@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import React,{VFC} from "react"
+import {DateOperater} from "model/DateOperater"
 
 type Props = {
     title:string
@@ -9,25 +10,31 @@ type Props = {
     scheduleLocations:string[]
     scheduleUrl:string[]
 }
-
+const dateOperater = new DateOperater()
 export const Card:VFC<Props> = (props) => {
-    const date = new Date()
+    const today = dateOperater.displayToday()
     return(
         <CardContainer>
             {props.isDate ? (
-                <Dates>{}</Dates>
+                <Dates>{today}</Dates>
             ):(null)}
-            <Title>今日の予定</Title>
+            <Title>{props.title}</Title>
+            <ScheduleContainer>
             <SUl>
-                <Sli><a href="#">夕飯</a></Sli>
-                <div>
-                    <span>時間:</span><span>11時00分</span>
-                </div>
-                <div>
-                    <span>場所:</span>はま寿司
-                </div>
-                <Sli>Tabel Tennis</Sli>
+            {props.schedules.map((schedule,i)=>(
+                <>
+                <Sli><a href={props.scheduleUrl[i]}>{schedule}</a></Sli>
+                    <div>
+                        <span>時間:</span><span>{props.scheduleDates[i]}</span>
+                    </div>
+                    <div>
+                        <span>場所:</span>{props.scheduleLocations[i]}
+                    </div>
+                </>
+            ))}
             </SUl>
+            </ScheduleContainer>
+            
         </CardContainer>
     )
 }
@@ -40,7 +47,6 @@ box-shadow:0 3px 10px rgba(0,0,0,.16);
 margin:20px;
 border-radius:5px;
 position:relative;
-overflow:auto;
 `
 const Dates = styled.div`
 font-size:16px;
@@ -63,5 +69,12 @@ margin-top:10px;
 
 `
 const SUl = styled.ul`
-padding-top:10px;
+margin-top:-5px;
+`
+const ScheduleContainer = styled.div`
+position:absolute;
+top:60px;
+height:220px;
+width:100%;
+overflow:auto;
 `

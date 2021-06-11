@@ -13,7 +13,7 @@ export class DateOperater{
     }
     private getWeekOdDay = ():WeekOfDays|string => {
         const date = new Date()
-        let err = "Error coused!Not Return weekOfDay"
+        const err = "Error coused!Not Return weekOfDay"
         switch(date.getDay()){
             case 1:
                 return "月"
@@ -42,5 +42,4 @@ export class DateOperater{
         }
         return this.month.toString()
     }
-    
 }
