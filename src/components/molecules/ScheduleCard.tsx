@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React, { VFC } from 'react'
 import { DateOperater } from 'model/DateOperater'
-
+import {CardContainer} from "components/atoms/CardContainer"
 type Props = {
     title: string
     isDate: boolean
@@ -11,7 +11,7 @@ type Props = {
     scheduleUrl: string[]
 }
 const dateOperater = new DateOperater()
-export const Card: VFC<Props> = (props) => {
+export const ScheduleCard: VFC<Props> = (props) => {
     const today = dateOperater.displayToday()
     return (
         <CardContainer>
@@ -38,15 +38,7 @@ export const Card: VFC<Props> = (props) => {
     )
 }
 
-const CardContainer = styled.div`
-    width: 250px;
-    height: 300px;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
-    margin: 20px;
-    border-radius: 5px;
-    position: relative;
-`
+
 const Dates = styled.div`
     font-size: 16px;
     margin: 5px;
