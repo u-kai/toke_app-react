@@ -2,13 +2,21 @@ import styled from "styled-components"
 import React,{VFC} from "react"
 
 type Props = {
-
+    title:string
+    isDate:boolean
+    schedules:string[]
+    scheduleDates:string[]
+    scheduleLocations:string[]
+    scheduleUrl:string[]
 }
 
 export const Card:VFC<Props> = (props) => {
+    const date = new Date()
     return(
         <CardContainer>
-            <Date>2021/6/11(金)</Date>
+            {props.isDate ? (
+                <Dates>{}</Dates>
+            ):(null)}
             <Title>今日の予定</Title>
             <SUl>
                 <Sli><a href="#">夕飯</a></Sli>
@@ -34,7 +42,7 @@ border-radius:5px;
 position:relative;
 overflow:auto;
 `
-const Date = styled.div`
+const Dates = styled.div`
 font-size:16px;
 margin:5px;
 `
