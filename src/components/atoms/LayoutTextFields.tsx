@@ -7,11 +7,13 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             display: 'flex',
             flexWrap: 'wrap',
+            width:"70%",
+            marginTop:30
         },
         textField: {
             marginLeft: theme.spacing(1),
             marginRight: theme.spacing(1),
-            width: '25ch',
+            width: "25ch",
         },
     })
 )
@@ -30,7 +32,7 @@ export const LayoutTextFields: VFC<Props> = (props) => {
 
     return (
         <div className={classes.root}>
-            <div>
+    
                 <TextField
                     id={id}
                     label={label}
@@ -44,7 +46,7 @@ export const LayoutTextFields: VFC<Props> = (props) => {
                         shrink: true,
                     }}
                 />
-            </div>
+            
         </div>
     )
 }

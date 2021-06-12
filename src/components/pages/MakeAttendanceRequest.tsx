@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { LayoutTextFields } from 'components/atoms/LayoutTextFields'
+import {DateAndTimePickers} from "components/atoms/DateAndTimePickers"
+import {SendButton} from "components/atoms/SendButton"
+import {MultilineTextFields} from "components/atoms/MultilineTextFileds"
+import {TimePicker} from "components/atoms/TimePicker"
 export const MakeAttendanceRequest = () => {
     type AttendanceRequestInputs = {
         id: string
@@ -12,6 +16,9 @@ export const MakeAttendanceRequest = () => {
     const handleChage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
+    // const onChange = (e) =>{
+    //     console.log
+    // }
     return (
         <Container>
             <Title>出席依頼</Title>
@@ -26,12 +33,31 @@ export const MakeAttendanceRequest = () => {
                     onChange={handleChage}
                 />
             </div>
-            <label htmlFor={'date'}>日時：</label>
-            <input id="date" type="text"></input>
-            <label htmlFor={'brings'}>持ち物：</label>
-            <input id="brings" type="text"></input>
-            <label htmlFor={'desc'}>概要：</label>
-            <input id="desc" type="text"></input>
+            <div style={{display:"flex",flexDirection:"row"}}>
+                <DateAndTimePickers
+                    id="date"
+                    label="日時"
+                    onChange={(e)=>console.log(e.target.value)}
+                ></DateAndTimePickers>
+                <TimePicker
+                    label="時間"
+                    onChange={(e)=>console.log(e.target.value)}
+                 ></TimePicker>
+            </div>
+            <div>
+                <LayoutTextFields
+                    key={'burings'}
+                    id="burings"
+                    label="持ち物"
+                    value={purpose}
+                    placeholder={'筆記用具'}
+                    onChange={handleChage}
+                />
+            </div>
+            <div>
+                <MultilineTextFields></MultilineTextFields>
+            </div>
+            <SendButton></SendButton>
         </Container>
     )
 }

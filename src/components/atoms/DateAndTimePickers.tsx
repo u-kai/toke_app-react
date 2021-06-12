@@ -1,6 +1,8 @@
-import React from 'react'
+import React,{VFC} from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
+import {DateOperater} from "model/DateOperater"
+import { FiberPin } from '@material-ui/icons'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,21 +17,28 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     })
 )
-
-export default function DateAndTimePickers() {
+const date = new DateOperater()
+const today = date.forMaterialUI()
+type Props = {
+    id:string
+    label:string
+    onChange?:(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
+}
+export const DateAndTimePickers:VFC<Props> = (props) => {
     const classes = useStyles()
-
+    const {id,label,onChange} = props
     return (
         <form className={classes.container} noValidate>
             <TextField
-                id="datetime-local"
-                label="Next appointment"
+                id={id}
+                label={label}
                 type="datetime-local"
-                defaultValue="2017-05-24T10:30"
+                defaultValue={today}
                 className={classes.textField}
                 InputLabelProps={{
                     shrink: true,
                 }}
+                onChange={onChange}
             />
         </form>
     )
