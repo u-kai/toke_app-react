@@ -19,5 +19,16 @@ parserOptions: {
 "project": "./tsconfig.json" // TypeScriptのLint時に参照するconfigファイルを指定
 },
 root: true, // 上位ディレクトリにある他のeslintrcを参照しないようにする
-rules: {"react/prop-types": 0}
+rules: {
+    "react/prop-types": 0,
+    "@typescript-eslint/ban-types": [
+        "error",
+        {
+          "extendDefaults": true,
+          "types": {
+            "{}": false
+          }
+          }  
+    ]
+}
 }

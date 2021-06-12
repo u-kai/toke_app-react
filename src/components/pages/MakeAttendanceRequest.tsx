@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { LayoutTextFields } from 'components/atoms/LayoutTextFields'
-import {DateAndTimePickers} from "components/atoms/DateAndTimePickers"
-import {SendButton} from "components/atoms/SendButton"
-import {MultilineTextFields} from "components/atoms/MultilineTextFileds"
-import {TimePicker} from "components/atoms/TimePicker"
+import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
+import { SendButton } from 'components/atoms/SendButton'
+import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
+import { TimePicker } from 'components/atoms/TimePicker'
 export const MakeAttendanceRequest = () => {
     type AttendanceRequestInputs = {
         id: string
@@ -33,16 +33,13 @@ export const MakeAttendanceRequest = () => {
                     onChange={handleChage}
                 />
             </div>
-            <div style={{display:"flex",flexDirection:"row"}}>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers
                     id="date"
                     label="日時"
-                    onChange={(e)=>console.log(e.target.value)}
+                    onChange={(e) => console.log(e.target.value)}
                 ></DateAndTimePickers>
-                <TimePicker
-                    label="時間"
-                    onChange={(e)=>console.log(e.target.value)}
-                 ></TimePicker>
+                <TimePicker label="時間" onChange={(e) => console.log(e.target.value)}></TimePicker>
             </div>
             <div>
                 <LayoutTextFields

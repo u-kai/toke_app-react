@@ -7,13 +7,13 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             display: 'flex',
             flexWrap: 'wrap',
-            width:"70%",
-            marginTop:30
+            width: '70%',
+            marginTop: 30,
         },
         textField: {
             marginLeft: theme.spacing(1),
             marginRight: theme.spacing(1),
-            width: "25ch",
+            width: '25ch',
         },
     })
 )
@@ -32,21 +32,19 @@ export const LayoutTextFields: VFC<Props> = (props) => {
 
     return (
         <div className={classes.root}>
-    
-                <TextField
-                    id={id}
-                    label={label}
-                    style={{ margin: 8 }}
-                    placeholder={placeholder}
-                    fullWidth
-                    margin="normal"
-                    onChange={onChange}
-                    value={value}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-            
+            <TextField
+                id={id}
+                label={label}
+                style={{ margin: 8 }}
+                placeholder={placeholder}
+                fullWidth
+                margin="normal"
+                onChange={onChange}
+                value={value}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+            />
         </div>
     )
 }

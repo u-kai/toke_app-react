@@ -42,7 +42,7 @@ export class DateOperater {
         }
         return this.month.toString()
     }
-    forMaterialUI = () =>{
+    forMaterialUI = () => {
         return `${this.year}-${this.formatMonth()}-${this.day}T10:00`
     }
 }

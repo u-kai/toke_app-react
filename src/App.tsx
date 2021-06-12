@@ -8,8 +8,8 @@ function App() {
         // <GroupCard></GroupCard>
         // <AttendanceRequests></AttendanceRequests>
         <>
-        <MakeAttendanceRequest></MakeAttendanceRequest>
-        <MultipleSelectAndAddButton></MultipleSelectAndAddButton>
+            <MakeAttendanceRequest></MakeAttendanceRequest>
+            <MultipleSelectAndAddButton></MultipleSelectAndAddButton>
         </>
     )
 }

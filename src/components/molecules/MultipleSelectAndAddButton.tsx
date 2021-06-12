@@ -1,8 +1,8 @@
-import {MultipleSelect} from "components/atoms/MultipleSelect"
-import {AddButton} from "components/atoms/AddButton"
-import React from "react"
+import { MultipleSelect } from 'components/atoms/MultipleSelect'
+import { AddButton } from 'components/atoms/AddButton'
+import React from 'react'
 export const MultipleSelectAndAddButton = () => {
-    return(
+    return (
         <div>
             <MultipleSelect></MultipleSelect>
             <AddButton></AddButton>
