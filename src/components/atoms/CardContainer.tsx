@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-
 export const CardContainer = styled.div`
     width: 250px;
     height: 300px;
@@ -10,4 +9,3 @@ export const CardContainer = styled.div`
     border-radius: 5px;
     position: relative;
 `
-
