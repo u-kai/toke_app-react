@@ -9,29 +9,6 @@ import {returnUserAttendanceRequestsCount} from "functions/retrunUserAttendanceR
 export const Home = () => {
     const user_id = useRecoilValue(userIdState)
     const [userAttendaceRequestsCount,setUserAttendanceRequestsCount] = useState("")
-    // const countUserAttendanceRequests = () => {
-    //     const selectInfo:SelectInfo = {
-    //         selectDatas:["count(*)"],
-    //         tableName:"user_attendance_requests_info",
-    //         whereClaseElements:{
-    //             whereKeys:["user_id","is_response"],
-    //             whereValues:[user_id,"false"],
-    //             whereOperators:["AND"]
-    //         }
-    //     }
-    //         postAndReturnResponseToJson(selectInfo,"select")
-    //         .then((results:BackendReturn)=>{
-    //             if(results.results.error!==undefined){
-    //                 return
-    //             }
-    //             if(results.results.select){
-    //                 const count = Object.values(results.results.select[0])
-    //                 setUserAttendanceRequestsCount(count.toString())
-    //             }
-    //         })
-        
-    // }
-    console.log(user_id)
     useEffect(()=>{
         returnUserAttendanceRequestsCount(user_id)
         .then((count)=>{
@@ -40,10 +17,10 @@ export const Home = () => {
             }
             setUserAttendanceRequestsCount(count.toString())
         })
-        // countUserAttendanceRequests()
     },[])
     return (
         <div>
             出席依頼:{userAttendaceRequestsCount}件
-        </div>)
+        </div>
+        )
 }

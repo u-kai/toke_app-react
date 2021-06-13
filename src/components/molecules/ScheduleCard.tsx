@@ -2,16 +2,10 @@ import styled from 'styled-components'
 import React, { VFC } from 'react'
 import { DateOperater } from 'model/DateOperater'
 import { CardContainer } from 'components/atoms/CardContainer'
-type Props = {
-    title: string
-    isDate: boolean
-    schedules: string[]
-    scheduleDates: string[]
-    scheduleLocations: string[]
-    scheduleUrl: string[]
-}
+import { ScheduleCardProps } from "types/ui-types/ScheduleCardProps"
+
 const dateOperater = new DateOperater()
-export const ScheduleCard: VFC<Props> = (props) => {
+export const ScheduleCard: VFC<ScheduleCardProps> = (props) => {
     const today = dateOperater.displayToday()
     return (
         <CardContainer>
