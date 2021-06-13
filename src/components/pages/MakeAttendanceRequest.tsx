@@ -13,9 +13,9 @@ export const MakeAttendanceRequest = () => {
     }
     const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState('')
-    const [date,setDate] = useState("")
-    const [burings,setBurings] = useState("")
-    const [desc,setDesc] = useState("")
+    const [date, setDate] = useState('')
+    const [burings, setBurings] = useState('')
+    const [desc, setDesc] = useState('')
     const handleChage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -57,8 +57,7 @@ export const MakeAttendanceRequest = () => {
             <div>
                 <MultilineTextFields></MultilineTextFields>
             </div>
-            <SendButton
-                onClick={()=>console.log("dd")}></SendButton>
+            <SendButton onClick={() => console.log('dd')}></SendButton>
         </Container>
     )
 }

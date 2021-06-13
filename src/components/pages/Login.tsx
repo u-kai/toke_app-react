@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useState } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
-import { postAndReturnResposeToJson } from 'functions/postAndReturnResponseToJson'
+import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { useHistory } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
 import { useRecoilState, useSetRecoilState } from 'recoil'
@@ -28,7 +28,7 @@ export const Login = () => {
                 whereOperators: ['AND'],
             },
         }
-        postAndReturnResposeToJson(sendData, url).then((results: BackendReturn) => {
+        postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
             console.log(results)
             if (results.results.error) {
                 setError(results.results.error.sqlMessage)

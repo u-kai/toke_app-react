@@ -1,6 +1,6 @@
-import {atom} from "recoil"
+import { atom } from 'recoil'
 
 export const userIdState = atom<string>({
-    key:"userIdState",
-    default:""
+    key: 'userIdState',
+    default: '',
 })
