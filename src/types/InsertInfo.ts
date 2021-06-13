@@ -1,4 +1,4 @@
-import { WhereClauseElements } from 'type/WhereClauseElements'
+import { WhereClauseElements } from 'types/WhereClauseElements'
 export type InsertInfo = {
     tableName: string
     insertKeys: string[]

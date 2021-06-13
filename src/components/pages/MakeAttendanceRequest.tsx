@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { LayoutTextFields } from 'components/atoms/LayoutTextFields'
+import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { SendButton } from 'components/atoms/SendButton'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
@@ -13,6 +13,9 @@ export const MakeAttendanceRequest = () => {
     }
     const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState('')
+    const [date,setDate] = useState("")
+    const [burings,setBurings] = useState("")
+    const [desc,setDesc] = useState("")
     const handleChage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -24,7 +27,7 @@ export const MakeAttendanceRequest = () => {
             <Title>出席依頼</Title>
 
             <div>
-                <LayoutTextFields
+                <LayoutTextField
                     key={'purose'}
                     id="purpose"
                     label="目的"
@@ -42,7 +45,7 @@ export const MakeAttendanceRequest = () => {
                 <TimePicker label="時間" onChange={(e) => console.log(e.target.value)}></TimePicker>
             </div>
             <div>
-                <LayoutTextFields
+                <LayoutTextField
                     key={'burings'}
                     id="burings"
                     label="持ち物"

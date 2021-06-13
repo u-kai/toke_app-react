@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
+    type?:"text"|"password"
     id: string
     value: string
     onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
@@ -26,14 +27,15 @@ type Props = {
     label: string
 }
 
-export const LayoutTextFields: VFC<Props> = (props) => {
+export const LayoutTextField: VFC<Props> = (props) => {
     const classes = useStyles()
-    const { id, value, onChange, placeholder = '', label } = props
+    const { id, value, onChange, placeholder = '', label,type="text" } = props
 
     return (
         <div className={classes.root}>
             <TextField
                 id={id}
+                type={type}
                 label={label}
                 style={{ margin: 8 }}
                 placeholder={placeholder}

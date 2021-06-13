@@ -1,4 +1,4 @@
-import { WhereOperator } from 'type/WhereOperator'
+import { WhereOperator } from 'types/WhereOperator'
 export type WhereClauseElements = {
     whereKeys: string[]
     whereValues: string[]
