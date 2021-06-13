@@ -1,6 +1,6 @@
 import { LikeJson } from 'types/LikeJson'
 import { SelectInfo } from 'types/post-data-types/SelectInfo'
-export const makeRequest = (bodyData: LikeJson | SelectInfo): RequestInit => {
+export const makeRequest = (bodyData: LikeJson | SelectInfo | SelectInfo[]): RequestInit => {
     return {
         method: 'POST',
         mode: 'cors',

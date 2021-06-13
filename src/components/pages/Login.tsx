@@ -12,13 +12,13 @@ import { SelectInfo } from 'types/post-data-types/SelectInfo'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import React from 'react'
 export const Login = () => {
-    const [error, setError] = useState('') 
+    const [error, setError] = useState('')
     const url = 'select'
     const history = useHistory()
     const inputList = ['名前', 'パスワード']
     const setUserId = useSetRecoilState(userIdState)
     const [userName, setUserName] = useRecoilState(userNameState)
-    const [password, setPassword] = useState('')
+    const [password, setPassword] = useState('udomaki')
     const onClick = () => {
         const sendData: SelectInfo = {
             tableName: 'user_login',

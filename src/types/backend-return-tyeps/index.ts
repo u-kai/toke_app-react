@@ -1,1 +1,1 @@
-import {BackendReturn} from "types/backend-return-tyeps/BackendReturn"
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
