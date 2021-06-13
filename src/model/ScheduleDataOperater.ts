@@ -4,6 +4,8 @@ import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { SQLError } from 'types/backend-return-tyeps/SQLError'
 import { WhereOperator } from 'types/post-data-types/WhereOperator'
+import {ScheduleInfo,ScheduleInfoResults} from "types/backend-return-tyeps/ScheduleInfo"
+
 
 export class ScheduleDataOperater {
     private userId: string
@@ -14,11 +16,14 @@ export class ScheduleDataOperater {
         this.tableName = 'user_attendance_requests_info'
         this.selectUrl = 'select'
     }
-    private isError = (error?: SQLError | undefined): boolean => {
-        return error !== undefined
-    }
     private isResults = (results: SelectResult | undefined): results is SelectResult => {
         return results !== undefined && results.length > 0
+    }
+    private isInfos = (results: any): results is ScheduleInfo => {
+        return results.attendance_request_id !== undefined &&
+                results.purpose !== undefined && results.date !== undefined &&
+                results.location !== undefined && results.describes !== undefined &&
+                results.brings !== undefined && results.organizer_id !== undefined
     }
     private isStrings = (strings: (string | undefined)[]): strings is string[] => {
         const notUndefines = strings.filter((string) => string !== undefined)
@@ -29,9 +34,9 @@ export class ScheduleDataOperater {
         whereKeys: string[],
         whereValues: string[],
         whereOperators: WhereOperator[],
-        tableName?:string
+        tableName?: string
     ): SelectInfo => {
-        if(!tableName){
+        if (!tableName) {
             tableName = this.tableName
         }
         return {
@@ -47,14 +52,24 @@ export class ScheduleDataOperater {
     private makeSelectInfoForCount = (): SelectInfo => {
         return this.makeSelectInfo(['count(*)'], ['user_id', 'is_response'], [this.userId, 'false'], ['AND'])
     }
-    private makeSelectInfoForIds = ():SelectInfo => {
-        return this.makeSelectInfo(['attendance_request_id'],['user_id', 'is_response'],[this.userId, 'false'],['AND'])
+    private makeSelectInfoForIds = (): SelectInfo => {
+        return this.makeSelectInfo(
+            ['attendance_request_id'],
+            ['user_id', 'is_response'],
+            [this.userId, 'false'],
+            ['AND']
+        )
     }
-    private makeSelectInfosForInfos = (ids:string[]):SelectInfo[] => {
-        const selectInfos = ids.map((id)=>{
-            return this.makeSelectInfo(["*"],["attendance_request_id"],[id],[],"attendance_requests")
-        })
-        return selectInfos
+    private makeSelectInfosForInfos = (ids: string[]): SelectInfo => {
+        // const selectInfos = ids.map((id) => {
+        //     return this.makeSelectInfo(['*'], ['attendance_request_id'], [id], [], 'attendance_requests')
+        // })
+        const whereKeys = ids.map(_=>"attendance_request_id")
+        const whereOperators:WhereOperator[] = ids.map(_=>"OR")
+        if(whereOperators.length>=1){
+            whereOperators.pop()
+        }
+        return this.makeSelectInfo(["*"],whereKeys, ids, whereOperators, 'attendance_requests')
     }
     private returnCount = (select: SelectResult | undefined): string => {
         if (this.isResults(select)) {
@@ -62,27 +77,40 @@ export class ScheduleDataOperater {
         }
         return 'Error'
     }
-    private returnIds = (select: SelectResult | undefined): string[]=>{
-        if(this.isResults(select)){
-            const ids = select.map((data)=>{
+    private returnIds = (select: SelectResult | undefined): string[] => {
+        if (this.isResults(select)) {
+            const ids = select.map((data) => {
                 const id = Object.values(data)[0]
-                if(id !== null && id !== undefined){
+                if (id !== null && id !== undefined) {
                     return id.toString()
                 }
             })
-            if(this.isStrings(ids)){
+            if (this.isStrings(ids)) {
                 return ids
             }
         }
-        return ["Error"]
+        return ['Error']
     }
-    private returnInfos = (select:SelectResult | undefined):SelectResult=>{
-        if(this.isResults(select)){
-            return select
+    private returnInfos = (selects: SelectResult | undefined): ScheduleInfoResults  => {
+        let results:ScheduleInfoResults = []
+        if(selects){
+            results = selects.map((select)=>{
+                if (this.isInfos(select)) {
+                    return select
+                }
+                 
+                return {
+                    attendance_request_id: 0,
+                    purpose: "error",
+                    date: new Date(),
+                    location: "error",
+                    describes: "error",
+                    bring: "error",
+                    organizer_id: -1000
+                }
+            })
         }
-        return ([{
-            "error":"error"
-        }])
+        return results
     }
     returnPromiseCount = (): Promise<string> => {
         return postAndReturnResponseToJson(this.makeSelectInfoForCount(), this.selectUrl).then(
@@ -91,21 +119,22 @@ export class ScheduleDataOperater {
             }
         )
     }
-    private returnPromiseScheduleIds = ():Promise<string[]> => {
-        return postAndReturnResponseToJson(this.makeSelectInfoForIds(),this.selectUrl)
-        .then((results:BackendReturn)=>{
-            console.log("attendanceIds",results.results.select)
-            return this.returnIds(results.results.select)
-        })
+    private returnPromiseScheduleIds = (): Promise<string[]> => {
+        return postAndReturnResponseToJson(this.makeSelectInfoForIds(), this.selectUrl).then(
+            (results: BackendReturn) => {
+                console.log('attendanceIds', results.results.select)
+                return this.returnIds(results.results.select)
+            }
+        )
     }
-    returnPromiseScheduleInfos = () => {
-        this.returnPromiseScheduleIds()
-        .then((ids:string[])=>{
-            return postAndReturnResponseToJson(this.makeSelectInfosForInfos(ids),this.selectUrl+"/loop")
-            .then((results:BackendReturn)=>{
-                console.log("selects loop",results.results.select)
-                return this.returnInfos(results.results.select)
-            })
+    returnPromiseScheduleInfos = ():Promise<ScheduleInfoResults> => {
+        return this.returnPromiseScheduleIds().then((ids: string[]) => {
+            return postAndReturnResponseToJson(this.makeSelectInfosForInfos(ids), this.selectUrl).then(
+                (results: BackendReturn) => {
+                    console.log('selects loop', results.results.select)
+                    return this.returnInfos(results.results.select)
+                }
+            )
         })
     }
 }
