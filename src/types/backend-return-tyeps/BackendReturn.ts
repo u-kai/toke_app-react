@@ -6,6 +6,6 @@ export type BackendReturn = {
     results: {
         error?: SQLError
         other?: InsertUpdateDeleteResult
-        select?: SelectResult
+        select?: SelectResult | [] /////////////////
     }
 }

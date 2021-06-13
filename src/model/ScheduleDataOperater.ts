@@ -26,7 +26,8 @@ export class ScheduleDataOperater {
             results.location !== undefined &&
             results.describes !== undefined &&
             results.bring !== undefined &&
-            results.organizer_id !== undefined
+            results.organizer_id !== undefined &&
+            results.organizer_name !== undefined
         )
     }
     private isStrings = (strings: (string | undefined)[]): strings is string[] => {
@@ -65,9 +66,6 @@ export class ScheduleDataOperater {
         )
     }
     private makeSelectInfosForInfos = (ids: string[]): SelectInfo => {
-        // const selectInfos = ids.map((id) => {
-        //     return this.makeSelectInfo(['*'], ['attendance_request_id'], [id], [], 'attendance_requests')
-        // })
         const whereKeys = ids.map((_) => 'attendance_request_id')
         const whereOperators: WhereOperator[] = ids.map((_) => 'OR')
         if (whereOperators.length >= 1) {
@@ -96,7 +94,6 @@ export class ScheduleDataOperater {
         return ['Error']
     }
     private returnInfos = (selects: SelectResult | undefined): ScheduleInfoResults => {
-        console.log("returnInfos1",selects)
         let results: ScheduleInfoResults = []
         if (selects) {
             results = selects.map((select) => {
@@ -111,6 +108,7 @@ export class ScheduleDataOperater {
                     describes: 'error',
                     bring: 'error',
                     organizer_id: -1000,
+                    organizer_name:"error"
                 }
             })
         }
@@ -133,9 +131,9 @@ export class ScheduleDataOperater {
     }
     returnPromiseScheduleInfos = (): Promise<ScheduleInfoResults> => {
         return this.returnPromiseScheduleIds().then((ids: string[]) => {
+            console.log("ids",ids)
             return postAndReturnResponseToJson(this.makeSelectInfosForInfos(ids), this.selectUrl).then(
                 (results: BackendReturn) => {
-                    console.log('selects loop', results.results.select)
                     return this.returnInfos(results.results.select)
                 }
             )

@@ -49,7 +49,7 @@ export const MakeAttendanceRequest = () => {
                     key={'burings'}
                     id="burings"
                     label="持ち物"
-                    value={purpose}
+                    value={burings}
                     placeholder={'筆記用具'}
                     onChange={handleChage}
                 />

@@ -7,6 +7,7 @@ export type ScheduleInfo = {
     location: string
     describes: string
     bring: string
-    organizer_id: number
+    organizer_id: number,
+    organizer_name:string
 }
 export type ScheduleInfoResults = ScheduleInfo[]
