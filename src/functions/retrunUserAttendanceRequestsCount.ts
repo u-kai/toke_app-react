@@ -1,4 +1,4 @@
-import { SelectInfo } from 'types/SelectInfo'
+import { SelectInfo } from 'types/post-data-types/SelectInfo'
 import { useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
