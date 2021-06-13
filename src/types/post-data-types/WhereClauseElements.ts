@@ -1,4 +1,4 @@
-import { WhereOperator } from 'types/WhereOperator'
+import { WhereOperator } from 'types/post-data-types/WhereOperator'
 export type WhereClauseElements = {
     whereKeys: string[]
     whereValues: string[]

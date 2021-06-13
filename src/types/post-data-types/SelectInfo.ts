@@ -1,4 +1,4 @@
-import { WhereClauseElements } from 'types/WhereClauseElements'
+import { WhereClauseElements } from 'types/post-data-types/WhereClauseElements'
 export type SelectInfo = {
     tableName: string
     selectDatas?: string[]
