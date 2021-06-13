@@ -57,7 +57,8 @@ export const MakeAttendanceRequest = () => {
             <div>
                 <MultilineTextFields></MultilineTextFields>
             </div>
-            <SendButton></SendButton>
+            <SendButton
+                onClick={()=>console.log("dd")}></SendButton>
         </Container>
     )
 }
