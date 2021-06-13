@@ -4,8 +4,7 @@ import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { SQLError } from 'types/backend-return-tyeps/SQLError'
 import { WhereOperator } from 'types/post-data-types/WhereOperator'
-import {ScheduleInfo,ScheduleInfoResults} from "types/backend-return-tyeps/ScheduleInfo"
-
+import { ScheduleInfo, ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 
 export class ScheduleDataOperater {
     private userId: string
@@ -20,10 +19,15 @@ export class ScheduleDataOperater {
         return results !== undefined && results.length > 0
     }
     private isInfos = (results: any): results is ScheduleInfo => {
-        return results.attendance_request_id !== undefined &&
-                results.purpose !== undefined && results.date !== undefined &&
-                results.location !== undefined && results.describes !== undefined &&
-                results.brings !== undefined && results.organizer_id !== undefined
+        return (
+            results.attendance_request_id !== undefined &&
+            results.purpose !== undefined &&
+            results.date !== undefined &&
+            results.location !== undefined &&
+            results.describes !== undefined &&
+            results.bring !== undefined &&
+            results.organizer_id !== undefined
+        )
     }
     private isStrings = (strings: (string | undefined)[]): strings is string[] => {
         const notUndefines = strings.filter((string) => string !== undefined)
@@ -64,12 +68,12 @@ export class ScheduleDataOperater {
         // const selectInfos = ids.map((id) => {
         //     return this.makeSelectInfo(['*'], ['attendance_request_id'], [id], [], 'attendance_requests')
         // })
-        const whereKeys = ids.map(_=>"attendance_request_id")
-        const whereOperators:WhereOperator[] = ids.map(_=>"OR")
-        if(whereOperators.length>=1){
+        const whereKeys = ids.map((_) => 'attendance_request_id')
+        const whereOperators: WhereOperator[] = ids.map((_) => 'OR')
+        if (whereOperators.length >= 1) {
             whereOperators.pop()
         }
-        return this.makeSelectInfo(["*"],whereKeys, ids, whereOperators, 'attendance_requests')
+        return this.makeSelectInfo(['*'], whereKeys, ids, whereOperators, 'attendance_requests')
     }
     private returnCount = (select: SelectResult | undefined): string => {
         if (this.isResults(select)) {
@@ -91,22 +95,22 @@ export class ScheduleDataOperater {
         }
         return ['Error']
     }
-    private returnInfos = (selects: SelectResult | undefined): ScheduleInfoResults  => {
-        let results:ScheduleInfoResults = []
-        if(selects){
-            results = selects.map((select)=>{
+    private returnInfos = (selects: SelectResult | undefined): ScheduleInfoResults => {
+        console.log("returnInfos1",selects)
+        let results: ScheduleInfoResults = []
+        if (selects) {
+            results = selects.map((select) => {
                 if (this.isInfos(select)) {
                     return select
                 }
-                 
                 return {
                     attendance_request_id: 0,
-                    purpose: "error",
+                    purpose: 'error',
                     date: new Date(),
-                    location: "error",
-                    describes: "error",
-                    bring: "error",
-                    organizer_id: -1000
+                    location: 'error',
+                    describes: 'error',
+                    bring: 'error',
+                    organizer_id: -1000,
                 }
             })
         }
@@ -127,7 +131,7 @@ export class ScheduleDataOperater {
             }
         )
     }
-    returnPromiseScheduleInfos = ():Promise<ScheduleInfoResults> => {
+    returnPromiseScheduleInfos = (): Promise<ScheduleInfoResults> => {
         return this.returnPromiseScheduleIds().then((ids: string[]) => {
             return postAndReturnResponseToJson(this.makeSelectInfosForInfos(ids), this.selectUrl).then(
                 (results: BackendReturn) => {
