@@ -1,7 +1,7 @@
 import { SelectInfo } from 'types/SelectInfo'
 import { useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
-import { BackendReturn } from 'types/BackendReturn'
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 
 export const returnUserAttendanceRequestsCount = (user_id: string) => {

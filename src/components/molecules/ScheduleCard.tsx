@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import React, { VFC } from 'react'
 import { DateOperater } from 'model/DateOperater'
 import { CardContainer } from 'components/atoms/CardContainer'
-import { ScheduleCardProps } from "types/ui-types/ScheduleCardProps"
+import { ScheduleCardProps } from 'types/ui-types/ScheduleCardProps'
 
 const dateOperater = new DateOperater()
 export const ScheduleCard: VFC<ScheduleCardProps> = (props) => {

@@ -8,11 +8,11 @@ import { SimpleAlert } from '../atoms/SimpleAletert'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
-import { SelectInfo } from 'types/SelectInfo'
-import { BackendReturn } from 'types/BackendReturn'
+import { SelectInfo } from 'types/post-data-types/SelectInfo'
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import React from 'react'
 export const Login = () => {
-    const [error, setError] = useState('') ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const [error, setError] = useState('') 
     const url = 'select'
     const history = useHistory()
     const inputList = ['名前', 'パスワード']
