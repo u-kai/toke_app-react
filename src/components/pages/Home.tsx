@@ -23,6 +23,11 @@ export const Home = () => {
                 setUserAttendanceRequestsCount("エラーが起きてます．管理者にご報告ください．")
                 return
             }
+            if(checker.isSelect()){
+                const select = results.results.select![0]
+                const count = Object.values(select)[0] as string
+                setUserAttendanceRequestsCount(count)
+            }
         })
     },[user_id])
     //     const scheduleDataOperater = new ScheduleDataOperater(user_id)
