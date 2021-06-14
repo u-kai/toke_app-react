@@ -12,5 +12,8 @@ export class BackendResultsChecker{
     isSelect = () => {
         return this.backendResults.results.select !== undefined
     }
+    isOther = () => {
+        return this.backendResults.results.other !== undefined
+    }
 
 }

@@ -10,9 +10,11 @@ const errorResults:BackendReturn = {
 const backendResultsCheckerCaseError = new BackendResultsChecker(errorResults)
 const isErrorCaseError = backendResultsCheckerCaseError.isError()
 const isSelectCaseError = backendResultsCheckerCaseError.isSelect()
+const isOtherCaseError = backendResultsCheckerCaseError.isOther()
 it("test case error",()=>{
     expect(isErrorCaseError).toBe(true)
     expect(isSelectCaseError).toBe(false)
+    expect(isOtherCaseError).toBe(false)
 })
 
 const selectResult:BackendReturn = {
@@ -24,7 +26,9 @@ const selectResult:BackendReturn = {
 const backendResultsCheckerCaseSelect = new BackendResultsChecker(selectResult)
 const isErrorCaseSelect = backendResultsCheckerCaseSelect.isError()
 const isSelectCaseSelect = backendResultsCheckerCaseSelect.isSelect()
+const isOtherCaseSelect = backendResultsCheckerCaseSelect.isOther()
 it("test case select",()=>{
     expect(isErrorCaseSelect).toBe(false)
     expect(isSelectCaseSelect).toBe(true)
+    expect(isOtherCaseSelect).toBe(false)
 })
