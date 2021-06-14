@@ -11,8 +11,7 @@ import { userNameState } from 'store/user_name'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import {BackendResultsChecker} from "model/BackendResultsChecker"
 import React from 'react'
-import { SelectInfo } from 'types/post-data-types/SelectInfo'
-import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
+
 export const Login = () => {
     const [error, setError] = useState('')
     const url = 'login'
@@ -43,6 +42,7 @@ export const Login = () => {
                 setError("エラーが起きてます．管理者にご報告お願いします．")
                 return
             }
+            return 
         })
     }
     return (

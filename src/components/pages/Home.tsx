@@ -6,28 +6,39 @@ import { SelectInfo } from 'types/post-data-types/SelectInfo'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 import { ScheduleCard } from 'components/molecules/ScheduleCard'
 import { ScheduleDataOperater } from 'model/ScheduleDataOperater'
-
+import {postAndReturnResponseToJson} from "functions/postAndReturnResponseToJson"
+import {BackendReturn} from "types/backend-return-tyeps/BackendReturn"
+import { checkServerIdentity } from 'tls'
+import { BackendResultsChecker } from 'model/BackendResultsChecker'
 export const Home = () => {
     // const user_id = useRecoilValue(userIdState)
     const [user_id,setTestUserId] = useRecoilState(userIdState)
-    const [userAttendaceRequestsCount, setUserAttendanceRequestsCount] = useState('')
+    const [userAttendanceRequestsCount, setUserAttendanceRequestsCount] = useState('')
     const [scheduleCardDatas, setScheduleCardDatas] = useState<ScheduleInfoResults>([])
     useEffect(() => {
-        console.log("user_id",user_id)
-        const scheduleDataOperater = new ScheduleDataOperater(user_id)
-        scheduleDataOperater.returnPromiseCount().then((count) => {
-            setUserAttendanceRequestsCount(count)
+        postAndReturnResponseToJson({user_id:user_id},"schedule/count")
+        .then((results:BackendReturn)=>{
+            const checker = new BackendResultsChecker(results)
+            if(checker.isError()){
+                setUserAttendanceRequestsCount("エラーが起きてます．管理者にご報告ください．")
+                return
+            }
         })
-        scheduleDataOperater.returnPromiseScheduleInfos().then((scheduleInfoResults) => {
-            setScheduleCardDatas(scheduleInfoResults)
-        })
-    }, [user_id])
+    },[user_id])
+    //     const scheduleDataOperater = new ScheduleDataOperater(user_id)
+    //     scheduleDataOperater.returnPromiseCount().then((count) => {
+    //         setUserAttendanceRequestsCount(count)
+    //     })
+    //     scheduleDataOperater.returnPromiseScheduleInfos().then((scheduleInfoResults) => {
+    //         setScheduleCardDatas(scheduleInfoResults)
+    //     })
+    // }, [user_id])
     console.log("scheduleCardDatas",scheduleCardDatas)
 
     return (
         <>  
             <input id="test" value={user_id} onChange={(e)=>setTestUserId(e.target.value)}></input>
-            <div>出席依頼:{userAttendaceRequestsCount}件</div>
+            <div>出席依頼:{userAttendanceRequestsCount}件</div>
             {scheduleCardDatas.map((scuheduleCardData)=>(
                 <div key={`testtop${scuheduleCardData.attendance_request_id}`}>
                 <div key={`testto${scuheduleCardData.purpose}`}>title:{scuheduleCardData.purpose}</div>
