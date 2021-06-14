@@ -24,9 +24,9 @@ export const Login = () => {
             password:password
         }
         postAndReturnResponseToJson(sendData,url).then((results: BackendReturn) => {
-            console.log(results)
             if (results.results.error) {
                 setError(results.results.error.sqlMessage)
+                return
             }
             if (results.results.select) {
                 const selectResults = results.results.select[0]

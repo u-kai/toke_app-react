@@ -9,5 +9,8 @@ export class BackendResultsChecker{
     isError = () => {
         return this.backendResults.status === 400 || this.backendResults.results.error !== undefined
     }
+    isSelect = () => {
+        return this.backendResults.results.select !== undefined
+    }
 
 }
