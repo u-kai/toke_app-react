@@ -50,6 +50,8 @@ export const Home = () => {
             const cheker = new BackendResultsChecker(results)
             if(cheker.isError()){
                 setUserAttendanceRequestsCount("エラーが起きてます．管理者にご報告ください．")
+                console.log("errrrrrr")
+                setScheduleCardDatas([])
                 return
             }
             if(cheker.isSelect()){
@@ -66,7 +68,6 @@ export const Home = () => {
     //         setScheduleCardDatas(scheduleInfoResults)
     //     })
     // }, [user_id])
-    console.log("scheduleCardDatas",scheduleCardDatas)
 
     return (
         <>  
