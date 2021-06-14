@@ -8,27 +8,22 @@ import { SimpleAlert } from '../atoms/SimpleAletert'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
-import { SelectInfo } from 'types/post-data-types/SelectInfo'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import React from 'react'
 export const Login = () => {
     const [error, setError] = useState('')
-    const url = 'select'
+    const url = 'login'
     const history = useHistory()
     const inputList = ['名前', 'パスワード']
     const setUserId = useSetRecoilState(userIdState)
     const [userName, setUserName] = useRecoilState(userNameState)
     const [password, setPassword] = useState('udomaki')
     const onClick = () => {
-        const sendData: SelectInfo = {
-            tableName: 'user_login',
-            whereClaseElements: {
-                whereKeys: ['name', 'password'],
-                whereValues: [userName, password],
-                whereOperators: ['AND'],
-            },
+        const sendData = {
+            userName:userName,
+            password:password
         }
-        postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
+        postAndReturnResponseToJson(sendData,url).then((results: BackendReturn) => {
             console.log(results)
             if (results.results.error) {
                 setError(results.results.error.sqlMessage)
@@ -39,7 +34,7 @@ export const Login = () => {
                     setError('名前かパスワードが間違っています！')
                     return
                 }
-                if (selectResults['user_id']) {
+                if (selectResults!== undefined && selectResults["user_id"]) {
                     setError('')
                     history.push('/home')
                     setUserId(selectResults['user_id'].toString())
