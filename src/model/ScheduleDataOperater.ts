@@ -5,7 +5,7 @@ import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJs
 import { SQLError } from 'types/backend-return-tyeps/SQLError'
 import { WhereOperator } from 'types/post-data-types/WhereOperator'
 import { ScheduleInfo, ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
-
+import {errorScheduleInfo} from "datas/errorScheduleInfo"
 export class ScheduleDataOperater {
     private userId: string
     private tableName: string
@@ -100,16 +100,7 @@ export class ScheduleDataOperater {
                 if (this.isInfos(select)) {
                     return select
                 }
-                return {
-                    attendance_request_id: 0,
-                    purpose: 'error',
-                    date: new Date(),
-                    location: 'error',
-                    describes: 'error',
-                    bring: 'error',
-                    organizer_id: -1000,
-                    organizer_name:"error"
-                }
+                return errorScheduleInfo
             })
         }
         return results
