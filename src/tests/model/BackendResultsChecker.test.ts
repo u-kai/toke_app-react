@@ -32,3 +32,19 @@ it("test case select",()=>{
     expect(isSelectCaseSelect).toBe(true)
     expect(isOtherCaseSelect).toBe(false)
 })
+
+const otherResult:BackendReturn = {
+    status:200,
+    results:{
+        other:{info:"",insertId:2,warningStatus:2,changedRows:2,affectedRows:2,fieldCount:2,serverStatus:2}
+    }
+}
+const backendResultsCheckerCaseOther = new BackendResultsChecker(otherResult)
+const isErrorCaseOther = backendResultsCheckerCaseOther.isError()
+const isSelectCaseOther = backendResultsCheckerCaseOther.isSelect()
+const isOtherCaseOther = backendResultsCheckerCaseOther.isOther()
+it("test case Other",()=>{
+    expect(isErrorCaseOther).toBe(false)
+    expect(isSelectCaseOther).toBe(false)
+    expect(isOtherCaseOther).toBe(true)
+})
