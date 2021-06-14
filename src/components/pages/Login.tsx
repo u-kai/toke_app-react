@@ -10,6 +10,7 @@ import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import {BackendResultsChecker} from "model/BackendResultsChecker"
+import {ReturnDataForLogin} from "types/backend-return-tyeps/ReturnDataForLogin"
 import React from 'react'
 
 export const Login = () => {
@@ -34,9 +35,10 @@ export const Login = () => {
             if(checker.isSelect()){
                 setError('')
                 history.push('/home')
-                const selectResults = results.results.select![0]
-                if(selectResults['user_id']){
-                    setUserId(selectResults['user_id'].toString())
+                const selectResults = results.results.select! as ReturnDataForLogin
+            
+                if(selectResults[0]['user_id']){
+                    setUserId(selectResults[0]['user_id'].toString())
                     return
                 }
                 setError("エラーが起きてます．管理者にご報告お願いします．")

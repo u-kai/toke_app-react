@@ -1,6 +1,4 @@
-
-
-export type ScheduleInfo = {
+export type ReturnDataForScheduleInfo = {
     attendance_request_id: number
     purpose: string
     date: Date
@@ -9,5 +7,4 @@ export type ScheduleInfo = {
     bring: string
     organizer_id: number,
     organizer_name:string
-}
-export type ScheduleInfoResults = ScheduleInfo[]
+}[]

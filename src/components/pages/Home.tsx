@@ -3,18 +3,35 @@ import { useRecoilValue, useRecoilState } from 'recoil'
 import { ScheduleCardProps } from 'types/ui-types/ScheduleCardProps'
 import { userIdState } from 'store/user_id'
 import { SelectInfo } from 'types/post-data-types/SelectInfo'
-import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
-import { ScheduleCard } from 'components/molecules/ScheduleCard'
-import { ScheduleDataOperater } from 'model/ScheduleDataOperater'
+import { ScheduleInfoResults,ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import {postAndReturnResponseToJson} from "functions/postAndReturnResponseToJson"
 import {BackendReturn} from "types/backend-return-tyeps/BackendReturn"
 import { checkServerIdentity } from 'tls'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
+import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
+import { SQLError } from 'types/backend-return-tyeps/SQLError'
+import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
+import { ReturnDataForScheduleInfo } from 'types/backend-return-tyeps/ReturnDataForScheduleInfo'
 export const Home = () => {
     // const user_id = useRecoilValue(userIdState)
     const [user_id,setTestUserId] = useRecoilState(userIdState)
     const [userAttendanceRequestsCount, setUserAttendanceRequestsCount] = useState('')
     const [scheduleCardDatas, setScheduleCardDatas] = useState<ScheduleInfoResults>([])
+
+    const isScheduleInfoResult = (result:{[key:string]:string | number | null}) =>{
+        const bool =     result.attendance_request_id && result.purpose && result.date &&
+            result.location && result.describes && result.bring && result.organize_id &&
+            result.organizer_name
+        return bool
+    }
+    // attendance_request_id: number
+    // purpose: string
+    // date: Date
+    // location: string
+    // describes: string
+    // bring: string
+    // organizer_id: number,
+    // organizer_name:string
     useEffect(() => {
         postAndReturnResponseToJson({user_id:user_id},"schedule/count")
         .then((results:BackendReturn)=>{
@@ -27,6 +44,17 @@ export const Home = () => {
                 const select = results.results.select![0]
                 const count = Object.values(select)[0] as string
                 setUserAttendanceRequestsCount(count)
+            }
+        })
+        postAndReturnResponseToJson({user_id:user_id},"schedule/ids").then((results:BackendReturn)=>{
+            const cheker = new BackendResultsChecker(results)
+            if(cheker.isError()){
+                setUserAttendanceRequestsCount("エラーが起きてます．管理者にご報告ください．")
+                return
+            }
+            if(cheker.isSelect()){
+                const select = results.results.select! as ReturnDataForScheduleInfo
+                setScheduleCardDatas(select)
             }
         })
     },[user_id])
