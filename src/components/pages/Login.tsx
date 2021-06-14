@@ -9,7 +9,10 @@ import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
+import {BackendResultsChecker} from "model/BackendResultsChecker"
 import React from 'react'
+import { SelectInfo } from 'types/post-data-types/SelectInfo'
+import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
 export const Login = () => {
     const [error, setError] = useState('')
     const url = 'login'
@@ -24,21 +27,21 @@ export const Login = () => {
             password:password
         }
         postAndReturnResponseToJson(sendData,url).then((results: BackendReturn) => {
-            if (results.results.error) {
-                setError(results.results.error.sqlMessage)
+            const checker = new BackendResultsChecker(results)
+            if(checker.isError()){
+                setError('名前かパスワードが間違っています！')
                 return
             }
-            if (results.results.select) {
-                const selectResults = results.results.select[0]
-                if (selectResults === undefined) {
-                    setError('名前かパスワードが間違っています！')
+            if(checker.isSelect()){
+                setError('')
+                history.push('/home')
+                const selectResults = results.results.select![0]
+                if(selectResults['user_id']){
+                    setUserId(selectResults['user_id'].toString())
                     return
                 }
-                if (selectResults!== undefined && selectResults["user_id"]) {
-                    setError('')
-                    history.push('/home')
-                    setUserId(selectResults['user_id'].toString())
-                }
+                setError("エラーが起きてます．管理者にご報告お願いします．")
+                return
             }
         })
     }
