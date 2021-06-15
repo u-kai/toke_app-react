@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { VFC } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
@@ -13,13 +13,14 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 )
 
-export const MultilineTextFields = () => {
-    const classes = useStyles()
-    const [value, setValue] = React.useState('Controlled')
+type Props = {
+    value: string
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+}
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value)
-    }
+export const MultilineTextFields: VFC<Props> = (props) => {
+    const classes = useStyles()
+    const { value, onChange } = props
 
     return (
         <form className={classes.root} noValidate autoComplete="off">
@@ -30,8 +31,7 @@ export const MultilineTextFields = () => {
                     label="Multiline"
                     multiline
                     rows={4}
-                    //   defaultValue="Default Value"
-                    onChange={handleChange}
+                    onChange={onChange}
                     variant="outlined"
                 />
             </div>

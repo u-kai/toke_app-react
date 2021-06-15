@@ -22,17 +22,19 @@ const today = date.forMaterialUI()
 type Props = {
     id: string
     label: string
+    date: string
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 }
 export const DateAndTimePickers: VFC<Props> = (props) => {
     const classes = useStyles()
-    const { id, label, onChange } = props
+    const { id, label, onChange, date } = props
     return (
         <form className={classes.container} noValidate>
             <TextField
                 id={id}
                 label={label}
                 type="datetime-local"
+                value={date}
                 defaultValue={today}
                 className={classes.textField}
                 InputLabelProps={{

@@ -1,14 +1,43 @@
-import React, { useState } from 'react'
+import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
+import React, { useState, VFC } from 'react'
+import { useRecoilValue } from 'recoil'
+import { attendanceRequestIdState } from 'store/attendance_request_id'
+import { userIdState } from 'store/user_id'
 import styled from 'styled-components'
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
+import { ResponseAttendanceRequestProps as Props } from 'types/ui-types/ResponseAttendanceRequestProps'
 
-export const AttendanceRequests = () => {
+export const AttendanceRequests: VFC<Props> = (props) => {
+    const { attendanceRequestId, purpose, date, brings, describe } = props
     const items = ['目的', '日時', '持ち物', '概要']
-    const requestDates = [
-        '夏祭りに関する会議',
-        '2021/07/01() 11:00~12:00',
-        '筆記用具',
-        '今年の夏祭りを開催するかしないか等について議論します',
-    ]
+    const requestDates = [purpose, date, brings, describe]
+
+    const userId = useRecoilValue(userIdState)
+    const [isAttend, setIsAttend] = useState(false)
+    const [prefixDesc, setPrefixDesc] = useState<'欠席します．' | '出席します．'>('欠席します．')
+    const [message, setMessage] = useState('')
+    const absent = () => {
+        setIsAttend(false)
+        setPrefixDesc('欠席します．')
+    }
+    const attend = () => {
+        setIsAttend(true)
+        setPrefixDesc('出席します．')
+    }
+    const changeMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setMessage(e.target.value)
+    }
+    const sendData = () => {
+        const sendInfo = {
+            userId: userId,
+            attendanceRequestId: attendanceRequestId,
+            isAttend: isAttend.toString(),
+            message: message,
+        }
+        postAndReturnResponseToJson(sendInfo, 'isAttendResponse').then((results: BackendReturn) => {
+            console.log('update', results)
+        })
+    }
     return (
         <Container>
             <Title>出席依頼</Title>
@@ -23,13 +52,16 @@ export const AttendanceRequests = () => {
                 ))}
             </ul>
             <ResponseContainer>
-                <button>出席</button>・<button>欠席</button>
+                <button onClick={attend}>出席</button>・<button onClick={absent}>欠席</button>
                 <p>返信</p>
                 <div>
-                    <textarea>出席します．よろしくお願いいたします．</textarea>
+                    <p>{prefixDesc}</p>
+                    <textarea placeholder={'何かあればお書きください'} onChange={changeMessage}>
+                        {message}
+                    </textarea>
                 </div>
                 <div></div>
-                <SendButton>送信する</SendButton>
+                <SendButton onClick={sendData}>送信する</SendButton>
             </ResponseContainer>
         </Container>
     )

@@ -9,9 +9,9 @@ export class DateOperater {
         this.day = date.getDate()
         this.month = date.getMonth() + 1
         this.year = date.getFullYear()
-        this.weekOfDay = this.getWeekOdDay()
+        this.weekOfDay = this.getWeekOfDay()
     }
-    private getWeekOdDay = (): WeekOfDays | string => {
+    private getWeekOfDay = (): WeekOfDays | string => {
         const date = new Date()
         const err = 'Error coused!Not Return weekOfDay'
         switch (date.getDay()) {

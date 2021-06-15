@@ -16,6 +16,14 @@ function App() {
                 <BrowserRouter>
                     <Router></Router>
                 </BrowserRouter>
+                <MakeAttendanceRequest></MakeAttendanceRequest>
+                <AttendanceRequests
+                    purpose="test"
+                    date="test"
+                    describe="test"
+                    attendanceRequestId="1"
+                    brings="test"
+                ></AttendanceRequests>
             </RecoilRoot>
             {/* <MakeAttendanceRequest></MakeAttendanceRequest>
             <MultipleSelectAndAddButton></MultipleSelectAndAddButton> */}
