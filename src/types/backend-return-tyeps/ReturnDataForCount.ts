@@ -1,3 +1,3 @@
 export type ReturnDataForCount = {
-    "count(*)":string
+    'count(*)': string
 }[]

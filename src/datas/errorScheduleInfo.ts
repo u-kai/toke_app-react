@@ -6,5 +6,5 @@ export const errorScheduleInfo = {
     describes: 'error',
     bring: 'error',
     organizer_id: -1000,
-    organizer_name:"error"
+    organizer_name: 'error',
 }

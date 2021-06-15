@@ -9,8 +9,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import {BackendResultsChecker} from "model/BackendResultsChecker"
-import {ReturnDataForLogin} from "types/backend-return-tyeps/ReturnDataForLogin"
+import { BackendResultsChecker } from 'model/BackendResultsChecker'
+import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
 import React from 'react'
 
 export const Login = () => {
@@ -23,28 +23,28 @@ export const Login = () => {
     const [password, setPassword] = useState('udomaki')
     const onClick = () => {
         const sendData = {
-            userName:userName,
-            password:password
+            userName: userName,
+            password: password,
         }
-        postAndReturnResponseToJson(sendData,url).then((results: BackendReturn) => {
+        postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
             const checker = new BackendResultsChecker(results)
-            if(checker.isError()){
+            if (checker.isError()) {
                 setError('名前かパスワードが間違っています！')
                 return
             }
-            if(checker.isSelect()){
+            if (checker.isSelect()) {
                 setError('')
                 history.push('/home')
                 const selectResults = results.results.select! as ReturnDataForLogin
-            
-                if(selectResults[0]['user_id']){
+
+                if (selectResults[0]['user_id']) {
                     setUserId(selectResults[0]['user_id'].toString())
                     return
                 }
-                setError("エラーが起きてます．管理者にご報告お願いします．")
+                setError('エラーが起きてます．管理者にご報告お願いします．')
                 return
             }
-            return 
+            return
         })
     }
     return (

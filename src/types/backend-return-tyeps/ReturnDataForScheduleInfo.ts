@@ -5,6 +5,6 @@ export type ReturnDataForScheduleInfo = {
     location: string
     describes: string
     bring: string
-    organizer_id: number,
-    organizer_name:string
+    organizer_id: number
+    organizer_name: string
 }[]
