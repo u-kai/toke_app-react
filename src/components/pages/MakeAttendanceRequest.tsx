@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
@@ -12,6 +12,10 @@ import { dateCalculater } from 'functions/dateCalculater'
 import { DateOperater } from 'model/DateOperater'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
+import { BackendResultsChecker } from 'model/BackendResultsChecker'
+import {MultipleSelect} from "components/atoms/MultipleSelect"
+import { SimpleAlert } from 'components/atoms/SimpleAletert'
+import { ReturnDataForGetMembers } from 'types/backend-return-tyeps/ReturnDataForGetMembers'
 const dateOperater = new DateOperater()
 const today = dateOperater.forMaterialUI()
 export const MakeAttendanceRequest = () => {
@@ -24,6 +28,39 @@ export const MakeAttendanceRequest = () => {
     const [bring, setBring] = useState('')
     const [desc, setDesc] = useState('')
     const [location,setLocation] = useState("")
+    const [isSend, setIsSend] = useState(false) 
+    const [error, setError] = useState("")
+    const [groupIds,setGroupIds] = useState([""])
+    const [groupNames,setGroupNames] = useState([""])
+    const [memberIds,setMemberIds] = useState([""])
+    const [memberNames,setMemberNames] = useState([""])
+    useEffect(()=>{
+        //search members 
+        const sendData = {
+            userId:organizerId
+        }
+        postAndReturnResponseToJson(sendData,"getMembers")
+        .then((results:BackendReturn)=>{
+            const checker = new BackendResultsChecker(results)
+            if(checker.isError()){
+                setError('エラーが起きてます．管理者にご報告ください．')
+                return
+            }
+            if(checker.isSelect()){
+                const selects = results.results.select! as ReturnDataForGetMembers
+                let memberNamesTemp:string[] = []
+                let memberIdsTemp:string[] = []
+                selects.map((select)=>{
+                    memberNamesTemp = [...memberNamesTemp,select.user_name]
+                    memberIdsTemp = [...memberIdsTemp,select.user_id]
+                })
+                console.log(memberNamesTemp)
+                console.log(memberIdsTemp)
+                setMemberIds(memberIdsTemp)
+                setMemberNames(memberNamesTemp)
+            }
+        })
+    },[])
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -45,6 +82,8 @@ export const MakeAttendanceRequest = () => {
         setLocation(e.target.value)
     }
     const test = () => {
+        setIsSend(true)
+        setError("")
         const sendData = {
             purpose: purpose,
             bring: bring,
@@ -52,16 +91,28 @@ export const MakeAttendanceRequest = () => {
             organizer_id: organizerId,
             organizer_name: organizerName,
             location:location,
-            start_date: date,
+            start_date: "hello",
             end_date: dateCalculater(date, requestTime),
         }
         postAndReturnResponseToJson(sendData,"newRequest")
         .then((data:BackendReturn)=>{
-            console.log(data)
+            const checker = new BackendResultsChecker(data)
+            if(checker.isError()){
+                setIsSend(false)
+                setError("エラーが発生しました．データが反映されていません．もう一度送信してください")
+
+            }
+            
         })
     }
     return (
         <Container>
+            {error.length > 0 ?(
+                <SimpleAlert
+                    message={error}
+                    severity={"error"}
+                ></SimpleAlert>
+            ):(null)}
             <Title>出席依頼</Title>
 
             <div>
@@ -101,7 +152,7 @@ export const MakeAttendanceRequest = () => {
             <div>
                 <MultilineTextFields value={desc} onChange={changeDesc}></MultilineTextFields>
             </div>
-            <SendButton onClick={() => test()}></SendButton>
+            <SendButton onClick={() => test()} isDisabled={isSend}></SendButton>
         </Container>
     )
 }

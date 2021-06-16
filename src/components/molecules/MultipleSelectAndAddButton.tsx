@@ -4,7 +4,8 @@ import React from 'react'
 export const MultipleSelectAndAddButton = () => {
     return (
         <div>
-            <MultipleSelect></MultipleSelect>
+            {/* <MultipleSelect
+            ></MultipleSelect> */}
             <AddButton></AddButton>
         </div>
     )
