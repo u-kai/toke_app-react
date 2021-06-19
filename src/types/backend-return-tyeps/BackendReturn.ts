@@ -9,6 +9,6 @@ export type BackendReturn = {
     results: {
         error?: SQLError
         other?: InsertUpdateDeleteResult
-        select?: ReturnDataForCount | ReturnDataForLogin | ReturnDataForScheduleInfo | ReturnDataForGetMembers
+        select?: ReturnDataForCount | ReturnDataForLogin | ReturnDataForScheduleInfo | ReturnDataForGetMembers | [{success:string}]
     }
 }

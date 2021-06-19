@@ -7,6 +7,7 @@ import React from 'react'
 import { RecoilRoot } from 'recoil'
 import { BrowserRouter } from 'react-router-dom'
 import { Router } from 'router/Router'
+import { NewRegistUser } from 'components/pages/NewRegistUser'
 function App() {
     return (
         // <GroupCard></GroupCard>
@@ -16,6 +17,7 @@ function App() {
                 <BrowserRouter>
                     <Router></Router>
                 </BrowserRouter>
+                <NewRegistUser></NewRegistUser>
                 <MakeAttendanceRequest></MakeAttendanceRequest>
                 <AttendanceRequests
                     purpose="test"

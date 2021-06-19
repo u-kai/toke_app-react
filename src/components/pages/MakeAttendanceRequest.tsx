@@ -34,6 +34,7 @@ export const MakeAttendanceRequest = () => {
     const [groupNames,setGroupNames] = useState([""])
     const [memberIds,setMemberIds] = useState([""])
     const [memberNames,setMemberNames] = useState([""])
+    const [selectedMembers,setSelectedMembers] = useState([""])
     useEffect(()=>{
         //search members 
         const sendData = {
@@ -91,18 +92,22 @@ export const MakeAttendanceRequest = () => {
             organizer_id: organizerId,
             organizer_name: organizerName,
             location:location,
-            start_date: "hello",
+            start_date: date,
             end_date: dateCalculater(date, requestTime),
+            memberIds:memberIds
         }
         postAndReturnResponseToJson(sendData,"newRequest")
         .then((data:BackendReturn)=>{
+            console.log(data)
             const checker = new BackendResultsChecker(data)
             if(checker.isError()){
                 setIsSend(false)
                 setError("エラーが発生しました．データが反映されていません．もう一度送信してください")
-
             }
-            
+            if(checker.isSelect()){
+                const suc = data.results.select! as [{success:string}]
+                console.log(suc[0].success)
+            }
         })
     }
     return (
@@ -124,6 +129,14 @@ export const MakeAttendanceRequest = () => {
                     placeholder={'会議のご案内'}
                     onChange={changePurpose}
                 />
+            </div>
+            <div>
+                <MultipleSelect 
+                    names={memberNames}
+                    onChange={(e)=>setSelectedMembers([e.target.value as string])}
+                    placeholder={"メンバーを選択"}
+                    selectNames={selectedMembers}/>
+
             </div>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>

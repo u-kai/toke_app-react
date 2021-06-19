@@ -89,7 +89,7 @@ export const MultipleSelect:VFC<Props> = (props) => {
         </Select>
       </FormControl>
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-mutiple-chip-label">選択した{placeholder}</InputLabel>
+        <InputLabel id="demo-mutiple-chip-label">{placeholder}</InputLabel>
         <Select
           labelId="demo-mutiple-chip-label"
           id="demo-mutiple-chip"

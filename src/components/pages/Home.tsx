@@ -18,26 +18,6 @@ export const Home = () => {
     const [userAttendanceRequestsCount, setUserAttendanceRequestsCount] = useState('')
     const [scheduleCardDatas, setScheduleCardDatas] = useState<ScheduleInfoResults>([])
 
-    const isScheduleInfoResult = (result: { [key: string]: string | number | null }) => {
-        const bool =
-            result.attendance_request_id &&
-            result.purpose &&
-            result.date &&
-            result.location &&
-            result.describes &&
-            result.bring &&
-            result.organize_id &&
-            result.organizer_name
-        return bool
-    }
-    // attendance_request_id: number
-    // purpose: string
-    // date: Date
-    // location: string
-    // describes: string
-    // bring: string
-    // organizer_id: number,
-    // organizer_name:string
     useEffect(() => {
         postAndReturnResponseToJson({ user_id: user_id }, 'schedule/count').then((results: BackendReturn) => {
             const checker = new BackendResultsChecker(results)
