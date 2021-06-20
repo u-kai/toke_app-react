@@ -6,6 +6,7 @@ import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJs
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { StateMakerForGetScheduleSCount } from 'model/StateMaker/StateMakerForGetSchedulesCount'
 import { StateMakerForGetSchedulesInfo } from 'model/StateMaker/StateMakerForGetSchedulesInfos'
+import { StateMakerForGetGroups } from 'model/StateMaker/StateMakerForGetGroups'
 export const Home = () => {
     const [userId, setTestUserId] = useRecoilState(userIdState)
     const [userAttendanceRequestsCount, setUserAttendanceRequestsCount] = useState('')
@@ -28,8 +29,11 @@ export const Home = () => {
                 setScheduleCardDatas([])
             }
         })
-        postAndReturnResponseToJson({ userId: userId }, 'getGroups').then((results: BackendReturn) => {
-            console.log('groups', results)
+        const stateMakerForGetGroups = new StateMakerForGetGroups(userId)
+        stateMakerForGetGroups.returnErrorAndGroups().then((data) => {
+            console.log(data.error)
+            console.log(data.groups.groupIds)
+            console.log(data.groups.groupNames)
         })
     }, [userId])
 
