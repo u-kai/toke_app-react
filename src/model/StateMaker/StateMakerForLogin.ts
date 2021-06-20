@@ -8,17 +8,11 @@ export class StateMakerForLogin extends StateMaker{
     constructor(userName: string, password: string) {
         super(new DataPosterForLogin(userName,password))
     }
-    private factoryConverter = (backendReturnData: BackendReturn) => {
-        return new BtoFConverter(backendReturnData)
-    }
-    private postData = () => {
-        return this.dataPoster.postAndReturnPromiseJson()
-    }
-    private returnError = (data: BackendReturn): string | '' => {
+    returnError = (data: BackendReturn): string | '' => {
         return this.factoryConverter(data).returnError('名前かパスワードが間違っています！')
     }
 
-    private returnSelectResults = (data: BackendReturn): string | '' => {
+    private returnUserId = (data: BackendReturn): string | '' => {
         const selectResult = this.factoryConverter(data).returnSelectResults()
         if (selectResult === undefined) {
             return ''
@@ -26,9 +20,9 @@ export class StateMakerForLogin extends StateMaker{
         const castResult = selectResult as ReturnDataForLogin
         return castResult[0].user_id
     }
-    returnErrorAndSelectResults = async (): Promise<string[]> => {
+    returnErrorAndUserId = async (): Promise<string[]> => {
         return this.postData().then((data) => {
-            return [this.returnError(data), this.returnSelectResults(data)]
+            return [this.returnError(data), this.returnUserId(data)]
         })
     }
 }

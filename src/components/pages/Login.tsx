@@ -1,21 +1,15 @@
 import styled, { keyframes } from 'styled-components'
-import { useState } from 'react'
+import React,{ useState } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
-import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { useHistory } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import { BackendResultsChecker } from 'model/BackendResultsChecker'
-import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
-import React from 'react'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 export const Login = () => {
     const [error, setError] = useState('')
-    const url = 'login'
     const history = useHistory()
     const inputList = ['名前', 'パスワード']
     const setUserId = useSetRecoilState(userIdState)
@@ -23,38 +17,13 @@ export const Login = () => {
     const [password, setPassword] = useState('udomaki')
     const onClick = () => {
         const stateMaker = new StateMakerForLogin(userName, password)
-        stateMaker.returnErrorAndSelectResults().then((errorAndSelectResults: string[]) => {
-            
-            setError(errorAndSelectResults[0])
-            setUserId(errorAndSelectResults[1])
-            if (errorAndSelectResults[0] === '') {
+        stateMaker.returnErrorAndUserId().then((errorAndUserId: string[]) => {
+            setError(errorAndUserId[0])
+            setUserId(errorAndUserId[1])
+            if (errorAndUserId[0] === '') {
                 history.push('/home')
             }
         })
-        // const sendData = {
-        //     userName: userName,
-        //     password: password,
-        // }
-        // postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
-        //     const checker = new BackendResultsChecker(results)
-        //     if (checker.isError()) {
-        //         setError('名前かパスワードが間違っています！')
-        //         return
-        //     }
-        //     if (checker.isSelect()) {
-        //         setError('')
-        //         history.push('/home')
-        //         const selectResults = results.results.select! as ReturnDataForLogin
-
-        //         if (selectResults[0]['user_id']) {
-        //             setUserId(selectResults[0]['user_id'].toString())
-        //             return
-        //         }
-        //         setError('エラーが起きてます．管理者にご報告お願いします．')
-        //         return
-        //     }
-        //     return
-        // })
     }
     return (
         <Contener>
