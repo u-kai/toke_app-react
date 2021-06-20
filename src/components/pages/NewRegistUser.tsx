@@ -3,10 +3,6 @@ import styled from 'styled-components'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
-import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import { BackendResultsChecker } from 'model/BackendResultsChecker'
-import { SupervisedUserCircle } from '@material-ui/icons'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
 export const NewRegistUser = () => {
     const inputList = ['名前', 'パスワード']
@@ -20,25 +16,6 @@ export const NewRegistUser = () => {
             setSuccessMessage(data.success)
             setError(data.error)
         })
-        // const sendData = {
-        //     userName: userName,
-        //     password: password,
-        // }
-        // postAndReturnResponseToJson(sendData, 'newUserRegist').then((results: BackendReturn) => {
-        //     console.log(results)
-        //     const checker = new BackendResultsChecker(results)
-        //     if (checker.isError()) {
-        //         setError(results.results.error!.sqlMessage)
-        //     }
-        //     if (checker.isOther()) {
-        //         console.log('success')
-        //     }
-        //     if (checker.isSelect()) {
-        //         console.log(results)
-        //         setError('')
-        //         setSuccessMessage('新規ご登録ありがとうございます')
-        //     }
-        // })
     }
     return (
         <Contener>
