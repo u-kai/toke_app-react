@@ -17,10 +17,10 @@ export const Login = () => {
     const [password, setPassword] = useState('udomaki')
     const onClick = () => {
         const stateMaker = new StateMakerForLogin(userName, password)
-        stateMaker.returnErrorAndUserId().then((errorAndUserId: string[]) => {
-            setError(errorAndUserId[0])
-            setUserId(errorAndUserId[1])
-            if (errorAndUserId[0] === '') {
+        stateMaker.returnErrorAndUserId().then((errorAndUserId: {error:string|"",userId:string|""}) => {
+            setError(errorAndUserId.error)
+            setUserId(errorAndUserId.userId)
+            if (errorAndUserId.error === '') {
                 history.push('/home')
             }
         })

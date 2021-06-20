@@ -44,30 +44,6 @@ export const MakeAttendanceRequest = () => {
             setMemberIds(data.data.ids)
             setMemberNames(data.data.names)
         })
-        //search members
-        // const sendData = {
-        //     userId: organizerId,
-        // }
-        // postAndReturnResponseToJson(sendData, 'getMembers').then((results: BackendReturn) => {
-        //     const checker = new BackendResultsChecker(results)
-        //     if (checker.isError()) {
-        //         setError('エラーが起きてます．管理者にご報告ください．')
-        //         return
-        //     }
-        //     if (checker.isSelect()) {
-        //         const selects = results.results.select! as ReturnDataForGetMembers
-        //         let memberNamesTemp: string[] = []
-        //         let memberIdsTemp: string[] = []
-        //         selects.map((select) => {
-        //             memberNamesTemp = [...memberNamesTemp, select.user_name]
-        //             memberIdsTemp = [...memberIdsTemp, select.user_id]
-        //         })
-        //         console.log(memberNamesTemp)
-        //         console.log(memberIdsTemp)
-        //         setMemberIds(memberIdsTemp)
-        //         setMemberNames(memberNamesTemp)
-        //     }
-        // })
     }, [])
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)

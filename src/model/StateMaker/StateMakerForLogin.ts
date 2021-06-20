@@ -18,9 +18,9 @@ export class StateMakerForLogin extends StateMaker {
         const castResult = selectResult as ReturnDataForLogin
         return castResult[0].user_id
     }
-    returnErrorAndUserId = async (): Promise<string[]> => {
+    returnErrorAndUserId = async (): Promise<{error:string | '',userId:string | ''}> => {
         return this.postData().then((data) => {
-            return [this.returnError(data), this.returnUserId(data)]
+            return {error:this.returnError(data),userId:this.returnUserId(data)}
         })
     }
 }
