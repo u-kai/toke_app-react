@@ -1,7 +1,6 @@
 import { StateMakerForNewSomething } from 'model/StateMaker/StateMakerForNewSomething'
 import { DataPosterForNewEventRegist } from 'model/DataPoster/DataPosterForNewEventRegist'
 
-
 export class StateMakerForNewEventRegist extends StateMakerForNewSomething {
     constructor(
         purpose: string,

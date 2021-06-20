@@ -7,6 +7,7 @@ import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJs
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { SupervisedUserCircle } from '@material-ui/icons'
+import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
 export const NewRegistUser = () => {
     const inputList = ['名前', 'パスワード']
     const [userName, setUserName] = useState('')
@@ -14,25 +15,30 @@ export const NewRegistUser = () => {
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
     const onClick = () => {
-        const sendData = {
-            userName: userName,
-            password: password,
-        }
-        postAndReturnResponseToJson(sendData, 'newUserRegist').then((results: BackendReturn) => {
-            console.log(results)
-            const checker = new BackendResultsChecker(results)
-            if (checker.isError()) {
-                setError(results.results.error!.sqlMessage)
-            }
-            if (checker.isOther()) {
-                console.log('success')
-            }
-            if (checker.isSelect()) {
-                console.log(results)
-                setError('')
-                setSuccessMessage('新規ご登録ありがとうございます')
-            }
+        const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
+        stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
+            setSuccessMessage(data.success)
+            setError(data.error)
         })
+        // const sendData = {
+        //     userName: userName,
+        //     password: password,
+        // }
+        // postAndReturnResponseToJson(sendData, 'newUserRegist').then((results: BackendReturn) => {
+        //     console.log(results)
+        //     const checker = new BackendResultsChecker(results)
+        //     if (checker.isError()) {
+        //         setError(results.results.error!.sqlMessage)
+        //     }
+        //     if (checker.isOther()) {
+        //         console.log('success')
+        //     }
+        //     if (checker.isSelect()) {
+        //         console.log(results)
+        //         setError('')
+        //         setSuccessMessage('新規ご登録ありがとうございます')
+        //     }
+        // })
     }
     return (
         <Contener>

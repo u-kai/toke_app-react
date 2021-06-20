@@ -1,9 +1,9 @@
-import {StateMaker} from "model/StateMaker/StateMaker"
-import {DataPoster} from "model/DataPoster/DataPoster"
-import {BackendReturn} from "types/backend-return-tyeps/BackendReturn"
+import { StateMaker } from 'model/StateMaker/StateMaker'
+import { DataPoster } from 'model/DataPoster/DataPoster'
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 
-export class StateMakerForNewSomething extends StateMaker{
-    constructor(dataPoster:DataPoster){
+export class StateMakerForNewSomething extends StateMaker {
+    constructor(dataPoster: DataPoster) {
         super(dataPoster)
     }
     returnError = (data: BackendReturn): string | '' => {

@@ -17,7 +17,7 @@ import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
-import {StateMakerForNewGroupRegist} from "model/StateMaker/StateMakerForNewGroupRegist"
+import { StateMakerForNewGroupRegist } from 'model/StateMaker/StateMakerForNewGroupRegist'
 const dateOperater = new DateOperater()
 const today = dateOperater.forMaterialUI()
 export const MakeAttendanceRequest = () => {
@@ -86,8 +86,8 @@ export const MakeAttendanceRequest = () => {
         })
     }
     const testGroup = () => {
-        const stateMakerForNewGroup = new StateMakerForNewGroupRegist(memberIds,groupName)
-        stateMakerForNewGroup.returnErrorAndSuccessMessage().then((data)=>{
+        const stateMakerForNewGroup = new StateMakerForNewGroupRegist(memberIds, groupName)
+        stateMakerForNewGroup.returnErrorAndSuccessMessage().then((data) => {
             console.log(data.error)
             console.log(data.success)
         })
