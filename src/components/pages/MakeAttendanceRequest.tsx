@@ -13,7 +13,7 @@ import { DateOperater } from 'model/DateOperater'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
-import {MultipleSelect} from "components/atoms/MultipleSelect"
+import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { ReturnDataForGetMembers } from 'types/backend-return-tyeps/ReturnDataForGetMembers'
 const dateOperater = new DateOperater()
@@ -27,34 +27,33 @@ export const MakeAttendanceRequest = () => {
     const [requestTime, setRequestTime] = useState('00:30')
     const [bring, setBring] = useState('')
     const [desc, setDesc] = useState('')
-    const [location,setLocation] = useState("")
-    const [isSend, setIsSend] = useState(false) 
-    const [error, setError] = useState("")
+    const [location, setLocation] = useState('')
+    const [isSend, setIsSend] = useState(false)
+    const [error, setError] = useState('')
     // const [groupIds,setGroupIds] = useState([""])
     // const [groupNames,setGroupNames] = useState([""])
-    const [groupName,setGroupName] = useState("")
-    const [memberIds,setMemberIds] = useState([""])
-    const [memberNames,setMemberNames] = useState([""])
-    const [selectedMembers,setSelectedMembers] = useState([""])
-    useEffect(()=>{
-        //search members 
+    const [groupName, setGroupName] = useState('')
+    const [memberIds, setMemberIds] = useState([''])
+    const [memberNames, setMemberNames] = useState([''])
+    const [selectedMembers, setSelectedMembers] = useState([''])
+    useEffect(() => {
+        //search members
         const sendData = {
-            userId:organizerId
+            userId: organizerId,
         }
-        postAndReturnResponseToJson(sendData,"getMembers")
-        .then((results:BackendReturn)=>{
+        postAndReturnResponseToJson(sendData, 'getMembers').then((results: BackendReturn) => {
             const checker = new BackendResultsChecker(results)
-            if(checker.isError()){
+            if (checker.isError()) {
                 setError('エラーが起きてます．管理者にご報告ください．')
                 return
             }
-            if(checker.isSelect()){
+            if (checker.isSelect()) {
                 const selects = results.results.select! as ReturnDataForGetMembers
-                let memberNamesTemp:string[] = []
-                let memberIdsTemp:string[] = []
-                selects.map((select)=>{
-                    memberNamesTemp = [...memberNamesTemp,select.user_name]
-                    memberIdsTemp = [...memberIdsTemp,select.user_id]
+                let memberNamesTemp: string[] = []
+                let memberIdsTemp: string[] = []
+                selects.map((select) => {
+                    memberNamesTemp = [...memberNamesTemp, select.user_name]
+                    memberIdsTemp = [...memberIdsTemp, select.user_id]
                 })
                 console.log(memberNamesTemp)
                 console.log(memberIdsTemp)
@@ -62,7 +61,7 @@ export const MakeAttendanceRequest = () => {
                 setMemberNames(memberNamesTemp)
             }
         })
-    },[])
+    }, [])
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -85,27 +84,26 @@ export const MakeAttendanceRequest = () => {
     }
     const test = () => {
         setIsSend(true)
-        setError("")
+        setError('')
         const sendData = {
             purpose: purpose,
             bring: bring,
             describe: desc,
             organizer_id: organizerId,
             organizer_name: organizerName,
-            location:location,
+            location: location,
             start_date: date,
             end_date: dateCalculater(date, requestTime),
-            memberIds:memberIds
+            memberIds: memberIds,
         }
-        postAndReturnResponseToJson(sendData,"newEventRegist")
-        .then((data:BackendReturn)=>{
+        postAndReturnResponseToJson(sendData, 'newEventRegist').then((data: BackendReturn) => {
             console.log(data)
             const checker = new BackendResultsChecker(data)
-            if(checker.isError()){
+            if (checker.isError()) {
                 setIsSend(false)
-                setError("エラーが発生しました．データが反映されていません．もう一度送信してください")
+                setError('エラーが発生しました．データが反映されていません．もう一度送信してください')
             }
-            if(checker.isSuccess()){
+            if (checker.isSuccess()) {
                 const suc = data.results.success!
                 console.log(suc[0].success)
             }
@@ -113,22 +111,16 @@ export const MakeAttendanceRequest = () => {
     }
     const testGroup = () => {
         const sendData = {
-            memberIds:[...memberIds,organizerId],///memberIds = allmember
-            groupName:groupName
+            memberIds: [...memberIds, organizerId], ///memberIds = allmember
+            groupName: groupName,
         }
-        postAndReturnResponseToJson(sendData,"newGroupRegist")
-        .then((results:BackendReturn)=>{
-            console.log("group",results)
-        })  
+        postAndReturnResponseToJson(sendData, 'newGroupRegist').then((results: BackendReturn) => {
+            console.log('group', results)
+        })
     }
     return (
         <Container>
-            {error.length > 0 ?(
-                <SimpleAlert
-                    message={error}
-                    severity={"error"}
-                ></SimpleAlert>
-            ):(null)}
+            {error.length > 0 ? <SimpleAlert message={error} severity={'error'}></SimpleAlert> : null}
             <Title>出席依頼</Title>
 
             <div>
@@ -142,13 +134,14 @@ export const MakeAttendanceRequest = () => {
                 />
             </div>
             <div>
-                <MultipleSelect 
+                <MultipleSelect
                     names={memberNames}
-                    onChange={(e)=>setSelectedMembers([e.target.value as string])}
-                    placeholder={"メンバーを選択"}
-                    selectNames={selectedMembers}/>
+                    onChange={(e) => setSelectedMembers([e.target.value as string])}
+                    placeholder={'メンバーを選択'}
+                    selectNames={selectedMembers}
+                />
             </div>
-            <input value={groupName} onChange={(e)=>setGroupName(e.target.value)}/>
+            <input value={groupName} onChange={(e) => setGroupName(e.target.value)} />
             <button onClick={testGroup}>send</button>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>
@@ -165,7 +158,7 @@ export const MakeAttendanceRequest = () => {
                 />
             </div>
             <div>
-            <LayoutTextField
+                <LayoutTextField
                     key={'location'}
                     id="location"
                     label="場所"

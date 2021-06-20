@@ -34,7 +34,7 @@ export const AttendanceRequests: VFC<Props> = (props) => {
             isAttend: isAttend.toString(),
             message: message,
         }
-        console.log("sendInfo",sendInfo)
+        console.log('sendInfo', sendInfo)
         postAndReturnResponseToJson(sendInfo, 'changeResponse').then((results: BackendReturn) => {
             console.log('updatefasdfasdf', results)
         })

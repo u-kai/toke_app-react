@@ -11,10 +11,10 @@
 //     const [error, setError] = useState("")
 //     const organizerId = useRecoilValue(userIdState)
 //     const onClick = () => {
-export const s = "d"
+export const s = 'd'
 //     }
 //     useEffect(()=>{
-//         //search members 
+//         //search members
 //         const sendData = {
 //             userId:memberIds
 //         }
@@ -42,7 +42,7 @@ export const s = "d"
 //     },[])
 //     return(
 // <div>
-// <MultipleSelect 
+// <MultipleSelect
 //     names={memberNames}
 //     onChange={(e)=>setSelectedMembers([e.target.value as string])}
 //     placeholder={"メンバーを選択"}

@@ -13,11 +13,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
     onClick: () => void
-    isDisabled?:boolean
+    isDisabled?: boolean
 }
 export const SendButton: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const { onClick,isDisabled=false } = props
+    const { onClick, isDisabled = false } = props
     return (
         <div>
             {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}

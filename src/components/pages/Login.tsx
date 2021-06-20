@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useState } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
@@ -12,7 +12,7 @@ import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
 import React from 'react'
-
+import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 export const Login = () => {
     const [error, setError] = useState('')
     const url = 'login'
@@ -22,30 +22,39 @@ export const Login = () => {
     const [userName, setUserName] = useRecoilState(userNameState)
     const [password, setPassword] = useState('udomaki')
     const onClick = () => {
-        const sendData = {
-            userName: userName,
-            password: password,
-        }
-        postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
-            const checker = new BackendResultsChecker(results)
-            if (checker.isError()) {
-                setError('名前かパスワードが間違っています！')
-                return
-            }
-            if (checker.isSelect()) {
-                setError('')
+        const stateMaker = new StateMakerForLogin(userName, password)
+        stateMaker.returnErrorAndSelectResults().then((errorAndSelectResults: string[]) => {
+            console.log(errorAndSelectResults)
+            setError(errorAndSelectResults[0])
+            setUserId(errorAndSelectResults[1])
+            if (errorAndSelectResults[0] === '') {
                 history.push('/home')
-                const selectResults = results.results.select! as ReturnDataForLogin
-
-                if (selectResults[0]['user_id']) {
-                    setUserId(selectResults[0]['user_id'].toString())
-                    return
-                }
-                setError('エラーが起きてます．管理者にご報告お願いします．')
-                return
             }
-            return
         })
+        // const sendData = {
+        //     userName: userName,
+        //     password: password,
+        // }
+        // postAndReturnResponseToJson(sendData, url).then((results: BackendReturn) => {
+        //     const checker = new BackendResultsChecker(results)
+        //     if (checker.isError()) {
+        //         setError('名前かパスワードが間違っています！')
+        //         return
+        //     }
+        //     if (checker.isSelect()) {
+        //         setError('')
+        //         history.push('/home')
+        //         const selectResults = results.results.select! as ReturnDataForLogin
+
+        //         if (selectResults[0]['user_id']) {
+        //             setUserId(selectResults[0]['user_id'].toString())
+        //             return
+        //         }
+        //         setError('エラーが起きてます．管理者にご報告お願いします．')
+        //         return
+        //     }
+        //     return
+        // })
     }
     return (
         <Contener>

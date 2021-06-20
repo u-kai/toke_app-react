@@ -20,7 +20,7 @@ export class BackendResultsChecker {
         return this.backendResults.results.other !== undefined
     }
     isSuccess = () => {
-        if(this.backendResults.results.success){
+        if (this.backendResults.results.success) {
             return true
         }
         return false

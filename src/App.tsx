@@ -9,7 +9,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Router } from 'router/Router'
 import { NewRegistUser } from 'components/pages/NewRegistUser'
 import { SocketIo } from 'components/pages/SocketIo'
-import socketIOClient from "socket.io-client"
+import socketIOClient from 'socket.io-client'
 function App() {
     // const socket = socketIOClient("http://localhost:8080")
     // socket.on("send test",(data:string)=>{

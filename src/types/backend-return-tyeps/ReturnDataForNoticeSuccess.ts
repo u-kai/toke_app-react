@@ -1,1 +1,1 @@
-export type ReturnDataForNoticeSuccess = [{success:"success"}]
+export type ReturnDataForNoticeSuccess = [{ success: 'success' }]

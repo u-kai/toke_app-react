@@ -42,9 +42,8 @@ export const Home = () => {
                 setScheduleCardDatas(select)
             }
         })
-        postAndReturnResponseToJson({userId:user_id},"getGroups")
-        .then((results:BackendReturn)=>{
-            console.log("groups",results)
+        postAndReturnResponseToJson({ userId: user_id }, 'getGroups').then((results: BackendReturn) => {
+            console.log('groups', results)
         })
     }, [user_id])
     //     const scheduleDataOperater = new ScheduleDataOperater(user_id)
