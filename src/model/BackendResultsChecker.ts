@@ -19,13 +19,10 @@ export class BackendResultsChecker {
     isOther = () => {
         return this.backendResults.results.other !== undefined
     }
-    isForLogin = () => {
-        // if(this.isSelect()){
-        //     this.backendResults.results.select?.map((keyValue:)=>{
-        //     })
-        // }
-        // if(this.backendResults.results.select){
-        //     this.backendResults.results.select.map()
-        // }
+    isSuccess = () => {
+        if(this.backendResults.results.success){
+            return true
+        }
+        return false
     }
 }

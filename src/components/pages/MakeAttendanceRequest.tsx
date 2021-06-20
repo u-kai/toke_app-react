@@ -105,8 +105,8 @@ export const MakeAttendanceRequest = () => {
                 setIsSend(false)
                 setError("エラーが発生しました．データが反映されていません．もう一度送信してください")
             }
-            if(checker.isSelect()){
-                const suc = data.results.select! as [{success:string}]
+            if(checker.isSuccess()){
+                const suc = data.results.success!
                 console.log(suc[0].success)
             }
         })
