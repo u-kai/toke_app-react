@@ -30,8 +30,9 @@ export const MakeAttendanceRequest = () => {
     const [location,setLocation] = useState("")
     const [isSend, setIsSend] = useState(false) 
     const [error, setError] = useState("")
-    const [groupIds,setGroupIds] = useState([""])
-    const [groupNames,setGroupNames] = useState([""])
+    // const [groupIds,setGroupIds] = useState([""])
+    // const [groupNames,setGroupNames] = useState([""])
+    const [groupName,setGroupName] = useState("")
     const [memberIds,setMemberIds] = useState([""])
     const [memberNames,setMemberNames] = useState([""])
     const [selectedMembers,setSelectedMembers] = useState([""])
@@ -96,7 +97,7 @@ export const MakeAttendanceRequest = () => {
             end_date: dateCalculater(date, requestTime),
             memberIds:memberIds
         }
-        postAndReturnResponseToJson(sendData,"newRequest")
+        postAndReturnResponseToJson(sendData,"newEventRegist")
         .then((data:BackendReturn)=>{
             console.log(data)
             const checker = new BackendResultsChecker(data)
@@ -109,6 +110,16 @@ export const MakeAttendanceRequest = () => {
                 console.log(suc[0].success)
             }
         })
+    }
+    const testGroup = () => {
+        const sendData = {
+            memberIds:[...memberIds,organizerId],///memberIds = allmember
+            groupName:groupName
+        }
+        postAndReturnResponseToJson(sendData,"newGroupRegist")
+        .then((results:BackendReturn)=>{
+            console.log("group",results)
+        })  
     }
     return (
         <Container>
@@ -136,8 +147,9 @@ export const MakeAttendanceRequest = () => {
                     onChange={(e)=>setSelectedMembers([e.target.value as string])}
                     placeholder={"メンバーを選択"}
                     selectNames={selectedMembers}/>
-
             </div>
+            <input value={groupName} onChange={(e)=>setGroupName(e.target.value)}/>
+            <button onClick={testGroup}>send</button>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>
                 <TimePicker label="時間" onChange={changeRequestTime}></TimePicker>

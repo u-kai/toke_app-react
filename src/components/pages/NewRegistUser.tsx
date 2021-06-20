@@ -6,6 +6,7 @@ import {SimpleAlert} from "components/atoms/SimpleAletert"
 import { postAndReturnResponseToJson } from "functions/postAndReturnResponseToJson"
 import { BackendReturn } from "types/backend-return-tyeps/BackendReturn"
 import { BackendResultsChecker } from "model/BackendResultsChecker"
+import { SupervisedUserCircle } from "@material-ui/icons"
 export const NewRegistUser = () => {
     const inputList = ['名前', 'パスワード']
     const [userName,setUserName] = useState("")
@@ -17,7 +18,7 @@ export const NewRegistUser = () => {
             userName:userName,
             password:password
         }
-        postAndReturnResponseToJson(sendData,"newRegist")
+        postAndReturnResponseToJson(sendData,"newUserRegist")
         .then((results:BackendReturn)=>{
             console.log(results)
             const checker = new BackendResultsChecker(results)
@@ -62,6 +63,9 @@ export const NewRegistUser = () => {
         <ErrorContener>
             {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
         </ErrorContener>
+        <SuccessContener>
+            {successMessage.length !== 0 ? <SimpleAlert message={successMessage} severity={"success"}/>:null}
+        </SuccessContener>
     </Contener>
 )
 }
@@ -89,6 +93,7 @@ position: absolute;
 left: 40%;
 top: 1%;
 `
+const SuccessContener = ErrorContener
 const TextFieldContener = styled.div`
 width: 100%;
 height: 80px;

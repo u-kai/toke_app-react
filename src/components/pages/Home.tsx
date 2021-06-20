@@ -6,9 +6,8 @@ import { SelectInfo } from 'types/post-data-types/SelectInfo'
 import { ScheduleInfoResults, ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import { checkServerIdentity } from 'tls'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
-import { SelectResult } from 'types/backend-return-tyeps/SelectResult'
+
 import { SQLError } from 'types/backend-return-tyeps/SQLError'
 import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
 import { ReturnDataForScheduleInfo } from 'types/backend-return-tyeps/ReturnDataForScheduleInfo'
@@ -19,7 +18,7 @@ export const Home = () => {
     const [scheduleCardDatas, setScheduleCardDatas] = useState<ScheduleInfoResults>([])
 
     useEffect(() => {
-        postAndReturnResponseToJson({ user_id: user_id }, 'schedule/count').then((results: BackendReturn) => {
+        postAndReturnResponseToJson({ user_id: user_id }, 'getSchedules/count').then((results: BackendReturn) => {
             const checker = new BackendResultsChecker(results)
             if (checker.isError()) {
                 setUserAttendanceRequestsCount('エラーが起きてます．管理者にご報告ください．')
@@ -31,11 +30,10 @@ export const Home = () => {
                 setUserAttendanceRequestsCount(count)
             }
         })
-        postAndReturnResponseToJson({ user_id: user_id }, 'schedule/ids').then((results: BackendReturn) => {
+        postAndReturnResponseToJson({ user_id: user_id }, 'getSchedules/ids').then((results: BackendReturn) => {
             const cheker = new BackendResultsChecker(results)
             if (cheker.isError()) {
                 setUserAttendanceRequestsCount('エラーが起きてます．管理者にご報告ください．')
-                console.log('errrrrrr')
                 setScheduleCardDatas([])
                 return
             }
@@ -43,6 +41,10 @@ export const Home = () => {
                 const select = results.results.select! as ReturnDataForScheduleInfo
                 setScheduleCardDatas(select)
             }
+        })
+        postAndReturnResponseToJson({userId:user_id},"getGroups")
+        .then((results:BackendReturn)=>{
+            console.log("groups",results)
         })
     }, [user_id])
     //     const scheduleDataOperater = new ScheduleDataOperater(user_id)
