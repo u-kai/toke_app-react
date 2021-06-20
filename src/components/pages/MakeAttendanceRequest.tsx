@@ -16,6 +16,7 @@ import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { ReturnDataForGetMembers } from 'types/backend-return-tyeps/ReturnDataForGetMembers'
+import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
 const dateOperater = new DateOperater()
 const today = dateOperater.forMaterialUI()
 export const MakeAttendanceRequest = () => {
@@ -37,30 +38,36 @@ export const MakeAttendanceRequest = () => {
     const [memberNames, setMemberNames] = useState([''])
     const [selectedMembers, setSelectedMembers] = useState([''])
     useEffect(() => {
-        //search members
-        const sendData = {
-            userId: organizerId,
-        }
-        postAndReturnResponseToJson(sendData, 'getMembers').then((results: BackendReturn) => {
-            const checker = new BackendResultsChecker(results)
-            if (checker.isError()) {
-                setError('エラーが起きてます．管理者にご報告ください．')
-                return
-            }
-            if (checker.isSelect()) {
-                const selects = results.results.select! as ReturnDataForGetMembers
-                let memberNamesTemp: string[] = []
-                let memberIdsTemp: string[] = []
-                selects.map((select) => {
-                    memberNamesTemp = [...memberNamesTemp, select.user_name]
-                    memberIdsTemp = [...memberIdsTemp, select.user_id]
-                })
-                console.log(memberNamesTemp)
-                console.log(memberIdsTemp)
-                setMemberIds(memberIdsTemp)
-                setMemberNames(memberNamesTemp)
-            }
+        const stateMaker = new StateMakerForGetMembers(organizerId)
+        stateMaker.returnErrorAndIdsNames().then((data) => {
+            setError(data.error)
+            setMemberIds(data.data.ids)
+            setMemberNames(data.data.names)
         })
+        //search members
+        // const sendData = {
+        //     userId: organizerId,
+        // }
+        // postAndReturnResponseToJson(sendData, 'getMembers').then((results: BackendReturn) => {
+        //     const checker = new BackendResultsChecker(results)
+        //     if (checker.isError()) {
+        //         setError('エラーが起きてます．管理者にご報告ください．')
+        //         return
+        //     }
+        //     if (checker.isSelect()) {
+        //         const selects = results.results.select! as ReturnDataForGetMembers
+        //         let memberNamesTemp: string[] = []
+        //         let memberIdsTemp: string[] = []
+        //         selects.map((select) => {
+        //             memberNamesTemp = [...memberNamesTemp, select.user_name]
+        //             memberIdsTemp = [...memberIdsTemp, select.user_id]
+        //         })
+        //         console.log(memberNamesTemp)
+        //         console.log(memberIdsTemp)
+        //         setMemberIds(memberIdsTemp)
+        //         setMemberNames(memberNamesTemp)
+        //     }
+        // })
     }, [])
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)

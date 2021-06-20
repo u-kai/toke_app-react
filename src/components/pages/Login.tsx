@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components'
-import React,{ useState } from 'react'
+import React, { useState } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
 import { useHistory } from 'react-router-dom'

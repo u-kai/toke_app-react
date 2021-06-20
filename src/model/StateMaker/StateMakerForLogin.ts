@@ -1,12 +1,10 @@
 import { DataPosterForLogin } from 'model/DataPoster/DataPosterForLogin'
-import { BtoFConverter } from 'model/BtoFConverter/BtoFConverter'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogin'
-import {DataPoster} from "model/DataPoster/DataPoster"
-import {StateMaker} from "model/StateMaker/StateMaker"
-export class StateMakerForLogin extends StateMaker{
+import { StateMaker } from 'model/StateMaker/StateMaker'
+export class StateMakerForLogin extends StateMaker {
     constructor(userName: string, password: string) {
-        super(new DataPosterForLogin(userName,password))
+        super(new DataPosterForLogin(userName, password))
     }
     returnError = (data: BackendReturn): string | '' => {
         return this.factoryConverter(data).returnError('名前かパスワードが間違っています！')
