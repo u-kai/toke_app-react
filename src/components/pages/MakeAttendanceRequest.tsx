@@ -15,8 +15,9 @@ import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
-import { ReturnDataForGetMembers } from 'types/backend-return-tyeps/ReturnDataForGetMembers'
+import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
+import { cpuUsage } from 'process'
 const dateOperater = new DateOperater()
 const today = dateOperater.forMaterialUI()
 export const MakeAttendanceRequest = () => {
@@ -65,31 +66,47 @@ export const MakeAttendanceRequest = () => {
     const changeLocation = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setLocation(e.target.value)
     }
+    console.log(memberIds)
     const test = () => {
-        setIsSend(true)
-        setError('')
-        const sendData = {
-            purpose: purpose,
-            bring: bring,
-            describe: desc,
-            organizer_id: organizerId,
-            organizer_name: organizerName,
-            location: location,
-            start_date: date,
-            end_date: dateCalculater(date, requestTime),
-            memberIds: memberIds,
-        }
-        postAndReturnResponseToJson(sendData, 'newEventRegist').then((data: BackendReturn) => {
-            console.log(data)
-            const checker = new BackendResultsChecker(data)
-            if (checker.isError()) {
-                setIsSend(false)
-                setError('エラーが発生しました．データが反映されていません．もう一度送信してください')
-            }
-            if (checker.isSuccess()) {
-                const suc = data.results.success!
-                console.log(suc[0].success)
-            }
+        // setIsSend(true)
+        // setError('')
+        // const sendData = {
+        //     purpose: purpose,
+        //     bring: bring,
+        //     describe: desc,
+        //     organizer_id: organizerId,
+        //     organizer_name: organizerName,
+        //     location: location,
+        //     start_date: date,
+        //     end_date: dateCalculater(date, requestTime),
+        //     memberIds: memberIds,
+        // }
+        // postAndReturnResponseToJson(sendData, 'newEventRegist').then((data: BackendReturn) => {
+        //     console.log(data)
+        //     const checker = new BackendResultsChecker(data)
+        //     if (checker.isError()) {
+        //         setIsSend(false)
+        //         setError('エラーが発生しました．データが反映されていません．もう一度送信してください')
+        //     }
+        //     if (checker.isSuccess()) {
+        //         const suc = data.results.success!
+        //         console.log(suc[0].success)
+        //     }
+        // })
+        const stateMaker = new StateMakerForNewEventRegist(
+            purpose,
+            bring,
+            desc,
+            organizerId,
+            organizerName,
+            location,
+            date,
+            dateCalculater(date, requestTime),
+            memberIds
+        )
+        stateMaker.returnErrorAndSuccessMessage().then((data) => {
+            setError(data.error)
+            console.log('success', data.success)
         })
     }
     const testGroup = () => {
