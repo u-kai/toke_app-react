@@ -68,31 +68,7 @@ export const MakeAttendanceRequest = () => {
     }
     console.log(memberIds)
     const test = () => {
-        // setIsSend(true)
-        // setError('')
-        // const sendData = {
-        //     purpose: purpose,
-        //     bring: bring,
-        //     describe: desc,
-        //     organizer_id: organizerId,
-        //     organizer_name: organizerName,
-        //     location: location,
-        //     start_date: date,
-        //     end_date: dateCalculater(date, requestTime),
-        //     memberIds: memberIds,
-        // }
-        // postAndReturnResponseToJson(sendData, 'newEventRegist').then((data: BackendReturn) => {
-        //     console.log(data)
-        //     const checker = new BackendResultsChecker(data)
-        //     if (checker.isError()) {
-        //         setIsSend(false)
-        //         setError('エラーが発生しました．データが反映されていません．もう一度送信してください')
-        //     }
-        //     if (checker.isSuccess()) {
-        //         const suc = data.results.success!
-        //         console.log(suc[0].success)
-        //     }
-        // })
+        setIsSend(true)
         const stateMaker = new StateMakerForNewEventRegist(
             purpose,
             bring,
