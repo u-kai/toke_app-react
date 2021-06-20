@@ -24,7 +24,7 @@ export const Login = () => {
     const onClick = () => {
         const stateMaker = new StateMakerForLogin(userName, password)
         stateMaker.returnErrorAndSelectResults().then((errorAndSelectResults: string[]) => {
-            console.log(errorAndSelectResults)
+            
             setError(errorAndSelectResults[0])
             setUserId(errorAndSelectResults[1])
             if (errorAndSelectResults[0] === '') {
