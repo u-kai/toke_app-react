@@ -17,7 +17,7 @@ import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
-import { cpuUsage } from 'process'
+import {StateMakerForNewGroupRegist} from "model/StateMaker/StateMakerForNewGroupRegist"
 const dateOperater = new DateOperater()
 const today = dateOperater.forMaterialUI()
 export const MakeAttendanceRequest = () => {
@@ -86,12 +86,10 @@ export const MakeAttendanceRequest = () => {
         })
     }
     const testGroup = () => {
-        const sendData = {
-            memberIds: [...memberIds, organizerId], ///memberIds = allmember
-            groupName: groupName,
-        }
-        postAndReturnResponseToJson(sendData, 'newGroupRegist').then((results: BackendReturn) => {
-            console.log('group', results)
+        const stateMakerForNewGroup = new StateMakerForNewGroupRegist(memberIds,groupName)
+        stateMakerForNewGroup.returnErrorAndSuccessMessage().then((data)=>{
+            console.log(data.error)
+            console.log(data.success)
         })
     }
     return (

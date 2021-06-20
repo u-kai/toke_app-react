@@ -1,6 +1,6 @@
 import { StateMakerForNewSomething } from 'model/StateMaker/StateMakerForNewSomething'
 import { DataPosterForNewEventRegist } from 'model/DataPoster/DataPosterForNewEventRegist'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
+
 
 export class StateMakerForNewEventRegist extends StateMakerForNewSomething {
     constructor(
