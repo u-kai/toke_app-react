@@ -1,10 +1,8 @@
-import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import React, { useState, VFC } from 'react'
 import { useRecoilValue } from 'recoil'
-import { attendanceRequestIdState } from 'store/attendance_request_id'
+import {StateMakerForChangeResponse} from "model/StateMaker/StateMakerForChangeResponse"
 import { userIdState } from 'store/user_id'
 import styled from 'styled-components'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { ResponseAttendanceRequestProps as Props } from 'types/ui-types/ResponseAttendanceRequestProps'
 
 export const AttendanceRequests: VFC<Props> = (props) => {
@@ -28,15 +26,10 @@ export const AttendanceRequests: VFC<Props> = (props) => {
         setMessage(e.target.value)
     }
     const sendData = () => {
-        const sendInfo = {
-            userId: userId,
-            attendanceRequestId: attendanceRequestId,
-            isAttend: isAttend.toString(),
-            message: message,
-        }
-        console.log('sendInfo', sendInfo)
-        postAndReturnResponseToJson(sendInfo, 'changeResponse').then((results: BackendReturn) => {
-            console.log('updatefasdfasdf', results)
+        const stateMaker = new StateMakerForChangeResponse(userId,attendanceRequestId,isAttend,message)
+        stateMaker.returnErrorAndSuccessMessage().then((results)=>{
+            console.log(results.error)
+            console.log(results.success)
         })
     }
     return (

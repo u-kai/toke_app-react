@@ -2,7 +2,7 @@ import { DataPosterForResponseAttendance } from "model/DataPoster/DataPosterForR
 import {StateMakerForNewSomething} from "model/StateMaker/StateMakerForNewSomething"
 
 export class StateMakerForResponseAttendance extends StateMakerForNewSomething{
-    constructor(url:"newAttendResponseRegist"| "changesAttendanceResponse",userId:string,attendanceRequestId:string,isAttend:boolean,message:string){
+    constructor(url:"newAttendResponseRegist"| "changeResponse",userId:string,attendanceRequestId:string,isAttend:boolean,message:string){
         super(new DataPosterForResponseAttendance(
             url,
             userId,

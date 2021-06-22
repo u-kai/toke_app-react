@@ -1,6 +1,6 @@
 import { makeRequest } from 'functions/makeRequest'
 import { LikeJson } from 'types/LikeJson'
-import { devUrl } from 'datas/url'
+import { devUrl } from 'datas/urls/url'
 import { SelectInfo } from 'types/post-data-types/SelectInfo'
 export const postAndReturnResponseToJson = (sendDatas: LikeJson | SelectInfo | SelectInfo[], url: string) => {
     console.log('sendDatas', sendDatas, 'url', url)

@@ -25,7 +25,7 @@ export const MakeAttendanceRequest = () => {
     const organizerName = useRecoilValue(userNameState)
     const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState('')
-    const [date, setDate] = useState(today)
+    const [date, setDate] = useState("2021/06/09")
     const [requestTime, setRequestTime] = useState('00:30')
     const [bring, setBring] = useState('')
     const [desc, setDesc] = useState('')

@@ -1,9 +1,10 @@
+import { FiberPinRounded } from '@material-ui/icons'
 import { DataPoster } from 'model/DataPoster/DataPoster'
-const url = 'getSchedules/ids'
+
 const postKeys = ['userId']
 
 export class DataPosterForGetSchedulesInfos extends DataPoster {
-    constructor(userId: string) {
+    constructor(url:string,userId: string) {
         super(url, postKeys, [userId])
     }
 }

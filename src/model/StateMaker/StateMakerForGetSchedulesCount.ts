@@ -4,8 +4,8 @@ import { ReturnDataForCount } from 'types/backend-return-tyeps/ReturnDataForCoun
 import { StateMaker } from 'model/StateMaker/StateMaker'
 
 export class StateMakerForGetScheduleSCount extends StateMaker {
-    constructor(userId: string) {
-        super(new DataPosterForGetSchedulesCount(userId))
+    constructor(url:string,userId: string) {
+        super(new DataPosterForGetSchedulesCount(url,userId))
     }
     returnError = (data: BackendReturn): string | '' => {
         return this.factoryConverter(data).returnError('エラーが発生しています．管理者に問い合わせしてください．')
