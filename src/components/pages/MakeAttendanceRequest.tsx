@@ -37,7 +37,7 @@ export const MakeAttendanceRequest = () => {
     const [groupName, setGroupName] = useState('')
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
-    const [selectedMembers, setSelectedMembers] = useState([''])
+    const [selectedMembers, setSelectedMembers] = useState<string[]>([])
     useEffect(() => {
         const stateMaker = new StateMakerForGetMembers(organizerId)
         stateMaker.returnErrorAndIdsNames().then((data) => {
@@ -92,6 +92,10 @@ export const MakeAttendanceRequest = () => {
             console.log(data.success)
         })
     }
+    const changeMembers = (event: React.ChangeEvent<{ value: unknown }>) => {
+        console.log("selected members",event.target.value)
+        setSelectedMembers(event.target.value as string[]);
+      };
     return (
         <Container>
             {error.length > 0 ? <SimpleAlert message={error} severity={'error'}></SimpleAlert> : null}
@@ -110,12 +114,12 @@ export const MakeAttendanceRequest = () => {
             <div>
                 <MultipleSelect
                     names={memberNames}
-                    onChange={(e) => setSelectedMembers([e.target.value as string])}
+                    onChange={changeMembers}
                     placeholder={'メンバーを選択'}
                     selectNames={selectedMembers}
                 />
             </div>
-            <input value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+            <input value={groupName} onChange={changeMembers} />
             <button onClick={testGroup}>send</button>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>
