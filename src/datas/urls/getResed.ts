@@ -1,1 +1,1 @@
-export const getResedUrl = "getResed"
+export const getResedUrl = 'getResed'

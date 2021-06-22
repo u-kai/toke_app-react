@@ -7,8 +7,8 @@ import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { StateMakerForGetScheduleSCount } from 'model/StateMaker/StateMakerForGetSchedulesCount'
 import { StateMakerForGetSchedulesInfo } from 'model/StateMaker/StateMakerForGetSchedulesInfos'
 import { StateMakerForGetGroups } from 'model/StateMaker/StateMakerForGetGroups'
-import {getNotResUrl} from "datas/urls/getNotRes"
-import {getResedUrl} from "datas/urls/getResed"
+import { getNotResUrl } from 'datas/urls/getNotRes'
+import { getResedUrl } from 'datas/urls/getResed'
 
 export const Home = () => {
     const [userId, setTestUserId] = useRecoilState(userIdState)
@@ -16,13 +16,13 @@ export const Home = () => {
     const [scheduleCardDatas, setScheduleCardDatas] = useState<ScheduleInfoResults>([])
 
     useEffect(() => {
-        const stateMakerForCount = new StateMakerForGetScheduleSCount(`${getNotResUrl}/count`,userId)
+        const stateMakerForCount = new StateMakerForGetScheduleSCount(`${getNotResUrl}/count`, userId)
         stateMakerForCount.returnErrorAndCount().then((data) => {
             setUserAttendanceRequestsCount(data.count)
             console.log('error count', data.error)
         })
 
-        const stateMakerForInfo = new StateMakerForGetSchedulesInfo(`${getNotResUrl}/ids`,userId)
+        const stateMakerForInfo = new StateMakerForGetSchedulesInfo(`${getNotResUrl}/ids`, userId)
         stateMakerForInfo.returnErrorAndInfos().then((data) => {
             console.log('info error', data.error)
             if (data.infos !== undefined) {
@@ -32,15 +32,15 @@ export const Home = () => {
                 setScheduleCardDatas([])
             }
         })
-        const stateMakerForResedCount = new StateMakerForGetScheduleSCount(`${getResedUrl}/count`,userId)
-        stateMakerForResedCount.returnErrorAndCount().then((data)=>{
-            console.log("resd count",data.count)
-            console.log("resd count error",data.error)
+        const stateMakerForResedCount = new StateMakerForGetScheduleSCount(`${getResedUrl}/count`, userId)
+        stateMakerForResedCount.returnErrorAndCount().then((data) => {
+            console.log('resd count', data.count)
+            console.log('resd count error', data.error)
         })
-        const stateMakerForResedInfo = new StateMakerForGetSchedulesInfo(`${getResedUrl}/ids`,userId)
+        const stateMakerForResedInfo = new StateMakerForGetSchedulesInfo(`${getResedUrl}/ids`, userId)
         stateMakerForResedInfo.returnErrorAndInfos().then((data) => {
-            console.log("resd info error",data.error)
-            console.log("resd info",data.infos)
+            console.log('resd info error', data.error)
+            console.log('resd info', data.infos)
         })
         const stateMakerForGetGroups = new StateMakerForGetGroups(userId)
         stateMakerForGetGroups.returnErrorAndGroups().then((data) => {

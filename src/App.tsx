@@ -18,36 +18,34 @@ function App() {
     // })
     const testNotRes = [
         {
-            id:"1",
-            startDate:"2021/07/01 11:00",
-            endDate:"13:00",
-            purpose:"Lanch"
+            id: '1',
+            startDate: '2021/07/01 11:00',
+            endDate: '13:00',
+            purpose: 'Lanch',
         },
         {
-            id:"2",
-            startDate:"2021/07/11 15:00",
-            endDate:"17:00",
-            purpose:"Diner",
-            data:"dfaf"
+            id: '2',
+            startDate: '2021/07/11 15:00',
+            endDate: '17:00',
+            purpose: 'Diner',
+            data: 'dfaf',
         },
     ]
     const testResed = [
-        
-            {
-                id:"3",
-                startDate:"2021/07/02 11:00",
-                endDate:"13:00",
-                purpose:"Lanch"
-            },
-            {
-                id:"4",
-                startDate:"2021/07/11 19:00",
-                endDate:"21:00",
-                purpose:"Diner"
-            },
-        
+        {
+            id: '3',
+            startDate: '2021/07/02 11:00',
+            endDate: '13:00',
+            purpose: 'Lanch',
+        },
+        {
+            id: '4',
+            startDate: '2021/07/11 19:00',
+            endDate: '21:00',
+            purpose: 'Diner',
+        },
     ]
-    const tests = (e:React.MouseEvent<HTMLDivElement, MouseEvent>) =>{
+    const tests = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         console.log(e.currentTarget.id)
     }
     return (
@@ -59,9 +57,11 @@ function App() {
                     <Router></Router>
                 </BrowserRouter>
                 <NestedList
-                onClickToDetail={tests}
-                notResMailsInfo={testNotRes}
-                resedMailsInfo={testResed}></NestedList>
+                    onClickToDetail={tests}
+                    notResMailsInfo={testNotRes}
+                    resedMailsInfo={testResed}
+                ></NestedList>
+                <MakeAttendanceRequest></MakeAttendanceRequest>
                 {/* <SocketIo></SocketIo>
                 <NewRegistUser></NewRegistUser>
                 <MakeAttendanceRequest></MakeAttendanceRequest>

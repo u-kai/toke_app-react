@@ -4,8 +4,8 @@ import { StateMaker } from 'model/StateMaker/StateMaker'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 
 export class StateMakerForGetSchedulesInfo extends StateMaker {
-    constructor(url:string,userId: string) {
-        super(new DataPosterForGetSchedulesInfos(url,userId))
+    constructor(url: string, userId: string) {
+        super(new DataPosterForGetSchedulesInfos(url, userId))
     }
     returnError = (data: BackendReturn): string | '' => {
         return this.factoryConverter(data).returnError('エラーが起きてます．管理者にご報告ください．')

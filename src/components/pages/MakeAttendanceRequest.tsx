@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { dateCalculater } from 'functions/dateCalculater'
-import { DateOperater } from 'model/DateOperater'
+import { DateConverter } from 'model/DateConverter'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { BackendResultsChecker } from 'model/BackendResultsChecker'
@@ -18,14 +18,14 @@ import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
 import { StateMakerForNewGroupRegist } from 'model/StateMaker/StateMakerForNewGroupRegist'
-const dateOperater = new DateOperater()
-const today = dateOperater.forMaterialUI()
+const dateConverter = new DateConverter()
+const today = dateConverter.forMaterialUI()
 export const MakeAttendanceRequest = () => {
     const organizerId = useRecoilValue(userIdState)
     const organizerName = useRecoilValue(userNameState)
     const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState('')
-    const [date, setDate] = useState("2021/06/09")
+    const [date, setDate] = useState(today)
     const [requestTime, setRequestTime] = useState('00:30')
     const [bring, setBring] = useState('')
     const [desc, setDesc] = useState('')

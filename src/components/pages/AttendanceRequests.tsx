@@ -1,6 +1,6 @@
 import React, { useState, VFC } from 'react'
 import { useRecoilValue } from 'recoil'
-import {StateMakerForChangeResponse} from "model/StateMaker/StateMakerForChangeResponse"
+import { StateMakerForChangeResponse } from 'model/StateMaker/StateMakerForChangeResponse'
 import { userIdState } from 'store/user_id'
 import styled from 'styled-components'
 import { ResponseAttendanceRequestProps as Props } from 'types/ui-types/ResponseAttendanceRequestProps'
@@ -26,8 +26,8 @@ export const AttendanceRequests: VFC<Props> = (props) => {
         setMessage(e.target.value)
     }
     const sendData = () => {
-        const stateMaker = new StateMakerForChangeResponse(userId,attendanceRequestId,isAttend,message)
-        stateMaker.returnErrorAndSuccessMessage().then((results)=>{
+        const stateMaker = new StateMakerForChangeResponse(userId, attendanceRequestId, isAttend, message)
+        stateMaker.returnErrorAndSuccessMessage().then((results) => {
             console.log(results.error)
             console.log(results.success)
         })

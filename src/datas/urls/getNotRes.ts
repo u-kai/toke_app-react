@@ -1,1 +1,1 @@
-export const getNotResUrl = "getNotRes"
+export const getNotResUrl = 'getNotRes'
