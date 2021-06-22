@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import React, { useState } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
-import { useHistory } from 'react-router-dom'
+import { useHistory,Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
@@ -50,6 +50,9 @@ export const Login = () => {
                     <SendButton onClick={onClick} />
                 </ButtonContener>
             </InputContener>
+            <div>
+            <Link to="/newRegistUser">新規登録はこちら</Link>
+            </div>
             <ErrorContener>
                 {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
             </ErrorContener>

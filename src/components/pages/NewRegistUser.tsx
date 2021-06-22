@@ -4,23 +4,27 @@ import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
+import { useHistory,Link } from 'react-router-dom'
 export const NewRegistUser = () => {
     const inputList = ['名前', 'パスワード']
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('thank')
+    const history = useHistory()
     const onClick = () => {
         const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
         stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
-            setSuccessMessage(data.success)
+            if(data.error === ""){
+                setSuccessMessage(data.success)
+            }
             setError(data.error)
         })
     }
     return (
         <Contener>
             <InputContener>
-                <Title>ログイン</Title>
+                <Title>新規登録</Title>
                 <TextFieldContener>
                     <LayoutTextField
                         id="login_userName"
@@ -46,7 +50,13 @@ export const NewRegistUser = () => {
                 {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
             </ErrorContener>
             <SuccessContener>
-                {successMessage.length !== 0 ? <SimpleAlert message={successMessage} severity={'success'} /> : null}
+                {successMessage.length !== 0 ? (
+                <SimpleAlert 
+                message={successMessage} 
+                severity={'success'}
+                children={<Link to={"/"}>ログインページでログインしてください</Link>}
+                 />
+                ) : null}
             </SuccessContener>
         </Contener>
     )
@@ -56,7 +66,7 @@ const Contener = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 30% 60% 1fr;
+    grid-template-rows: 50% 60% 1fr;
     grid-template-columns: 38% 24% 38%;
 `
 const InputContener = styled.div`
@@ -72,7 +82,7 @@ const InputContener = styled.div`
 `
 const ErrorContener = styled.div`
     position: absolute;
-    left: 40%;
+    left: 39%;
     top: 1%;
 `
 const SuccessContener = ErrorContener

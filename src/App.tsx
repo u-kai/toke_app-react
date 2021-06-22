@@ -11,6 +11,7 @@ import { NewRegistUser } from 'components/pages/NewRegistUser'
 import { SocketIo } from 'components/pages/SocketIo'
 import socketIOClient from 'socket.io-client'
 import { NestedList } from 'components/molecules/NestedList'
+import { Link } from "react-router-dom";
 function App() {
     // const socket = socketIOClient("http://localhost:8080")
     // socket.on("send test",(data:string)=>{
@@ -19,29 +20,23 @@ function App() {
     const testNotRes = [
         {
             id: '1',
-            startDate: '2021/07/01 11:00',
-            endDate: '13:00',
-            purpose: 'Lanch',
+            start_date: '2021-06-20T01:00:00.000Z',
+            end_date: '2021-06-20T01:00:00.000Z',
+            purpose: 'kokoronidosokudekitasinryakusyaha',
         },
         {
             id: '2',
-            startDate: '2021/07/11 15:00',
-            endDate: '17:00',
+            start_date: '2021-06-20T01:00:00.000Z',
+            end_date: '2021-06-20T01:00:00.000Z',
             purpose: 'Diner',
             data: 'dfaf',
         },
     ]
     const testResed = [
         {
-            id: '3',
-            startDate: '2021/07/02 11:00',
-            endDate: '13:00',
-            purpose: 'Lanch',
-        },
-        {
             id: '4',
-            startDate: '2021/07/11 19:00',
-            endDate: '21:00',
+            start_date: '2021-06-20T01:00:00.000Z',
+            end_date: '2021-06-20T10:00:00.000Z',
             purpose: 'Diner',
         },
     ]

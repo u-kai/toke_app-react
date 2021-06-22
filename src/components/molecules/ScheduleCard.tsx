@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 import React, { VFC } from 'react'
-import { DateOperater } from 'model/DateOperater'
+import { DateConverter } from 'model/DateConverter'
 import { CardContainer } from 'components/atoms/CardContainer'
 import { ScheduleCardProps } from 'types/ui-types/ScheduleCardProps'
 
-const dateOperater = new DateOperater()
+const dateConverter = new DateConverter()
 export const ScheduleCard: VFC<ScheduleCardProps> = (props) => {
-    const today = dateOperater.displayToday()
+    const today = dateConverter.displayToday()
     return (
         <CardContainer>
             {props.isDate ? <Dates>{today}</Dates> : null}

@@ -13,6 +13,8 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import StarBorder from '@material-ui/icons/StarBorder'
 import { SimpleBadge } from 'components/atoms/SimpleBadge'
+import { DateConverter } from 'model/DateConverter'
+import {MailDisplayInfo} from "types/ui-types/MailDisplayInfo"
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,22 +31,25 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
     onClickToDetail: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-    notResMailsInfo: { startDate: string; endDate: string; purpose: string; id: string }[]
-    resedMailsInfo: { startDate: string; endDate: string; purpose: string; id: string }[]
+    notResMailsInfo: MailDisplayInfo[]
+    resedMailsInfo: MailDisplayInfo[]
 }
+
+const dateConverter = new DateConverter()
 export const NestedList: VFC<Props> = (props) => {
     const classes = useStyles()
     const [notResOpen, setNotResOpen] = React.useState(false)
     const [resedOpen, setResedOpen] = React.useState(false)
     const { notResMailsInfo, resedMailsInfo, onClickToDetail } = props
-
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }
     const handleClickForResed = () => {
         setResedOpen(!resedOpen)
     }
-
+    const display = (data:MailDisplayInfo):string => {
+      return `${dateConverter.displayDateRange(data.start_date,data.end_date)} ${data.purpose}`
+    }
     return (
         <List
             component="nav"
@@ -73,7 +78,8 @@ export const NestedList: VFC<Props> = (props) => {
                             id={notResInfo.id}
                             onClick={onClickToDetail}
                         >
-                            <ListItemText key={`notResInfoItemText${i}`} primary={notResInfo.purpose}></ListItemText>
+                    
+                            <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
                         </ListItem>
                     ))}
                 </List>
@@ -95,7 +101,7 @@ export const NestedList: VFC<Props> = (props) => {
                             id={resedInfo.id}
                             onClick={onClickToDetail}
                         >
-                            <ListItemText key={`resedInfoItemText${i}`} primary={resedInfo.purpose}></ListItemText>
+                            <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
                         </ListItem>
                     ))}
                 </List>

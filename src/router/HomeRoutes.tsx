@@ -1,6 +1,7 @@
 import React from 'react'
 import { Login } from 'components/pages/Login'
 import { Home } from 'components/pages/Home'
+import {NewRegistUser} from "components/pages/NewRegistUser"
 export const homeRoutes = [
     {
         path: '',
@@ -12,4 +13,9 @@ export const homeRoutes = [
         exact: false,
         children: <Home />,
     },
+    {
+        path:"newRegistUser",
+        exact:false,
+        children:<NewRegistUser/>
+    }
 ]
