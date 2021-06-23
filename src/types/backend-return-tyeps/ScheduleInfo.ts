@@ -1,11 +1,13 @@
 export type ScheduleInfo = {
-    attendance_request_id: number
+    attendance_request_id: string
     purpose: string
     date: Date
     location: string
     describes: string
     bring: string
-    organizer_id: number
+    organizer_id: string
     organizer_name: string
+    start_date:string
+    end_date:string
 }
 export type ScheduleInfoResults = ScheduleInfo[]

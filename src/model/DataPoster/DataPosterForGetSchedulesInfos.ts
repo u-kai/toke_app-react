@@ -1,4 +1,3 @@
-import { FiberPinRounded } from '@material-ui/icons'
 import { DataPoster } from 'model/DataPoster/DataPoster'
 
 const postKeys = ['userId']

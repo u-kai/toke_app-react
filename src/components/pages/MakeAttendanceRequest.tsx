@@ -119,8 +119,6 @@ export const MakeAttendanceRequest = () => {
                     selectNames={selectedMembers}
                 />
             </div>
-            <input value={groupName} onChange={changeMembers} />
-            <button onClick={testGroup}>send</button>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>
                 <TimePicker label="時間" onChange={changeRequestTime}></TimePicker>
@@ -153,8 +151,11 @@ export const MakeAttendanceRequest = () => {
     )
 }
 
-const Container = styled.div``
+const Container = styled.div`
+margin-left:20%;
+`
 const Title = styled.h1`
+    width:70%;
     border-bottom: solid 3px black;
     text-align: center;
 `

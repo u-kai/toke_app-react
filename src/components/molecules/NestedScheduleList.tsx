@@ -31,16 +31,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
     onClickToDetail: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-    notResMailsInfo: MailDisplayInfo[]
-    resedMailsInfo: MailDisplayInfo[]
+    todayScheduleInfo: MailDisplayInfo[]
+    allScheduleInfo: MailDisplayInfo[]
 }
 
 const dateConverter = new DateConverter()
-export const NestedList: VFC<Props> = (props) => {
+export const NestedScheduleList: VFC<Props> = (props) => {
     const classes = useStyles()
-    const [notResOpen, setNotResOpen] = React.useState(false)
+    const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
-    const { notResMailsInfo, resedMailsInfo, onClickToDetail } = props
+    const { todayScheduleInfo, allScheduleInfo, onClickToDetail } = props
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }
@@ -56,30 +56,30 @@ export const NestedList: VFC<Props> = (props) => {
             aria-labelledby="nested-list-subheader"
             subheader={
                 <ListSubheader component="div" id="nested-list-subheader">
-                    Mailリスト
+                    予定リスト
                 </ListSubheader>
             }
             className={classes.root}
         >
             <ListItem button onClick={handleClickForNotRes}>
                 <ListItemIcon>
-                    <SimpleBadge color="secondary" badgeContent={notResMailsInfo.length}></SimpleBadge>
+                    <SimpleBadge color="secondary" badgeContent={todayScheduleInfo.length}></SimpleBadge>
                 </ListItemIcon>
-                <ListItemText primary="未返信" />
+                <ListItemText primary="今日の予定" />
                 {notResOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={notResOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    {notResMailsInfo.map((notResInfo, i) => (
+                    {todayScheduleInfo.map((todayInfo, i) => (
                         <ListItem
-                            key={`notResInfoItem${i}`}
+                            key={`todayScheduleItem${i}`}
                             button
                             className={classes.nested}
-                            id={notResInfo.id}
+                            id={todayInfo.attendance_request_id}
                             onClick={onClickToDetail}
                         >
                     
-                            <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
+                            <ListItemText key={`todayScheduleItemText${i}`} primary={display(todayInfo)}></ListItemText>
                         </ListItem>
                     ))}
                 </List>
@@ -88,20 +88,20 @@ export const NestedList: VFC<Props> = (props) => {
                 <ListItemIcon>
                     <InboxIcon />
                 </ListItemIcon>
-                <ListItemText primary="返信済み" />
+                <ListItemText primary="予定一覧" />
                 {resedOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={resedOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    {resedMailsInfo.map((resedInfo, i) => (
+                    {allScheduleInfo.map((scheduleInfo, i) => (
                         <ListItem
-                            key={`resedInfoItem${i}`}
+                            key={`scheduleInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={resedInfo.id}
+                            id={scheduleInfo.attendance_request_id}
                             onClick={onClickToDetail}
                         >
-                            <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
+                            <ListItemText key={`scheduleInfoItemText${i}`} primary={display(scheduleInfo)}></ListItemText>
                         </ListItem>
                     ))}
                 </List>

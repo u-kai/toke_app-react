@@ -1,0 +1,27 @@
+// <GroupCard></GroupCard>
+        // <AttendanceRequests></AttendanceRequests>
+        <>
+            {/* <RecoilRoot>
+                <BrowserRouter>
+                    <Router></Router>
+                </BrowserRouter>
+                <NestedList
+                    onClickToDetail={tests}
+                    notResMailsInfo={testNotRes}
+                    resedMailsInfo={testResed}
+                ></NestedList>
+                <MakeAttendanceRequest></MakeAttendanceRequest> */}
+                {/* <SocketIo></SocketIo>
+                <NewRegistUser></NewRegistUser>
+                <MakeAttendanceRequest></MakeAttendanceRequest>
+                <AttendanceRequests
+                    purpose="test"
+                    date="test"
+                    describe="test"
+                    attendanceRequestId="1"
+                    brings="test"
+                ></AttendanceRequests> */}
+            {/* </RecoilRoot> */}
+            {/* <MakeAttendanceRequest></MakeAttendanceRequest>
+            <MultipleSelectAndAddButton></MultipleSelectAndAddButton> */}
+        </>
