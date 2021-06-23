@@ -93,9 +93,9 @@ export const MakeAttendanceRequest = () => {
         })
     }
     const changeMembers = (event: React.ChangeEvent<{ value: unknown }>) => {
-        console.log("selected members",event.target.value)
-        setSelectedMembers(event.target.value as string[]);
-      };
+        console.log('selected members', event.target.value)
+        setSelectedMembers(event.target.value as string[])
+    }
     return (
         <Container>
             {error.length > 0 ? <SimpleAlert message={error} severity={'error'}></SimpleAlert> : null}
@@ -152,10 +152,10 @@ export const MakeAttendanceRequest = () => {
 }
 
 const Container = styled.div`
-margin-left:20%;
+    margin-left: 20%;
 `
 const Title = styled.h1`
-    width:70%;
+    width: 70%;
     border-bottom: solid 3px black;
     text-align: center;
 `

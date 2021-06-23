@@ -7,6 +7,6 @@ export type ReturnDataForScheduleInfo = {
     bring: string
     organizer_id: number
     organizer_name: string
-    start_date:string
-    end_date:string
+    start_date: string
+    end_date: string
 }[]

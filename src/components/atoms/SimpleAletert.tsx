@@ -16,12 +16,12 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
     message: string
     severity: 'error' | 'success' | 'info' | 'warning' | undefined
-    children?:JSX.Element
+    children?: JSX.Element
 }
 
 export const SimpleAlert: VFC<Props> = (props) => {
     const classes = useStyles()
-    const { message, severity = 'error',children} = props
+    const { message, severity = 'error', children } = props
     return (
         <div className={classes.root}>
             <Alert variant="outlined" severity={severity}>

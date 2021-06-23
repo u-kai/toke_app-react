@@ -7,7 +7,7 @@ export type ScheduleInfo = {
     bring: string
     organizer_id: string
     organizer_name: string
-    start_date:string
-    end_date:string
+    start_date: string
+    end_date: string
 }
 export type ScheduleInfoResults = ScheduleInfo[]

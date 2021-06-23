@@ -14,7 +14,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore'
 import StarBorder from '@material-ui/icons/StarBorder'
 import { SimpleBadge } from 'components/atoms/SimpleBadge'
 import { DateConverter } from 'model/DateConverter'
-import {MailDisplayInfo} from "types/ui-types/MailDisplayInfo"
+import { MailDisplayInfo } from 'types/ui-types/MailDisplayInfo'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -47,8 +47,8 @@ export const NestedMailList: VFC<Props> = (props) => {
     const handleClickForResed = () => {
         setResedOpen(!resedOpen)
     }
-    const display = (data:MailDisplayInfo):string => {
-      return `${dateConverter.displayDateRange(data.start_date,data.end_date)} ${data.purpose}`
+    const display = (data: MailDisplayInfo): string => {
+        return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
     }
     return (
         <List
@@ -78,7 +78,6 @@ export const NestedMailList: VFC<Props> = (props) => {
                             id={notResInfo.attendance_request_id}
                             onClick={onClickToDetail}
                         >
-                    
                             <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
                         </ListItem>
                     ))}

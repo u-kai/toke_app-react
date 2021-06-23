@@ -4,7 +4,7 @@ import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
-import { useHistory,Link } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 export const NewRegistUser = () => {
     const inputList = ['名前', 'パスワード']
     const [userName, setUserName] = useState('')
@@ -15,7 +15,7 @@ export const NewRegistUser = () => {
     const onClick = () => {
         const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
         stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
-            if(data.error === ""){
+            if (data.error === '') {
                 setSuccessMessage(data.success)
             }
             setError(data.error)
@@ -51,11 +51,11 @@ export const NewRegistUser = () => {
             </ErrorContener>
             <SuccessContener>
                 {successMessage.length !== 0 ? (
-                <SimpleAlert 
-                message={successMessage} 
-                severity={'success'}
-                children={<Link to={"/"}>ログインページでログインしてください</Link>}
-                 />
+                    <SimpleAlert
+                        message={successMessage}
+                        severity={'success'}
+                        children={<Link to={'/'}>ログインページでログインしてください</Link>}
+                    />
                 ) : null}
             </SuccessContener>
         </Contener>

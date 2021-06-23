@@ -1,5 +1,5 @@
-export class DataChecker{
-    isToday = (date:string) => {
+export class DateChecker {
+    isToday = (date: string) => {
         const today = new Date()
         const compare = new Date(date)
         return (
