@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 )
 
-export default function DeleteButton() {
+export const CancelButton = () => {
     const classes = useStyles()
 
     return (

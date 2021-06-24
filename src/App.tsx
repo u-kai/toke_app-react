@@ -21,31 +21,47 @@ import { StateMakerForGetSchedulesInfo } from 'model/StateMaker/StateMakerForGet
 import { userIdState } from 'store/user_id'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateChecker } from 'model/DateChecker'
-function App() {
+import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
+import { SendButton } from 'components/atoms/SendButton'
+import { MUIButton } from 'components/atoms/MUIButton'
+import { DateConverter } from 'model/DateConverter'
+import { isReturnStatement } from 'typescript'
+const dateConverter = new DateConverter()
+export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
+    const [responseMessage, setResponseMessage] = useState('')
+    const [isAttend, setIsAttend] = useState(false)
+    const [displayEventId, setDisplayEventId] = useState('')
+    const postResponse = () => {
+        console.log('not')
+    }
+    const handleAttned = (message: string, isAttend: boolean) => {
+        setIsAttend(isAttend)
+        setResponseMessage(message + responseMessage)
+    }
     useEffect(() => {
         const dateChecker = new DateChecker()
         const infosList = [
             { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
             { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
-            {
-                url: 'getEvent',
-                info: attendEventInfo,
-                huck: setAttendEventInfo,
-            },
+            { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
         ]
         infosList.map((dataInfos) => {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
             stateMaker.returnErrorAndInfos().then((data) => {
-                console.log(data.infos)
+                console.log('!!!!!!!!!!', data.infos)
                 if (data.infos) {
                     const sortList = dateChecker.sortTest(data.infos)
                     console.log(sortList)
                     dataInfos.huck(sortList)
+                    if (dataInfos.url === 'getNotRes') {
+                        console.log('getNotRes', sortList[0].attendance_request_id)
+                        //setDisplayEventId(sortList[0].attendance_request_id)
+                    }
                     if (dataInfos.url === 'getEvent') {
                         const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
                         setTodayEventInfo(todayInfos)
@@ -53,33 +69,30 @@ function App() {
                 }
             })
         })
-        // const notResEventStateMaker = new StateMakerForGetSchedulesInfo('getNotRes', userId)
-        // notResEventStateMaker.returnErrorAndInfos().then((data) => {
-        //     if (data.infos) {
-        //         console.log(data.infos)
-        //         const sortList = dateChecker.sortInfo(data.infos)
-        //         setNotResEventInfo(sortList)
-        //     }
-        // })
-        // const resedEventStateMaker = new StateMakerForGetSchedulesInfo('getResed', userId)
-        // resedEventStateMaker.returnErrorAndInfos().then((data) => {
-        //     if (data.infos) {
-        //         const sortList = dateChecker.sortInfo(data.infos)
-        //         setNotResEventInfo(sortList)
-        //         setResedEventInfo(data.infos)
-        //     }
-        // })
-        // const attendEventStateMaker = new StateMakerForGetSchedulesInfo('getEvent', userId)
-        // attendEventStateMaker.returnErrorAndInfos().then((data) => {
-        //     if (data.infos) {
-        //         const sortList = dateChecker.sortInfo(data.infos)
-        //         setNotResEventInfo(sortList)
-        //         setAttendEventInfo(data.infos)
-        //         const todays = data.infos.filter((data)=>dateChecker.isToday(data.start_date))
-        //         setTodayEventInfo(todays)
-        //     }
-        // })
     }, [userId])
+    // if(notResEventInfo[0] !== undefined){
+    //     setDisplayEventId(notResEventInfo[0].attendance_request_id)
+    // }
+    const returnTest = (id: string) => {
+        if (notResEventInfo.length !== 0) {
+            console.log('id', typeof id)
+            const clone = Object.assign([], notResEventInfo)
+            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo)
+            console.log('allEventInfo', allEventInfo)
+            console.log(
+                'filter',
+                allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
+            )
+            return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
+        }
+    }
+    // console.log("returnTest",returnTest(displayEzventId))
+    useEffect(() => {
+        if (notResEventInfo[0] !== undefined) {
+            setDisplayEventId(notResEventInfo[0].attendance_request_id)
+        }
+    }, [notResEventInfo])
+
     return (
         <RecoilRoot>
             <Container>
@@ -95,50 +108,73 @@ function App() {
                         notResMailsInfo={notResEventInfo}
                         resedMailsInfo={resedEventInfo}
                         onClickToDetail={(e) => {
-                            console.log(e.currentTarget.id)
+                            setDisplayEventId(e.currentTarget.id)
                         }}
                     />
                 </MailContainer>
-                <EventInfoContainer>
-                    <div>出席依頼</div>
-                    <div>開催者：有働開</div>
-                    <div>目的：夏休みの祭りに慣るする会議</div>
-                    <div>日時：2021/06/08(金)11:00</div>
-                    <div>場所：家</div>
-                    <div>持ち物：筆記用具</div>
-                    <div>概要</div>
-                    <div>夏休みに開催する祭りを行うかどうかの会議をしたいと思います．よろしくお願いいたします．</div>
-                    <div>現在の参加者</div>
-                    <ul>
-                        <li>udokai</li>
-                        <li>udomaki</li>
-                    </ul>
-                </EventInfoContainer>
+                {returnTest(displayEventId) !== undefined ? (
+                    <EventInfoContainer>
+                        <div>出席依頼</div>
+                        <div>開催者：{returnTest(displayEventId)!.organizer_name}</div>
+                        <div>目的：{returnTest(displayEventId)!.purpose}</div>
+                        <div>
+                            日時：
+                            {dateConverter.displayDateRange(
+                                returnTest(displayEventId)!.start_date,
+                                returnTest(displayEventId)!.end_date
+                            )}
+                        </div>
+                        <div>場所：{returnTest(displayEventId)!.location}</div>
+                        <div>持ち物：{returnTest(displayEventId)!.bring}</div>
+                        <div>概要</div>
+                        <div>{returnTest(displayEventId)!.describes}</div>
+                        <div>現在の参加者</div>
+                        <ul>
+                            <li></li>
+                            <li>udomaki</li>
+                        </ul>
+                    </EventInfoContainer>
+                ) : null}
                 <NextEventContainer>
                     <NestedScheduleList
                         todayScheduleInfo={todayEventInfo}
                         allScheduleInfo={attendEventInfo}
                         onClickToDetail={(e) => {
-                            console.log(e.currentTarget.id)
+                            setDisplayEventId(e.currentTarget.id)
                         }}
                     />
                 </NextEventContainer>
                 <ResponseContainer>
-                    <button>欠席</button>
-                    <button>出席</button>
-                    <textarea></textarea>
-                    <button>送信</button>
+                    <ButtonContainer>
+                        <MUIButton label={'出席'} onClick={() => handleAttned('出席します.', true)} color={'primary'} />
+                        <MUIButton
+                            label={'欠席'}
+                            onClick={() => handleAttned('欠席します.', false)}
+                            color={'secondary'}
+                        />
+                    </ButtonContainer>
+                    <MultilineTextFields
+                        placeholder={'メッセージ'}
+                        value={responseMessage}
+                        onChange={(e) => setResponseMessage(e.target.value)}
+                    />
+                    <SendButton onClick={postResponse} />
                 </ResponseContainer>
             </Container>
         </RecoilRoot>
     )
 }
+
+const ButtonContainer = styled.div`
+    display: flex;
+    display-direction: row;
+`
 const Container = styled.div`
     width: 100%;
     height: 750px;
     display: grid;
     grid-template-columns: 20% 60% 20%;
-    grid-template-rows: 9% 10% 55% 25%;
+    grid-template-rows: 9% 10% 48% 32%;
 `
 const FooterContainer = styled.div`
     // height:100%;
@@ -188,4 +224,3 @@ const ResponseContainer = styled.div`
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 10px;
 `
-export default App

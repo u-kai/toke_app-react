@@ -144,7 +144,7 @@ export const MakeAttendanceRequest = () => {
                 />
             </div>
             <div>
-                <MultilineTextFields value={desc} onChange={changeDesc}></MultilineTextFields>
+                <MultilineTextFields placeholder={'説明'} value={desc} onChange={changeDesc}></MultilineTextFields>
             </div>
             <SendButton onClick={() => test()} isDisabled={isSend}></SendButton>
         </Container>

@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             '& .MuiTextField-root': {
                 margin: theme.spacing(1),
-                width: '70%',
+                width: '90%',
             },
         },
     })
@@ -16,11 +16,12 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
     value: string
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    placeholder: string
 }
 
 export const MultilineTextFields: VFC<Props> = (props) => {
     const classes = useStyles()
-    const { value, onChange } = props
+    const { value, onChange, placeholder } = props
 
     return (
         <form className={classes.root} noValidate autoComplete="off">
@@ -28,7 +29,7 @@ export const MultilineTextFields: VFC<Props> = (props) => {
                 <TextField
                     value={value}
                     id="outlined-multiline-static"
-                    label="Multiline"
+                    label={placeholder}
                     multiline
                     rows={4}
                     onChange={onChange}
