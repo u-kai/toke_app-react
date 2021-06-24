@@ -1,3 +1,5 @@
+import { ScheduleInfoResults } from "types/backend-return-tyeps/ScheduleInfo"
+
 export class DateChecker {
     isToday = (date: string) => {
         const today = new Date()
@@ -8,16 +10,19 @@ export class DateChecker {
             today.getDate() === compare.getDate()
         )
     }
+    sortInfo = (infos:ScheduleInfoResults)=>{
+        const dateIndex:{[key:string]:number} = {}
+        const dateInfos = infos.map((info,i)=>{
+            dateIndex[info.start_date] = i
+            return info.start_date
+        })
+        
+        const sortList = this.sortAsc(dateInfos)
+        const indexs = sortList.map((date)=>dateIndex[date])
+        return indexs.map(i=>infos[i])
+        }
+
     sortAsc = (dates:string[]) => {
-        // let sortList:string[] = [new Date(dates[0]).]
-        let minList:string[] = [dates[0]]
-        // for (let i=0;i<dates.length;i++){
-        //     for (let j=0;j<dates.length;j++){
-        //         if(this.isBiggerDate1(minList[i],dates[i+1])){
-        //             minList[i]
-        //         }
-        //     }
-        // }
         const keyIsIndexValueIsDateValueTemp:{[key:string]:string} = {}
         const keyIsDateValueValueIsIndexTemp:{[key:string]:number} = {}
         const dateToValueList = dates.map((date,i)=>{
@@ -30,15 +35,9 @@ export class DateChecker {
             const index = keyIsDateValueValueIsIndexTemp[data]
             return keyIsIndexValueIsDateValueTemp[index]
         })
-
-
-
     }  
     private dateToValue = (date:string):number => {
         const dateInfo = new Date(date)
         return dateInfo.getFullYear() * 12 * 30 + dateInfo.getMonth() * 30 + dateInfo.getDate() + dateInfo.getHours() * 1/24 + dateInfo.getMinutes() * 1/1440
     } 
-    private isBiggerDate1 = (date1:string,date2:string) => {
-        return this.dateToValue(date1) >= this.dateToValue(date2)
-    }
 }

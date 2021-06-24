@@ -20,31 +20,42 @@ import { ReturnDataForScheduleInfo } from 'types/backend-return-tyeps/ReturnData
 import { StateMakerForGetSchedulesInfo } from 'model/StateMaker/StateMakerForGetSchedulesInfos'
 import { userIdState } from 'store/user_id'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
+import { DateChecker } from 'model/DateChecker'
 function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
+    const [todayEventInfo,setTodayEventInfo] = useState<ScheduleInfoResults>([])
     useEffect(() => {
+        const dateChecker = new DateChecker()
         const notResEventStateMaker = new StateMakerForGetSchedulesInfo('getNotRes', userId)
         notResEventStateMaker.returnErrorAndInfos().then((data) => {
             if (data.infos) {
                 console.log(data.infos)
-                setNotResEventInfo(data.infos)
+                const sortList = dateChecker.sortInfo(data.infos)
+                setNotResEventInfo(sortList)
             }
         })
         const resedEventStateMaker = new StateMakerForGetSchedulesInfo('getResed', userId)
         resedEventStateMaker.returnErrorAndInfos().then((data) => {
             if (data.infos) {
+                const sortList = dateChecker.sortInfo(data.infos)
+                setNotResEventInfo(sortList)
                 setResedEventInfo(data.infos)
             }
         })
         const attendEventStateMaker = new StateMakerForGetSchedulesInfo('getEvent', userId)
         attendEventStateMaker.returnErrorAndInfos().then((data) => {
             if (data.infos) {
+                const sortList = dateChecker.sortInfo(data.infos)
+                setNotResEventInfo(sortList)
                 setAttendEventInfo(data.infos)
+                const todays = data.infos.filter((data)=>dateChecker.isToday(data.start_date))
+                setTodayEventInfo(todays)
             }
         })
+        
     }, [userId])
     return (
         <RecoilRoot>
@@ -82,7 +93,7 @@ function App() {
                 </EventInfoContainer>
                 <NextEventContainer>
                     <NestedScheduleList
-                        todayScheduleInfo={attendEventInfo}
+                        todayScheduleInfo={todayEventInfo}
                         allScheduleInfo={attendEventInfo}
                         onClickToDetail={(e) => {
                             console.log(e.currentTarget.id)
