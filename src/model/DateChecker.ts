@@ -1,4 +1,4 @@
-import { ScheduleInfoResults } from "types/backend-return-tyeps/ScheduleInfo"
+import { ScheduleInfo, ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 
 export class DateChecker {
     isToday = (date: string) => {
@@ -10,34 +10,70 @@ export class DateChecker {
             today.getDate() === compare.getDate()
         )
     }
-    sortInfo = (infos:ScheduleInfoResults)=>{
-        const dateIndex:{[key:string]:number} = {}
-        const dateInfos = infos.map((info,i)=>{
-            dateIndex[info.start_date] = i
+    sortInfo = (infos: ScheduleInfoResults) => {
+        const dateIndex: { [key: string]: number } = {}
+        const dateInfos = infos.map((info, i) => {
+            dateIndex[info.attendance_request_id] = i
             return info.start_date
         })
-        
+        console.log('dateInfos', dateInfos)
+        console.log('dateIndex', dateIndex)
         const sortList = this.sortAsc(dateInfos)
-        const indexs = sortList.map((date)=>dateIndex[date])
-        return indexs.map(i=>infos[i])
+        const indexs = sortList.map((date) => dateIndex[date])
+        return indexs.map((i) => infos[i])
+    }
+    sortTest = (infos: ScheduleInfoResults) => {
+        const minDate: ScheduleInfo = {
+            attendance_request_id: '',
+            start_date: '1999-01-01',
+            end_date: '',
+            purpose: '',
+            bring: '',
+            location: '',
+            describes: '',
+            organizer_id: '',
+            organizer_name: '',
+            date: '',
         }
-
-    sortAsc = (dates:string[]) => {
-        const keyIsIndexValueIsDateValueTemp:{[key:string]:string} = {}
-        const keyIsDateValueValueIsIndexTemp:{[key:string]:number} = {}
-        const dateToValueList = dates.map((date,i)=>{
+        let maxList: ScheduleInfoResults = [minDate]
+        const clone = Object.assign({}, infos)
+        let temp = 0
+        for (let i = 0; i < infos.length; i++) {
+            for (let j = 0; j < infos.length; j++) {
+                if (this.dateToValue(maxList[i].start_date) <= this.dateToValue(clone[j].start_date)) {
+                    maxList[i] = Object.assign({}, clone[j])
+                    temp = j
+                }
+            }
+            maxList = [...maxList, minDate]
+            clone[temp] = minDate
+        }
+        maxList.pop()
+        console.log('max', maxList)
+        return maxList
+    }
+    sortAsc = (dates: string[]) => {
+        const keyIsIndexValueIsDateValueTemp: { [key: string]: string } = {}
+        const keyIsDateValueValueIsIndexTemp: { [key: string]: number } = {}
+        const dateToValueList = dates.map((date, i) => {
             keyIsDateValueValueIsIndexTemp[this.dateToValue(date).toString()] = i
             keyIsIndexValueIsDateValueTemp[i.toString()] = date
             return this.dateToValue(date)
         })
         const sortList = dateToValueList.sort()
-        return sortList.map((data)=>{
+        return sortList.map((data) => {
             const index = keyIsDateValueValueIsIndexTemp[data]
             return keyIsIndexValueIsDateValueTemp[index]
         })
-    }  
-    private dateToValue = (date:string):number => {
+    }
+    private dateToValue = (date: string): number => {
         const dateInfo = new Date(date)
-        return dateInfo.getFullYear() * 12 * 30 + dateInfo.getMonth() * 30 + dateInfo.getDate() + dateInfo.getHours() * 1/24 + dateInfo.getMinutes() * 1/1440
-    } 
+        return (
+            dateInfo.getFullYear() * 12 * 30 +
+            dateInfo.getMonth() * 30 +
+            dateInfo.getDate() +
+            (dateInfo.getHours() * 1) / 24 +
+            (dateInfo.getMinutes() * 1) / 1440
+        )
+    }
 }

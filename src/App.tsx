@@ -26,36 +26,59 @@ function App() {
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
-    const [todayEventInfo,setTodayEventInfo] = useState<ScheduleInfoResults>([])
+    const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
     useEffect(() => {
         const dateChecker = new DateChecker()
-        const notResEventStateMaker = new StateMakerForGetSchedulesInfo('getNotRes', userId)
-        notResEventStateMaker.returnErrorAndInfos().then((data) => {
-            if (data.infos) {
+        const infosList = [
+            { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
+            { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
+            {
+                url: 'getEvent',
+                info: attendEventInfo,
+                huck: setAttendEventInfo,
+            },
+        ]
+        infosList.map((dataInfos) => {
+            const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
+            stateMaker.returnErrorAndInfos().then((data) => {
                 console.log(data.infos)
-                const sortList = dateChecker.sortInfo(data.infos)
-                setNotResEventInfo(sortList)
-            }
+                if (data.infos) {
+                    const sortList = dateChecker.sortTest(data.infos)
+                    console.log(sortList)
+                    dataInfos.huck(sortList)
+                    if (dataInfos.url === 'getEvent') {
+                        const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
+                        setTodayEventInfo(todayInfos)
+                    }
+                }
+            })
         })
-        const resedEventStateMaker = new StateMakerForGetSchedulesInfo('getResed', userId)
-        resedEventStateMaker.returnErrorAndInfos().then((data) => {
-            if (data.infos) {
-                const sortList = dateChecker.sortInfo(data.infos)
-                setNotResEventInfo(sortList)
-                setResedEventInfo(data.infos)
-            }
-        })
-        const attendEventStateMaker = new StateMakerForGetSchedulesInfo('getEvent', userId)
-        attendEventStateMaker.returnErrorAndInfos().then((data) => {
-            if (data.infos) {
-                const sortList = dateChecker.sortInfo(data.infos)
-                setNotResEventInfo(sortList)
-                setAttendEventInfo(data.infos)
-                const todays = data.infos.filter((data)=>dateChecker.isToday(data.start_date))
-                setTodayEventInfo(todays)
-            }
-        })
-        
+        // const notResEventStateMaker = new StateMakerForGetSchedulesInfo('getNotRes', userId)
+        // notResEventStateMaker.returnErrorAndInfos().then((data) => {
+        //     if (data.infos) {
+        //         console.log(data.infos)
+        //         const sortList = dateChecker.sortInfo(data.infos)
+        //         setNotResEventInfo(sortList)
+        //     }
+        // })
+        // const resedEventStateMaker = new StateMakerForGetSchedulesInfo('getResed', userId)
+        // resedEventStateMaker.returnErrorAndInfos().then((data) => {
+        //     if (data.infos) {
+        //         const sortList = dateChecker.sortInfo(data.infos)
+        //         setNotResEventInfo(sortList)
+        //         setResedEventInfo(data.infos)
+        //     }
+        // })
+        // const attendEventStateMaker = new StateMakerForGetSchedulesInfo('getEvent', userId)
+        // attendEventStateMaker.returnErrorAndInfos().then((data) => {
+        //     if (data.infos) {
+        //         const sortList = dateChecker.sortInfo(data.infos)
+        //         setNotResEventInfo(sortList)
+        //         setAttendEventInfo(data.infos)
+        //         const todays = data.infos.filter((data)=>dateChecker.isToday(data.start_date))
+        //         setTodayEventInfo(todays)
+        //     }
+        // })
     }, [userId])
     return (
         <RecoilRoot>

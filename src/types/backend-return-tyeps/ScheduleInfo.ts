@@ -1,7 +1,7 @@
 export type ScheduleInfo = {
     attendance_request_id: string
     purpose: string
-    date: Date
+    date: string
     location: string
     describes: string
     bring: string
