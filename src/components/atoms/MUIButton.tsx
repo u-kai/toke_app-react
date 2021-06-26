@@ -16,13 +16,14 @@ type Props = {
     label: string
     onClick: () => void
     color: 'inherit' | 'default' | 'primary' | 'secondary' | undefined
+    disable?:boolean
 }
 export const MUIButton: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const { label, onClick, color } = props
+    const { label, onClick, color, disable=false} = props
     return (
         <div className={classes.root}>
-            <Button variant="contained" onClick={onClick} color={color}>
+            <Button variant="contained" onClick={onClick} color={color} disabled={disable}>
                 {label}
             </Button>
         </div>

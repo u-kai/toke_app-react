@@ -1,6 +1,6 @@
 import { atom } from 'recoil'
 
 export const isAttendState = atom<boolean>({
-    key: 'userIdState',
+    key: 'isAttendState',
     default: false,
 })

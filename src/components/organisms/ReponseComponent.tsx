@@ -18,6 +18,7 @@ import { MUIButton } from 'components/atoms/MUIButton'
 import { StateMaker } from 'model/StateMaker/StateMaker'
 import { StateMakerForChangeResponse } from 'model/StateMaker/StateMakerForChangeResponse'
 import {messageState} from "store/message"
+import {isAttendState} from "store/isAttend"
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -43,34 +44,32 @@ type Props = {
 
 export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const bull = <span className={classes.bullet}>•</span>
     const { eventId } = props
     const [newOrChange,setNewOrChange] = useState<"new"|"change">("new")
-    // const initIsAttend = () => {
-    //     if (propsIsAttend !== undefined) {
-    //         setNewOrChange("change")
-    //         return propsIsAttend
-    //     }
-    //     return false
-    // }
-    // const initMessage = () => {
-    //     if (propsMessage === null) {
-    //         return ''
-    //     }
-    //     if (propsMessage !== undefined) {
-    //         return propsMessage
-    //     }
-    //     return '欠席します.'
-    // }
-    const [isAttend, setIsAttend] = useState(false)
+    const [isAttend, setIsAttend] = useRecoilState(isAttendState)
+    const [isPush,setIsPush] = useState({
+        attend:false,
+        absent:false
+    })
     const [message,setMessage] = useRecoilState(messageState)
-    console.log("betuppe-zi",message)
     const [successMessage, setSuccessMessage] = useState('')
     const [userId, setUserId] = useRecoilState(userIdState)
     console.log("new or change",newOrChange)
-    const handleAttned = (message: string, isAttend: boolean) => {
+    const handleAttned = (isAttend:boolean) => {
+        const clone = Object.assign({},isPush)
+        if(isAttend === true){
+            clone.attend = true
+            clone.absent = false
+            setIsPush(clone)
+            setMessage("出席します．")
+        }
+        if (isAttend === false){
+            clone.absent = true
+            clone.attend = false
+            setIsPush(clone)
+            setMessage("欠席します．")
+        }
         setIsAttend(isAttend)
-        // setResponseMessage(message + responseMessage)
     }
     
     const postResponse = () => {
@@ -84,20 +83,14 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             }
         })
     }
-    // useEffect(() => {
-    //     if (isAttend) {
-    //         setResponseMessage('出席します.')
-    //         return
-    //     }
-    //     setResponseMessage('欠席します.')
-    // }, [isAttend])
     return (
         <Card className={classes.root}>
             <CardContent>
                 <ButtonContainer>
-                    <MUIButton label={'出席'} onClick={() => handleAttned('出席します.', true)} color={'primary'} />
-                    <MUIButton label={'欠席'} onClick={() => handleAttned('欠席します.', false)} color={'secondary'} />
+                    <MUIButton label={'出席'} onClick={() => handleAttned(true)} color={'primary'} disable={isPush.attend}/>
+                    <MUIButton label={'欠席'} onClick={() => handleAttned(false)} color={'secondary'} disable={isPush.absent} />
                 </ButtonContainer>
+                <div></div>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
                     value={message}
