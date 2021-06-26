@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
     onClickToNotRes: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     onClickToResed: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    onClickToRequest?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     notResMailsInfo: MailDisplayInfo[]
     resedMailsInfo: MailDisplayInfo[]
 }
@@ -41,12 +42,16 @@ export const NestedMailList: VFC<Props> = (props) => {
     const classes = useStyles()
     const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
-    const { notResMailsInfo, resedMailsInfo, onClickToNotRes, onClickToResed } = props
+    const [requestOpen, setRequestOpen] = React.useState(false)
+    const { notResMailsInfo, resedMailsInfo, onClickToNotRes, onClickToResed,onClickToRequest } = props
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }
     const handleClickForResed = () => {
         setResedOpen(!resedOpen)
+    }
+    const handleClickForRequest = () => {
+        setRequestOpen(!requestOpen)
     }
     const display = (data: MailDisplayInfo): string => {
         return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
@@ -106,14 +111,14 @@ export const NestedMailList: VFC<Props> = (props) => {
                     ))}
                 </List>
             </Collapse>
-            <ListItem button onClick={handleClickForResed}>
+            <ListItem button onClick={handleClickForRequest}>
                 <ListItemIcon>
                     <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary="送信済み" />
-                {resedOpen ? <ExpandLess /> : <ExpandMore />}
+                {requestOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-            <Collapse in={resedOpen} timeout="auto" unmountOnExit>
+            <Collapse in={requestOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                     {resedMailsInfo.map((resedInfo, i) => (
                         <ListItem

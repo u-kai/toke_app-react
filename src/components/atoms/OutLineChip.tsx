@@ -37,7 +37,6 @@ export const OutlineChip: React.VFC<Props> = (props) => {
             <Chip
                 icon={<FaceIcon />}
                 label={label}
-                // onDelete={handleDelete}
                 color={color}
                 variant="outlined"
             />

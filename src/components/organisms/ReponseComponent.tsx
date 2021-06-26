@@ -68,12 +68,6 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
         }
         setIsAttend(isAttend)
     }
-
-    // const returnAbsentOrAttend = () => {
-    //     console.log(isAttend)
-    //     isAttend ? setChoiceMessage("出席を選択されています．") : setChoiceMessage("欠席を選択されています．")
-    //     return choiceMessage
-    // }
     
     const postResponse = () => {
         const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, isAttend, message)
@@ -92,7 +86,7 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
                 <ButtonContainer>
                     <MUIButton label={'出席'} onClick={() => handleAttned(true)} color={'primary'} disable={isPush.attend}/>
                     <MUIButton label={'欠席'} onClick={() => handleAttned(false)} color={'secondary'} disable={isPush.absent} />
-                    <AbsentOrAttend>{isAttend ? ("出席を選択されています．"):("欠席を選択されています．")}</AbsentOrAttend>
+                    <AbsentOrAttend>{isAttend ? (<div>出席を選択されています．</div>):(<div>欠席を選択されています．</div>)}</AbsentOrAttend>
                 </ButtonContainer>
                 <MultilineTextFields
                     placeholder={'メッセージ'}

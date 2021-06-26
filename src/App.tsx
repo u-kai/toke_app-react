@@ -73,8 +73,6 @@ export default function App() {
                 setErrorMessage(data.error)
                 return
             }
-            // setErrorMessage(data.error)
-            console.log(data.responseInfo.isAttend)
             setIsAttend(data.responseInfo.isAttend)
             setMessage(data.responseInfo.message)
         })
