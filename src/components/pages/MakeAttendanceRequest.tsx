@@ -152,10 +152,11 @@ export const MakeAttendanceRequest = () => {
 }
 
 const Container = styled.div`
-    margin-left: 20%;
+    // margin-left: 20%;
 `
 const Title = styled.h1`
-    width: 70%;
-    border-bottom: solid 3px black;
+    width: 100%;
+    border-bottom: solid 1px gray;
     text-align: center;
+    font-weight:normal
 `

@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    onClickToDetail: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    onClickToNotRes: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    onClickToResed: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     notResMailsInfo: MailDisplayInfo[]
     resedMailsInfo: MailDisplayInfo[]
 }
@@ -40,7 +41,7 @@ export const NestedMailList: VFC<Props> = (props) => {
     const classes = useStyles()
     const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
-    const { notResMailsInfo, resedMailsInfo, onClickToDetail } = props
+    const { notResMailsInfo, resedMailsInfo, onClickToNotRes, onClickToResed } = props
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }
@@ -76,7 +77,7 @@ export const NestedMailList: VFC<Props> = (props) => {
                             button
                             className={classes.nested}
                             id={notResInfo.attendance_request_id}
-                            onClick={onClickToDetail}
+                            onClick={onClickToNotRes}
                         >
                             <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
                         </ListItem>
@@ -98,9 +99,31 @@ export const NestedMailList: VFC<Props> = (props) => {
                             button
                             className={classes.nested}
                             id={resedInfo.attendance_request_id}
-                            onClick={onClickToDetail}
+                            onClick={onClickToResed}
                         >
                             <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
+                        </ListItem>
+                    ))}
+                </List>
+            </Collapse>
+            <ListItem button onClick={handleClickForResed}>
+                <ListItemIcon>
+                    <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="送信済み" />
+                {resedOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={resedOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    {resedMailsInfo.map((resedInfo, i) => (
+                        <ListItem
+                            key={`sendInfoItem${i}`}
+                            button
+                            className={classes.nested}
+                            id={resedInfo.attendance_request_id}
+                            onClick={onClickToResed}
+                        >
+                            <ListItemText key={`sendInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
                         </ListItem>
                     ))}
                 </List>

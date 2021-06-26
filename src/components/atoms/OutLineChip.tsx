@@ -17,10 +17,13 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     })
 )
-
-export default function OutlinedChips() {
+type Props = {
+    label:string
+    color: "default" | "primary" | "secondary" | undefined
+}
+export const OutlineChip:React.VFC<Props> = (props) =>  {
     const classes = useStyles()
-
+    const {label,color} = props
     const handleDelete = () => {
         console.info('You clicked the delete icon.')
     }
@@ -33,9 +36,9 @@ export default function OutlinedChips() {
         <div className={classes.root}>
             <Chip
                 icon={<FaceIcon />}
-                label="Deletable secondary"
-                onDelete={handleDelete}
-                color="secondary"
+                label={label}
+                // onDelete={handleDelete}
+                color={color}
                 variant="outlined"
             />
         </div>

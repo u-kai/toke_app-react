@@ -25,7 +25,12 @@ import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { SendButton } from 'components/atoms/SendButton'
 import { MUIButton } from 'components/atoms/MUIButton'
 import { DateConverter } from 'model/DateConverter'
-import { isReturnStatement } from 'typescript'
+import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
+import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
+import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
+import { displayPartsToString } from 'typescript'
+import { EventInfo } from 'components/organisms/EventInfo'
+
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
@@ -36,12 +41,36 @@ export default function App() {
     const [responseMessage, setResponseMessage] = useState('')
     const [isAttend, setIsAttend] = useState(false)
     const [displayEventId, setDisplayEventId] = useState('')
+    const [errorMessage,setErrorMessage] = useState("")
+    const [successMessage,setSuccessMessage] = useState("")
+    const [paticipants, setPaticipants] = useState(["0人"])
+    const [displayComponents,setDisplayComponents] = useState<"request"|"response">("response")
     const postResponse = () => {
-        console.log('not')
+            const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId,displayEventId,isAttend,responseMessage)
+            stateMaker.returnErrorAndSuccessMessage().then((data)=>{
+                if(data.success){
+                    setSuccessMessage(data.success)
+                }
+                if(data.error){
+                    setSuccessMessage(data.error)
+                }
+            })
+    }
+
+    const init = () => {
+        setIsAttend(false)
     }
     const handleAttned = (message: string, isAttend: boolean) => {
         setIsAttend(isAttend)
         setResponseMessage(message + responseMessage)
+    }
+    const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>)  => {
+        setDisplayEventId(e.currentTarget.id)
+        setDisplayComponents("response")
+    }
+    const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setDisplayEventId(e.currentTarget.id)
+        setDisplayComponents("response")
     }
     useEffect(() => {
         const dateChecker = new DateChecker()
@@ -54,13 +83,15 @@ export default function App() {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
             stateMaker.returnErrorAndInfos().then((data) => {
                 console.log('!!!!!!!!!!', data.infos)
+                console.log("data",data)
+                setErrorMessage(data.error)
                 if (data.infos) {
                     const sortList = dateChecker.sortTest(data.infos)
                     console.log(sortList)
                     dataInfos.huck(sortList)
                     if (dataInfos.url === 'getNotRes') {
                         console.log('getNotRes', sortList[0].attendance_request_id)
-                        //setDisplayEventId(sortList[0].attendance_request_id)
+                        setDisplayEventId(sortList[0].attendance_request_id)
                     }
                     if (dataInfos.url === 'getEvent') {
                         const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
@@ -70,29 +101,43 @@ export default function App() {
             })
         })
     }, [userId])
-    // if(notResEventInfo[0] !== undefined){
-    //     setDisplayEventId(notResEventInfo[0].attendance_request_id)
-    // }
     const returnTest = (id: string) => {
-        if (notResEventInfo.length !== 0) {
-            console.log('id', typeof id)
+        if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
             const allEventInfo = clone.concat(resedEventInfo, attendEventInfo)
-            console.log('allEventInfo', allEventInfo)
-            console.log(
-                'filter',
-                allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
-            )
             return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
         }
     }
-    // console.log("returnTest",returnTest(displayEzventId))
     useEffect(() => {
         if (notResEventInfo[0] !== undefined) {
             setDisplayEventId(notResEventInfo[0].attendance_request_id)
+            return
         }
-    }, [notResEventInfo])
+        if(resedEventInfo[0] !== undefined){
+            setDisplayEventId(resedEventInfo[0].attendance_request_id)
+            return
+        }
+    }, [notResEventInfo,resedEventInfo])
+    useEffect(()=>{
+        postAndReturnResponseToJson({attendanceRequestId:displayEventId},"getPaticipants")
+        .then((data:BackendReturn)=>{
 
+            if(data.results.error?.sqlMessage === "データが見つかりませんでした．"){
+                setPaticipants(["0人"])
+            }
+            if(data.results.select !== undefined){
+                const userData = data.results.select as {user_name:string}[]
+                setPaticipants(userData.map(data=>data.user_name))
+            }
+            console.log("participant",data)
+            // if(data.results.select !== undefined){
+            //     const d = data.results.select
+            //     const a = d.map((data:{user_name:string})=>{
+
+            //     })
+            // }
+        })
+    },[displayEventId])
     return (
         <RecoilRoot>
             <Container>
@@ -100,41 +145,57 @@ export default function App() {
                     <input value={userId} onChange={(e) => setUserId(e.target.value)}></input>
                     <PrimarySearchAppBar></PrimarySearchAppBar>
                 </FooterContainer>
-                <BanerContainer>
-                    <SimpleAlert message={'success'} severity={'success'}></SimpleAlert>
+                {errorMessage !== "" ? (
+                    <BanerContainer>
+                    <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
                 </BanerContainer>
+                ):(null)}
+                {successMessage !== "" ? (
+                    <BanerContainer>
+                    <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
+                </BanerContainer>
+                ):(null)}
+                <MettingButtonContainer>
+                    <MUIButton
+                    label={"会議を設定する"}
+                    onClick={()=>setDisplayComponents("request")}
+                    color="primary"
+                    />
+                </MettingButtonContainer>
                 <MailContainer>
                     <NestedMailList
                         notResMailsInfo={notResEventInfo}
                         resedMailsInfo={resedEventInfo}
-                        onClickToDetail={(e) => {
-                            setDisplayEventId(e.currentTarget.id)
-                        }}
+                        onClickToNotRes={onClickToNotResed}
+                        onClickToResed={onClickToResed}
                     />
                 </MailContainer>
-                {returnTest(displayEventId) !== undefined ? (
-                    <EventInfoContainer>
-                        <div>出席依頼</div>
-                        <div>開催者：{returnTest(displayEventId)!.organizer_name}</div>
-                        <div>目的：{returnTest(displayEventId)!.purpose}</div>
-                        <div>
-                            日時：
-                            {dateConverter.displayDateRange(
-                                returnTest(displayEventId)!.start_date,
-                                returnTest(displayEventId)!.end_date
-                            )}
-                        </div>
-                        <div>場所：{returnTest(displayEventId)!.location}</div>
-                        <div>持ち物：{returnTest(displayEventId)!.bring}</div>
-                        <div>概要</div>
-                        <div>{returnTest(displayEventId)!.describes}</div>
-                        <div>現在の参加者</div>
-                        <ul>
-                            <li></li>
-                            <li>udomaki</li>
-                        </ul>
-                    </EventInfoContainer>
-                ) : null}
+                {displayComponents === "response" ? ( 
+                    returnTest(displayEventId) !== undefined ? (
+                        <EventInfoContainer>
+                            <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
+                            {/* <TitleContainer><span>出席依頼</span></TitleContainer>
+                            <div>開催者：{returnTest(displayEventId)!.organizer_name}</div>
+                            <div>目的：{returnTest(displayEventId)!.purpose}</div>
+                            <div>
+                                日時：
+                                {dateConverter.displayDateRange(
+                                    returnTest(displayEventId)!.start_date,
+                                    returnTest(displayEventId)!.end_date
+                                )}
+                            </div>
+                            <div>場所：{returnTest(displayEventId)!.location}</div>
+                            <div>持ち物：{returnTest(displayEventId)!.bring}</div>
+                            <div>概要</div>
+                            <div>{returnTest(displayEventId)!.describes}</div>
+                            <div>現在の参加者</div>
+                            <ul>
+                            {paticipants.map((paticipant)=>(
+                                <li>{paticipant}</li>
+                            ))}
+                            </ul> */}
+                        </EventInfoContainer>
+                ):(null)) : (<MakeAttendanceRequest></MakeAttendanceRequest>)}
                 <NextEventContainer>
                     <NestedScheduleList
                         todayScheduleInfo={todayEventInfo}
@@ -144,7 +205,8 @@ export default function App() {
                         }}
                     />
                 </NextEventContainer>
-                <ResponseContainer>
+                {displayComponents === "response" ? (
+                    <ResponseContainer>
                     <ButtonContainer>
                         <MUIButton label={'出席'} onClick={() => handleAttned('出席します.', true)} color={'primary'} />
                         <MUIButton
@@ -160,14 +222,28 @@ export default function App() {
                     />
                     <SendButton onClick={postResponse} />
                 </ResponseContainer>
+                ) : (null) }
+                
             </Container>
         </RecoilRoot>
     )
 }
-
+const TitleContainer = styled.div`
+    display: flex;
+    align-items:center;
+    width:100%;
+`
 const ButtonContainer = styled.div`
     display: flex;
     display-direction: row;
+`
+const MettingButtonContainer = styled.div`
+    display:flex;
+    margin-top:30px;
+    margin-left:30px;
+    align-items:center;
+    grid-row:2/3;
+    grid-column:1/2;
 `
 const Container = styled.div`
     width: 100%;
@@ -204,8 +280,8 @@ const EventInfoContainer = styled.div`
     height: 100%;
     grid-row: 3/4;
     grid-column: 2/3;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 10px;
 `
 const NextEventContainer = styled.div`

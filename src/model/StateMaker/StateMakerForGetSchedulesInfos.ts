@@ -8,6 +8,9 @@ export class StateMakerForGetSchedulesInfo extends StateMaker {
         super(new DataPosterForGetSchedulesInfos(url, userId))
     }
     returnError = (data: BackendReturn): string | '' => {
+        if(data.results.error?.sqlMessage === "データが見つかりませんでした．"){
+            return ""
+        }
         return this.factoryConverter(data).returnError('エラーが起きてます．管理者にご報告ください．')
     }
     private reutrnInfos = (data: BackendReturn): ScheduleInfoResults | undefined => {
