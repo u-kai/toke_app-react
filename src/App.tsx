@@ -39,6 +39,7 @@ import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import userEvent from '@testing-library/user-event'
+import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
@@ -48,6 +49,7 @@ export default function App() {
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
+    const [requestsInfo,setRequestsInfo] = useState<ScheduleInfoResults>([])
     const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
@@ -84,7 +86,7 @@ export default function App() {
             { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
             { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
             { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
-            {url:"getMyEvents",info:notResEventInfo,huck:(e:any)=>console.log("dfagasdgasdga",e)}
+            // { url:"getRequests",info:notResEventInfo,huck:setRequestsInfo}
         ]
         infosList.map((dataInfos) => {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
@@ -113,6 +115,15 @@ export default function App() {
         stateMakerUserName.returnErrorAndUserName().then((data)=>{
             if(data.userName !== ""){
                 setUserName(data.userName)
+            }
+            if(data.error !== ""){
+                setErrorMessage(data.error)
+            }
+        })
+        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
+        stateMakerforRequestInfo.returnErrorAndInfos().then((data)=>{
+            if(data.infos !== undefined){
+                setRequestsInfo(data.infos)
             }
             if(data.error !== ""){
                 setErrorMessage(data.error)
@@ -179,8 +190,10 @@ export default function App() {
                     <NestedMailList
                         notResMailsInfo={notResEventInfo}
                         resedMailsInfo={resedEventInfo}
+                        requestMailsInfo={requestsInfo}
                         onClickToNotRes={onClickToNotResed}
                         onClickToResed={onClickToResed}
+                        onClickToRequest={(e)=>console.log(e)}
                     />
                 </MailContainer>
                 {displayComponents === 'response' ? (
