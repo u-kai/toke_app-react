@@ -34,16 +34,20 @@ import { ResponseComponent } from 'components/organisms/ReponseComponent'
 import { StateMakerForGetResponse } from 'model/StateMaker/StateMakerForGetResponse'
 import {messageState} from "store/message"
 import {isAttendState} from "store/isAttend"
+import {userNameState} from "store/user_name"
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
+import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
+import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
+import userEvent from '@testing-library/user-event'
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
+    const [userName,setUserName] = useRecoilState(userNameState)
     const [message,setMessage] = useRecoilState(messageState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
- 
     const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
@@ -54,6 +58,7 @@ export default function App() {
 
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
+        setIsAttend(false)
         setMessage("")
         setDisplayComponents('response')
     }
@@ -69,8 +74,8 @@ export default function App() {
                 return
             }
             // setErrorMessage(data.error)
-            setIsAttend(data.responseInfo.isAttend)//inf
-            console.log(data.responseInfo.message)
+            console.log(data.responseInfo.isAttend)
+            setIsAttend(data.responseInfo.isAttend)
             setMessage(data.responseInfo.message)
         })
         setDisplayComponents('response')
@@ -106,7 +111,16 @@ export default function App() {
                 }
             })
         })
-    }, [userId])
+        const stateMakerUserName = new StateMakerForUserName(userId)
+        stateMakerUserName.returnErrorAndUserName().then((data)=>{
+            if(data.userName !== ""){
+                setUserName(data.userName)
+            }
+            if(data.error !== ""){
+                setErrorMessage(data.error)
+            }
+        })
+        }, [userId])
     const returnTest = (id: string) => {
         if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
@@ -142,7 +156,6 @@ export default function App() {
         setUserId(e.target.value)
     }
     return (
-        // <RecoilRoot>
             <Container>
                 <FooterContainer>
                     <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
@@ -194,13 +207,10 @@ export default function App() {
                     <ResponseContainer>
                         <ResponseComponent
                             eventId={displayEventId}
-                            propsMessage={message}
-                            // propsIsAttend={isAttend}
                         ></ResponseComponent>
                     </ResponseContainer>
                 ) : null}
             </Container>
-        /* </RecoilRoot> */
     )
 }
 const TitleContainer = styled.div`

@@ -49,10 +49,10 @@ export const Login = () => {
                 <ButtonContener>
                     <SendButton onClick={onClick} />
                 </ButtonContener>
-            </InputContener>
-            <div>
+                <div>
                 <Link to="/newRegistUser">新規登録はこちら</Link>
             </div>
+            </InputContener>
             <ErrorContener>
                 {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
             </ErrorContener>
@@ -69,7 +69,7 @@ const Contener = styled.div`
 `
 const InputContener = styled.div`
     width: 350px;
-    height: 300px;
+    height: 370px;
     grid-row: 2/3;
     grid-column: 2/3;
     border: solid 2px #95949a;
@@ -77,6 +77,7 @@ const InputContener = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items:center;
 `
 const ErrorContener = styled.div`
     position: absolute;
@@ -85,9 +86,9 @@ const ErrorContener = styled.div`
 `
 const TextFieldContener = styled.div`
     width: 100%;
-    height: 80px;
+    height: 70px;
     margin-left: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
 `
 const ButtonContener = styled.div`
     display: flex;
@@ -95,6 +96,7 @@ const ButtonContener = styled.div`
 `
 
 const Title = styled.div`
+    width:100%;
     font-size: 30px;
     height: 40px;
     font-weight: bold;

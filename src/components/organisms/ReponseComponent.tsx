@@ -37,9 +37,6 @@ const useStyles = makeStyles({
 })
 type Props = {
     eventId: string
-    propsMessage?: string
-    propsSetMessage?:string
-    propsIsAttend?: boolean
 }
 
 export const ResponseComponent: React.VFC<Props> = (props) => {
@@ -54,7 +51,7 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
     const [message,setMessage] = useRecoilState(messageState)
     const [successMessage, setSuccessMessage] = useState('')
     const [userId, setUserId] = useRecoilState(userIdState)
-    console.log("new or change",newOrChange)
+    const [choiceMessage,setChoiceMessage] = useState("")
     const handleAttned = (isAttend:boolean) => {
         const clone = Object.assign({},isPush)
         if(isAttend === true){
@@ -71,6 +68,12 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
         }
         setIsAttend(isAttend)
     }
+
+    // const returnAbsentOrAttend = () => {
+    //     console.log(isAttend)
+    //     isAttend ? setChoiceMessage("出席を選択されています．") : setChoiceMessage("欠席を選択されています．")
+    //     return choiceMessage
+    // }
     
     const postResponse = () => {
         const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, isAttend, message)
@@ -89,8 +92,8 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
                 <ButtonContainer>
                     <MUIButton label={'出席'} onClick={() => handleAttned(true)} color={'primary'} disable={isPush.attend}/>
                     <MUIButton label={'欠席'} onClick={() => handleAttned(false)} color={'secondary'} disable={isPush.absent} />
+                    <AbsentOrAttend>{isAttend ? ("出席を選択されています．"):("欠席を選択されています．")}</AbsentOrAttend>
                 </ButtonContainer>
-                <div></div>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
                     value={message}
@@ -105,4 +108,8 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
 const ButtonContainer = styled.div`
     display: flex;
     display-direction: row;
+    align-items:center;
+`
+const AbsentOrAttend = styled.span`
+    font-size:20px;
 `

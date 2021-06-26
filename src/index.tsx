@@ -4,11 +4,19 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { RecoilRoot } from 'recoil'
+import { Router } from 'express'
+import { BrowserRouter,Route } from 'react-router-dom'
+import {Login} from "components/pages/Login"
+
 
 ReactDOM.render(
     <React.StrictMode>
         <RecoilRoot>
-            <App />
+            <BrowserRouter>
+            <Route exact path="/" component={Login}/>
+            <Route exact path="/home" component={App}/>
+            {/* <App /> */}
+            </BrowserRouter>
         </RecoilRoot>
     </React.StrictMode>,
     document.getElementById('root')
