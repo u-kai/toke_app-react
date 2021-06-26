@@ -12,7 +12,9 @@ const useStyles = makeStyles((theme: Theme) =>
         formControl: {
             margin: theme.spacing(1),
             minWidth: 170,
-            maxWidth: 300,
+            maxWidth: 200,
+            maxHeight:70,
+            overflow:"auto"
         },
         chips: {
             display: 'flex',

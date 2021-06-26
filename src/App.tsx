@@ -40,6 +40,7 @@ import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import userEvent from '@testing-library/user-event'
 import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
+import {EventEdit} from "components/organisms/EventEdit"
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
@@ -68,7 +69,7 @@ export default function App() {
         setDisplayEventId(e.currentTarget.id)
         setIsAttend(false)
         setMessage("")
-        setDisplayComponents('response')
+        setDisplayComponents('request')
     }
     console.log(message)
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -140,6 +141,7 @@ export default function App() {
         if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
             const allEventInfo = clone.concat(resedEventInfo, attendEventInfo,requestsInfo)
+            console.log("restusn",allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0])
             return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
         }
     }
@@ -205,15 +207,16 @@ export default function App() {
                         onClickToRequest={onClickToRequest}
                     />
                 </MailContainer>
+                <EventInfoContainer>
                 {displayComponents === 'response' ? (
                     returnTest(displayEventId) !== undefined ? (
-                        <EventInfoContainer>
                             <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
-                        </EventInfoContainer>
                     ) : null
                 ) : (
-                    <MakeAttendanceRequest></MakeAttendanceRequest>
+                    <EventEdit info={returnTest(displayEventId)!} participants={paticipants}/>
+                    // <MakeAttendanceRequest></MakeAttendanceRequest>
                 )}
+                </EventInfoContainer>
                 <NextEventContainer>
                     <NestedScheduleList
                         todayScheduleInfo={todayEventInfo}

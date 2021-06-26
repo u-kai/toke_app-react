@@ -31,7 +31,7 @@ export const MultilineTextFields: VFC<Props> = (props) => {
                     id="outlined-multiline-static"
                     label={placeholder}
                     multiline
-                    rows={4}
+                    rows={2}
                     onChange={onChange}
                     variant="outlined"
                 />
