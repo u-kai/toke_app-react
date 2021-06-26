@@ -32,15 +32,19 @@ import { displayPartsToString } from 'typescript'
 import { EventInfo } from 'components/organisms/EventInfo'
 import { ResponseComponent } from 'components/organisms/ReponseComponent'
 import { StateMakerForGetResponse } from 'model/StateMaker/StateMakerForGetResponse'
-
+import {messageState} from "store/message"
+import {isAttendState} from "store/isAttend"
+import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
+    const [message,setMessage] = useRecoilState(messageState)
+    //const [message,setMessage] = useState("")
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
-    const [responseMessage, setResponseMessage] = useState<string | undefined>()
+ 
     const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
@@ -48,22 +52,27 @@ export default function App() {
     const [paticipants, setPaticipants] = useState(['0人'])
     const [displayComponents, setDisplayComponents] = useState<'request' | 'response'>('response')
 
-    const init = () => {
-        setIsAttend(false)
-    }
 
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
+        setMessage("")
         setDisplayComponents('response')
     }
+    console.log(message)
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const eventId = e.currentTarget.id
         setDisplayEventId(eventId)
         const stateMaker = new StateMakerForGetResponse(userId, eventId)
         stateMaker.returnErrorAndResponseInfo().then((data) => {
-            setErrorMessage(data.error)
-            setIsAttend(data.responseInfo.isAttend)
-            setResponseMessage(data.responseInfo.message)
+            console.log("infi",data)
+            if(data.error !== ""){
+                setErrorMessage(data.error)
+                return
+            }
+            // setErrorMessage(data.error)
+            setIsAttend(data.responseInfo.isAttend)//inf
+            console.log(data.responseInfo.message)
+            setMessage(data.responseInfo.message)
         })
         setDisplayComponents('response')
     }
@@ -73,12 +82,14 @@ export default function App() {
             { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
             { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
             { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
+            {url:"getMyEvents",info:notResEventInfo,huck:(e:any)=>console.log("dfagasdgasdga",e)}
         ]
         infosList.map((dataInfos) => {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
             stateMaker.returnErrorAndInfos().then((data) => {
-                console.log('!!!!!!!!!!', data.infos)
-                console.log('data', data)
+                if(data.infos === undefined){
+                    dataInfos.huck([])
+                }
                 setErrorMessage(data.error)
                 if (data.infos) {
                     const sortList = dateChecker.sortTest(data.infos)
@@ -89,6 +100,7 @@ export default function App() {
                         setDisplayEventId(sortList[0].attendance_request_id)
                     }
                     if (dataInfos.url === 'getEvent') {
+                        console.log("getEvent",data.infos)
                         const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
                         setTodayEventInfo(todayInfos)
                     }
@@ -131,7 +143,7 @@ export default function App() {
         setUserId(e.target.value)
     }
     return (
-        <RecoilRoot>
+        // <RecoilRoot>
             <Container>
                 <FooterContainer>
                     <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
@@ -183,13 +195,13 @@ export default function App() {
                     <ResponseContainer>
                         <ResponseComponent
                             eventId={displayEventId}
-                            propsMessage={responseMessage}
-                            propsIsAttend={isAttend}
+                            propsMessage={message}
+                            // propsIsAttend={isAttend}
                         ></ResponseComponent>
                     </ResponseContainer>
                 ) : null}
             </Container>
-        </RecoilRoot>
+        /* </RecoilRoot> */
     )
 }
 const TitleContainer = styled.div`

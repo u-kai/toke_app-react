@@ -15,6 +15,9 @@ import { userIdState } from 'store/user_id'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { SendButton } from 'components/atoms/SendButton'
 import { MUIButton } from 'components/atoms/MUIButton'
+import { StateMaker } from 'model/StateMaker/StateMaker'
+import { StateMakerForChangeResponse } from 'model/StateMaker/StateMakerForChangeResponse'
+import {messageState} from "store/message"
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -34,44 +37,44 @@ const useStyles = makeStyles({
 type Props = {
     eventId: string
     propsMessage?: string
+    propsSetMessage?:string
     propsIsAttend?: boolean
 }
+
 export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const bull = <span className={classes.bullet}>•</span>
-    const { eventId, propsMessage, propsIsAttend } = props
-    const initIsAttend = () => {
-        if (propsIsAttend !== undefined) {
-            return propsIsAttend
-        }
-        return false
-    }
-    const initMessage = () => {
-        if (propsMessage === null) {
-            return ''
-        }
-        if (propsMessage === '') {
-            return ''
-        }
-        if (propsMessage !== undefined) {
-            return propsMessage
-        }
-        return '欠席します.'
-    }
-    const [isAttend, setIsAttend] = useState(initIsAttend())
-    const [responseMessage, setResponseMessage] = useState(initMessage())
+    const { eventId } = props
+    const [newOrChange,setNewOrChange] = useState<"new"|"change">("new")
+    // const initIsAttend = () => {
+    //     if (propsIsAttend !== undefined) {
+    //         setNewOrChange("change")
+    //         return propsIsAttend
+    //     }
+    //     return false
+    // }
+    // const initMessage = () => {
+    //     if (propsMessage === null) {
+    //         return ''
+    //     }
+    //     if (propsMessage !== undefined) {
+    //         return propsMessage
+    //     }
+    //     return '欠席します.'
+    // }
+    const [isAttend, setIsAttend] = useState(false)
+    const [message,setMessage] = useRecoilState(messageState)
+    console.log("betuppe-zi",message)
     const [successMessage, setSuccessMessage] = useState('')
     const [userId, setUserId] = useRecoilState(userIdState)
+    console.log("new or change",newOrChange)
     const handleAttned = (message: string, isAttend: boolean) => {
         setIsAttend(isAttend)
         // setResponseMessage(message + responseMessage)
     }
-    useEffect(() => {
-        setIsAttend(initIsAttend())
-        setResponseMessage(initMessage())
-    }, [eventId])
+    
     const postResponse = () => {
-        const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, isAttend, responseMessage)
+        const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, isAttend, message)
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
             if (data.success) {
                 setSuccessMessage(data.success)
@@ -81,13 +84,13 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             }
         })
     }
-    useEffect(() => {
-        if (isAttend) {
-            setResponseMessage('出席します.')
-            return
-        }
-        setResponseMessage('欠席します.')
-    }, [isAttend])
+    // useEffect(() => {
+    //     if (isAttend) {
+    //         setResponseMessage('出席します.')
+    //         return
+    //     }
+    //     setResponseMessage('欠席します.')
+    // }, [isAttend])
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -97,8 +100,8 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
                 </ButtonContainer>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
-                    value={responseMessage}
-                    onChange={(e) => setResponseMessage(e.target.value)}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                 />
                 <SendButton onClick={postResponse} />
             </CardContent>
