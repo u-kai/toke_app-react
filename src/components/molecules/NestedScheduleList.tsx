@@ -84,7 +84,7 @@ export const NestedScheduleList: VFC<Props> = (props) => {
                 </List>
             </Collapse>
             <ListItem button onClick={handleClickForResed}>
-            <ListItemIcon>
+                <ListItemIcon>
                     <SimpleBadge color="secondary" badgeContent={allScheduleInfo.length}></SimpleBadge>
                 </ListItemIcon>
                 <ListItemText primary="予定一覧" />

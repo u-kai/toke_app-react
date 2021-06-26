@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: theme.spacing(1),
             minWidth: 170,
             maxWidth: 200,
-            maxHeight:70,
-            overflow:"auto"
+            maxHeight: 70,
+            overflow: 'auto',
         },
         chips: {
             display: 'flex',

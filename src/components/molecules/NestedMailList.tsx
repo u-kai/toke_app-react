@@ -35,7 +35,7 @@ type Props = {
     onClickToRequest?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     notResMailsInfo: MailDisplayInfo[]
     resedMailsInfo: MailDisplayInfo[]
-    requestMailsInfo:MailDisplayInfo[]
+    requestMailsInfo: MailDisplayInfo[]
 }
 
 const dateConverter = new DateConverter()
@@ -44,7 +44,8 @@ export const NestedMailList: VFC<Props> = (props) => {
     const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
     const [requestOpen, setRequestOpen] = React.useState(false)
-    const { notResMailsInfo, resedMailsInfo, requestMailsInfo,onClickToNotRes, onClickToResed,onClickToRequest } = props
+    const { notResMailsInfo, resedMailsInfo, requestMailsInfo, onClickToNotRes, onClickToResed, onClickToRequest } =
+        props
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }

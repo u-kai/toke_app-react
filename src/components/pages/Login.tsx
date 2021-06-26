@@ -4,7 +4,7 @@ import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
 import { useHistory, Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
@@ -26,6 +26,7 @@ export const Login = () => {
         })
     }
     return (
+        // <RecoilRoot>
         <Contener>
             <InputContener>
                 <Title>ログイン</Title>
@@ -50,13 +51,14 @@ export const Login = () => {
                     <SendButton onClick={onClick} />
                 </ButtonContener>
                 <div>
-                <Link to="/newRegistUser">新規登録はこちら</Link>
-            </div>
+                    <Link to="/newRegistUser">新規登録はこちら</Link>
+                </div>
             </InputContener>
             <ErrorContener>
                 {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
             </ErrorContener>
         </Contener>
+        // </RecoilRoot>
     )
 }
 
@@ -77,7 +79,7 @@ const InputContener = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items:center;
+    align-items: center;
 `
 const ErrorContener = styled.div`
     position: absolute;
@@ -96,7 +98,7 @@ const ButtonContener = styled.div`
 `
 
 const Title = styled.div`
-    width:100%;
+    width: 100%;
     font-size: 30px;
     height: 40px;
     font-weight: bold;

@@ -32,44 +32,43 @@ import { displayPartsToString } from 'typescript'
 import { EventInfo } from 'components/organisms/EventInfo'
 import { ResponseComponent } from 'components/organisms/ReponseComponent'
 import { StateMakerForGetResponse } from 'model/StateMaker/StateMakerForGetResponse'
-import {messageState} from "store/message"
-import {isAttendState} from "store/isAttend"
-import {userNameState} from "store/user_name"
+import { messageState } from 'store/message'
+import { isAttendState } from 'store/isAttend'
+import { userNameState } from 'store/user_name'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import userEvent from '@testing-library/user-event'
 import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
-import {EventEdit} from "components/organisms/EventEdit"
+import { EventEdit } from 'components/organisms/EventEdit'
 const dateConverter = new DateConverter()
 export default function App() {
     const [userId, setUserId] = useRecoilState(userIdState)
-    const [userName,setUserName] = useRecoilState(userNameState)
-    const [message,setMessage] = useRecoilState(messageState)
+    const [userName, setUserName] = useRecoilState(userNameState)
+    const [message, setMessage] = useRecoilState(messageState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
-    const [requestsInfo,setRequestsInfo] = useState<ScheduleInfoResults>([])
+    const [requestsInfo, setRequestsInfo] = useState<ScheduleInfoResults>([])
     const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
     const [paticipants, setPaticipants] = useState(['0人'])
-    const [displayComponents, setDisplayComponents] = useState<'request' | 'response'>('response')
-
-
+    const [displayComponents, setDisplayComponents] = useState<'editRequest' | 'response' | 'newRequest'>('response')
+    console.log('userName', userName)
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         setIsAttend(false)
-        setMessage("")
+        setMessage('')
         setDisplayComponents('response')
     }
     const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         setIsAttend(false)
-        setMessage("")
-        setDisplayComponents('request')
+        setMessage('')
+        setDisplayComponents('editRequest')
     }
     console.log(message)
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -77,8 +76,8 @@ export default function App() {
         setDisplayEventId(eventId)
         const stateMaker = new StateMakerForGetResponse(userId, eventId)
         stateMaker.returnErrorAndResponseInfo().then((data) => {
-            console.log("infi",data)
-            if(data.error !== ""){
+            console.log('infi', data)
+            if (data.error !== '') {
                 setErrorMessage(data.error)
                 return
             }
@@ -86,6 +85,10 @@ export default function App() {
             setMessage(data.responseInfo.message)
         })
         setDisplayComponents('response')
+    }
+    const createNewEvent = () => {
+        setDisplayComponents('newRequest')
+        setRequestsInfo([])
     }
     useEffect(() => {
         const dateChecker = new DateChecker()
@@ -98,7 +101,7 @@ export default function App() {
         infosList.map((dataInfos) => {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
             stateMaker.returnErrorAndInfos().then((data) => {
-                if(data.infos === undefined){
+                if (data.infos === undefined) {
                     dataInfos.huck([])
                 }
                 setErrorMessage(data.error)
@@ -111,7 +114,7 @@ export default function App() {
                         setDisplayEventId(sortList[0].attendance_request_id)
                     }
                     if (dataInfos.url === 'getEvent') {
-                        console.log("getEvent",data.infos)
+                        console.log('getEvent', data.infos)
                         const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
                         setTodayEventInfo(todayInfos)
                     }
@@ -119,29 +122,33 @@ export default function App() {
             })
         })
         const stateMakerUserName = new StateMakerForUserName(userId)
-        stateMakerUserName.returnErrorAndUserName().then((data)=>{
-            if(data.userName !== ""){
+        stateMakerUserName.returnErrorAndUserName().then((data) => {
+            console.log('usreName!!!!!!!!!!!', data)
+            if (data.userName !== '') {
                 setUserName(data.userName)
             }
-            if(data.error !== ""){
+            if (data.error !== '') {
                 setErrorMessage(data.error)
             }
         })
         const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
-        stateMakerforRequestInfo.returnErrorAndInfos().then((data)=>{
-            if(data.infos !== undefined){
+        stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
+            if (data.infos !== undefined) {
                 setRequestsInfo(data.infos)
             }
-            if(data.error !== ""){
+            if (data.error !== '') {
                 setErrorMessage(data.error)
             }
         })
-        }, [userId])
+    }, [userId])
     const returnTest = (id: string) => {
         if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
-            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo,requestsInfo)
-            console.log("restusn",allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0])
+            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo, requestsInfo)
+            console.log(
+                'restusn',
+                allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
+            )
             return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
         }
     }
@@ -154,10 +161,10 @@ export default function App() {
             setDisplayEventId(resedEventInfo[0].attendance_request_id)
             return
         }
-        if (requestsInfo[0] !== undefined){
+        if (requestsInfo[0] !== undefined) {
             setDisplayEventId(requestsInfo[0].attendance_request_id)
         }
-    }, [notResEventInfo, resedEventInfo,requestsInfo])
+    }, [notResEventInfo, resedEventInfo, requestsInfo])
     useEffect(() => {
         postAndReturnResponseToJson({ attendanceRequestId: displayEventId }, 'getPaticipants').then(
             (data: BackendReturn) => {
@@ -176,64 +183,61 @@ export default function App() {
         setUserId(e.target.value)
     }
     return (
-            <Container>
-                <FooterContainer>
-                    <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
-                </FooterContainer>
-                {errorMessage !== '' ? (
-                    <BanerContainer>
-                        <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
-                    </BanerContainer>
-                ) : null}
-                {successMessage !== '' ? (
-                    <BanerContainer>
-                        <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
-                    </BanerContainer>
-                ) : null}
-                <MettingButtonContainer>
-                    <MUIButton
-                        label={'会議を設定する'}
-                        onClick={() => setDisplayComponents('request')}
-                        color="primary"
-                    />
-                </MettingButtonContainer>
-                <MailContainer>
-                    <NestedMailList
-                        notResMailsInfo={notResEventInfo}
-                        resedMailsInfo={resedEventInfo}
-                        requestMailsInfo={requestsInfo}
-                        onClickToNotRes={onClickToNotResed}
-                        onClickToResed={onClickToResed}
-                        onClickToRequest={onClickToRequest}
-                    />
-                </MailContainer>
-                <EventInfoContainer>
+        // <RecoilRoot>
+        <Container>
+            <FooterContainer>
+                <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
+            </FooterContainer>
+            {errorMessage !== '' ? (
+                <BanerContainer>
+                    <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
+                </BanerContainer>
+            ) : null}
+            {successMessage !== '' ? (
+                <BanerContainer>
+                    <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
+                </BanerContainer>
+            ) : null}
+            <MettingButtonContainer>
+                <MUIButton label={'会議を設定する'} onClick={createNewEvent} color="primary" />
+            </MettingButtonContainer>
+            <MailContainer>
+                <NestedMailList
+                    notResMailsInfo={notResEventInfo}
+                    resedMailsInfo={resedEventInfo}
+                    requestMailsInfo={requestsInfo}
+                    onClickToNotRes={onClickToNotResed}
+                    onClickToResed={onClickToResed}
+                    onClickToRequest={onClickToRequest}
+                />
+            </MailContainer>
+            <EventInfoContainer>
                 {displayComponents === 'response' ? (
                     returnTest(displayEventId) !== undefined ? (
-                            <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
+                        <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
                     ) : null
+                ) : displayComponents === 'editRequest' ? (
+                    <EventEdit info={returnTest(displayEventId)!} participants={paticipants} />
                 ) : (
-                    <EventEdit info={returnTest(displayEventId)!} participants={paticipants}/>
-                    // <MakeAttendanceRequest></MakeAttendanceRequest>
+                    <EventEdit />
                 )}
-                </EventInfoContainer>
-                <NextEventContainer>
-                    <NestedScheduleList
-                        todayScheduleInfo={todayEventInfo}
-                        allScheduleInfo={attendEventInfo}
-                        onClickToDetail={(e) => {
-                            setDisplayEventId(e.currentTarget.id)
-                        }}
-                    />
-                </NextEventContainer>
-                {displayComponents === 'response' ? (
-                    <ResponseContainer>
-                        <ResponseComponent
-                            eventId={displayEventId}
-                        ></ResponseComponent>
-                    </ResponseContainer>
-                ) : null}
-            </Container>
+            </EventInfoContainer>
+            <NextEventContainer>
+                <NestedScheduleList
+                    todayScheduleInfo={todayEventInfo}
+                    allScheduleInfo={attendEventInfo}
+                    onClickToDetail={(e) => {
+                        setDisplayEventId(e.currentTarget.id)
+                    }}
+                />
+            </NextEventContainer>
+            {displayComponents === 'response' ? (
+                <ResponseContainer>
+                    <ResponseComponent eventId={displayEventId}></ResponseComponent>
+                </ResponseContainer>
+            ) : null}
+        </Container>
+        // </RecoilRoot>
     )
 }
 const TitleContainer = styled.div`

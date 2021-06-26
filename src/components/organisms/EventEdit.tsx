@@ -26,7 +26,7 @@ import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { TimePicker } from 'components/atoms/TimePicker'
 import { useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
-import TextField from '@material-ui/core/TextField';
+import TextField from '@material-ui/core/TextField'
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -44,7 +44,7 @@ const useStyles = makeStyles({
     },
 })
 type Props = {
-    eventId?:string
+    eventId?: string
     info?: ScheduleInfo
     participants?: string[]
 }
@@ -55,17 +55,21 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const bull = <span className={classes.bullet}>•</span>
     const organizerId = useRecoilValue(userIdState)
     const organizerName = useRecoilValue(userNameState)
-    const { info={
-        purpose:"",
-        location:"",
-        describes:"",
-        bring:"",
-        organizer_id:organizerId,
-        organizer_name:organizerName,
-        date:new Date().toString(),
-        start_date:today,
-        end_date:""
-    }, participants = [] } = props
+    // console.log(organizerName)
+    const {
+        info = {
+            purpose: '',
+            location: '',
+            describes: '',
+            bring: '',
+            organizer_id: organizerId,
+            organizer_name: organizerName,
+            date: new Date().toString(),
+            start_date: today,
+            end_date: '',
+        },
+        participants = [],
+    } = props
     const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState(info.purpose)
     const [date, setDate] = useState(info.start_date)
@@ -75,8 +79,6 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const [location, setLocation] = useState(info.location)
     const [isSend, setIsSend] = useState(false)
     const [error, setError] = useState('')
-    // const [groupIds,setGroupIds] = useState([""])
-    // const [groupNames,setGroupNames] = useState([""])
     const [groupName, setGroupName] = useState('')
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
@@ -89,13 +91,13 @@ export const EventEdit: React.VFC<Props> = (props) => {
             setMemberNames(data.data.names)
         })
     }, [])
-    useEffect(()=>{
+    useEffect(() => {
         setPurpose(info.purpose)
         setDate(info.start_date)
         setBring(info.bring)
         setDesc(info.describes)
         setLocation(info.location)
-    },[info])
+    }, [info])
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -153,42 +155,56 @@ export const EventEdit: React.VFC<Props> = (props) => {
                     出席依頼
                 </Typography>
                 <br />
-                <Typography className={classes.pos}><TextField id="standard-basic" label="開催者" value={info.organizer_name}/></Typography>
-                <Typography className={classes.pos}><TextField id="standard-basic" label="目的" value={purpose} onChange={changePurpose}/></Typography>
                 <Typography className={classes.pos}>
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <DateAndTimePickers date={date} id="date" label="日時" onChange={changeDate}></DateAndTimePickers>
-                <TimePicker label="時間" onChange={changeRequestTime}></TimePicker>
-                 </div>
+                    <TextField id="organizer_name" label="開催者" value={info.organizer_name} />
                 </Typography>
-                <Typography className={classes.pos}><TextField id="standard-basic" label="場所" value={location} onChange={changeLocation}/></Typography>
-                <Typography className={classes.pos}><TextField id="standard-basic" label="持ち物" value={bring} onChange={changeBring}/></Typography>
-                <Typography className={classes.pos}><MultilineTextFields placeholder={'説明'} value={desc} onChange={changeDesc}></MultilineTextFields></Typography>
+                <Typography className={classes.pos}>
+                    <TextField id="porpose" label="目的" value={purpose} onChange={changePurpose} />
+                </Typography>
+                <Typography className={classes.pos}>
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <DateAndTimePickers
+                            date={date}
+                            id="date"
+                            label="日時"
+                            onChange={changeDate}
+                        ></DateAndTimePickers>
+                        <TimePicker label="時間" onChange={changeRequestTime}></TimePicker>
+                    </div>
+                </Typography>
+                <Typography className={classes.pos}>
+                    <TextField id="location" label="場所" value={location} onChange={changeLocation} />
+                </Typography>
+                <Typography className={classes.pos}>
+                    <TextField id="bring" label="持ち物" value={bring} onChange={changeBring} />
+                </Typography>
+                <Typography className={classes.pos}>
+                    <MultilineTextFields placeholder={'説明'} value={desc} onChange={changeDesc}></MultilineTextFields>
+                </Typography>
                 <Typography className={classes.pos}>現在の参加者</Typography>
                 <Container>
-                {participants.map((participant) => (
-                    <OutlineChip label={participant} color={'primary'}></OutlineChip>
-                ))}
+                    {participants.map((participant) => (
+                        <OutlineChip label={participant} color={'primary'}></OutlineChip>
+                    ))}
                 </Container>
                 <DisplayFlexContainer>
-                <MultipleSelect
-                    names={memberNames}
-                    onChange={changeMembers}
-                    placeholder={'メンバーを選択'}
-                    selectNames={selectedMembers}
-                />
-                <SendButton onClick={()=>console.log("click")}></SendButton>
+                    <MultipleSelect
+                        names={memberNames}
+                        onChange={changeMembers}
+                        placeholder={'メンバーを選択'}
+                        selectNames={selectedMembers}
+                    />
+                    <SendButton onClick={() => console.log('click')}></SendButton>
                 </DisplayFlexContainer>
             </CardContent>
         </Card>
     )
 }
 const Container = styled.div`
-display:flex;
-flex-wrap:wrap;
-align-items:center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 `
 const DisplayFlexContainer = styled.div`
-    display:flex;
-
+    display: flex;
 `

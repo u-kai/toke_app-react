@@ -34,12 +34,7 @@ export const OutlineChip: React.VFC<Props> = (props) => {
 
     return (
         <div className={classes.root}>
-            <Chip
-                icon={<FaceIcon />}
-                label={label}
-                color={color}
-                variant="outlined"
-            />
+            <Chip icon={<FaceIcon />} label={label} color={color} variant="outlined" />
         </div>
     )
 }

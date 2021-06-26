@@ -17,8 +17,8 @@ import { SendButton } from 'components/atoms/SendButton'
 import { MUIButton } from 'components/atoms/MUIButton'
 import { StateMaker } from 'model/StateMaker/StateMaker'
 import { StateMakerForChangeResponse } from 'model/StateMaker/StateMakerForChangeResponse'
-import {messageState} from "store/message"
-import {isAttendState} from "store/isAttend"
+import { messageState } from 'store/message'
+import { isAttendState } from 'store/isAttend'
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -42,33 +42,33 @@ type Props = {
 export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const { eventId } = props
-    const [newOrChange,setNewOrChange] = useState<"new"|"change">("new")
+    const [newOrChange, setNewOrChange] = useState<'new' | 'change'>('new')
     const [isAttend, setIsAttend] = useRecoilState(isAttendState)
-    const [isPush,setIsPush] = useState({
-        attend:false,
-        absent:false
+    const [isPush, setIsPush] = useState({
+        attend: false,
+        absent: false,
     })
-    const [message,setMessage] = useRecoilState(messageState)
+    const [message, setMessage] = useRecoilState(messageState)
     const [successMessage, setSuccessMessage] = useState('')
     const [userId, setUserId] = useRecoilState(userIdState)
-    const [choiceMessage,setChoiceMessage] = useState("")
-    const handleAttned = (isAttend:boolean) => {
-        const clone = Object.assign({},isPush)
-        if(isAttend === true){
+    const [choiceMessage, setChoiceMessage] = useState('')
+    const handleAttned = (isAttend: boolean) => {
+        const clone = Object.assign({}, isPush)
+        if (isAttend === true) {
             clone.attend = true
             clone.absent = false
             setIsPush(clone)
-            setMessage("出席します．")
+            setMessage('出席します．')
         }
-        if (isAttend === false){
+        if (isAttend === false) {
             clone.absent = true
             clone.attend = false
             setIsPush(clone)
-            setMessage("欠席します．")
+            setMessage('欠席します．')
         }
         setIsAttend(isAttend)
     }
-    
+
     const postResponse = () => {
         const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, isAttend, message)
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
@@ -84,9 +84,21 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
         <Card className={classes.root}>
             <CardContent>
                 <ButtonContainer>
-                    <MUIButton label={'出席'} onClick={() => handleAttned(true)} color={'primary'} disable={isPush.attend}/>
-                    <MUIButton label={'欠席'} onClick={() => handleAttned(false)} color={'secondary'} disable={isPush.absent} />
-                    <AbsentOrAttend>{isAttend ? (<div>出席を選択されています．</div>):(<div>欠席を選択されています．</div>)}</AbsentOrAttend>
+                    <MUIButton
+                        label={'出席'}
+                        onClick={() => handleAttned(true)}
+                        color={'primary'}
+                        disable={isPush.attend}
+                    />
+                    <MUIButton
+                        label={'欠席'}
+                        onClick={() => handleAttned(false)}
+                        color={'secondary'}
+                        disable={isPush.absent}
+                    />
+                    <AbsentOrAttend>
+                        {isAttend ? <div>出席を選択されています．</div> : <div>欠席を選択されています．</div>}
+                    </AbsentOrAttend>
                 </ButtonContainer>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
@@ -102,8 +114,8 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
 const ButtonContainer = styled.div`
     display: flex;
     display-direction: row;
-    align-items:center;
+    align-items: center;
 `
 const AbsentOrAttend = styled.span`
-    font-size:20px;
+    font-size: 20px;
 `

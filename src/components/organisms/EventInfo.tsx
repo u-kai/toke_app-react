@@ -50,16 +50,16 @@ export const EventInfo: React.VFC<Props> = (props) => {
                 <Typography className={classes.pos}>概要: {info.describes}</Typography>
                 <Typography className={classes.pos}>現在の参加者</Typography>
                 <Container>
-                {participants.map((participant) => (
-                    <OutlineChip label={participant} color={'primary'}></OutlineChip>
-                ))}
+                    {participants.map((participant) => (
+                        <OutlineChip label={participant} color={'primary'}></OutlineChip>
+                    ))}
                 </Container>
             </CardContent>
         </Card>
     )
 }
 const Container = styled.div`
-display:flex;
-flex-wrap:wrap;
-align-items:center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 `

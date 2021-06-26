@@ -5,17 +5,16 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { RecoilRoot } from 'recoil'
 import { Router } from 'express'
-import { BrowserRouter,Route } from 'react-router-dom'
-import {Login} from "components/pages/Login"
-
+import { BrowserRouter, Route } from 'react-router-dom'
+import { Login } from 'components/pages/Login'
 
 ReactDOM.render(
     <React.StrictMode>
         <RecoilRoot>
             <BrowserRouter>
-            <Route exact path="/" component={Login}/>
-            <Route exact path="/home" component={App}/>
-            {/* <App /> */}
+                <Route exact path="/" component={Login} />
+                <Route exact path="/home" component={App} />
+                {/* <App /> */}
             </BrowserRouter>
         </RecoilRoot>
     </React.StrictMode>,
