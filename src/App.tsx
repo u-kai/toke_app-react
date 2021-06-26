@@ -64,6 +64,12 @@ export default function App() {
         setMessage("")
         setDisplayComponents('response')
     }
+    const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setDisplayEventId(e.currentTarget.id)
+        setIsAttend(false)
+        setMessage("")
+        setDisplayComponents('response')
+    }
     console.log(message)
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const eventId = e.currentTarget.id
@@ -131,9 +137,9 @@ export default function App() {
         })
         }, [userId])
     const returnTest = (id: string) => {
-        if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0) {
+        if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
-            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo)
+            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo,requestsInfo)
             return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
         }
     }
@@ -146,7 +152,10 @@ export default function App() {
             setDisplayEventId(resedEventInfo[0].attendance_request_id)
             return
         }
-    }, [notResEventInfo, resedEventInfo])
+        if (requestsInfo[0] !== undefined){
+            setDisplayEventId(requestsInfo[0].attendance_request_id)
+        }
+    }, [notResEventInfo, resedEventInfo,requestsInfo])
     useEffect(() => {
         postAndReturnResponseToJson({ attendanceRequestId: displayEventId }, 'getPaticipants').then(
             (data: BackendReturn) => {
@@ -193,7 +202,7 @@ export default function App() {
                         requestMailsInfo={requestsInfo}
                         onClickToNotRes={onClickToNotResed}
                         onClickToResed={onClickToResed}
-                        onClickToRequest={(e)=>console.log(e)}
+                        onClickToRequest={onClickToRequest}
                     />
                 </MailContainer>
                 {displayComponents === 'response' ? (
@@ -259,8 +268,8 @@ const BanerContainer = styled.div`
     height: 100%;
     grid-row: 2/3;
     grid-column: 2/3;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 3px;
 `
 const MailContainer = styled.div`

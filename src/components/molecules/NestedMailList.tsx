@@ -127,7 +127,7 @@ export const NestedMailList: VFC<Props> = (props) => {
                             button
                             className={classes.nested}
                             id={sendInfo.attendance_request_id}
-                            onClick={onClickToResed}
+                            onClick={onClickToRequest}
                         >
                             <ListItemText key={`sendInfoItemText${i}`} primary={display(sendInfo)}></ListItemText>
                         </ListItem>
