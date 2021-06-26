@@ -11,4 +11,4 @@ export type SelectResult =
     | ReturnDataForGetMembers
     | ReturnDataForGetGroups
     | ScheduleInfoResults
-    | {user_name:string}[]
+    | { user_name: string }[]

@@ -158,5 +158,5 @@ const Title = styled.h1`
     width: 100%;
     border-bottom: solid 1px gray;
     text-align: center;
-    font-weight:normal
+    font-weight: normal;
 `

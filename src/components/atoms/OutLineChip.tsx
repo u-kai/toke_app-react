@@ -18,12 +18,12 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 )
 type Props = {
-    label:string
-    color: "default" | "primary" | "secondary" | undefined
+    label: string
+    color: 'default' | 'primary' | 'secondary' | undefined
 }
-export const OutlineChip:React.VFC<Props> = (props) =>  {
+export const OutlineChip: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const {label,color} = props
+    const { label, color } = props
     const handleDelete = () => {
         console.info('You clicked the delete icon.')
     }

@@ -41,20 +41,25 @@ export default function App() {
     const [responseMessage, setResponseMessage] = useState('')
     const [isAttend, setIsAttend] = useState(false)
     const [displayEventId, setDisplayEventId] = useState('')
-    const [errorMessage,setErrorMessage] = useState("")
-    const [successMessage,setSuccessMessage] = useState("")
-    const [paticipants, setPaticipants] = useState(["0人"])
-    const [displayComponents,setDisplayComponents] = useState<"request"|"response">("response")
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+    const [paticipants, setPaticipants] = useState(['0人'])
+    const [displayComponents, setDisplayComponents] = useState<'request' | 'response'>('response')
     const postResponse = () => {
-            const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId,displayEventId,isAttend,responseMessage)
-            stateMaker.returnErrorAndSuccessMessage().then((data)=>{
-                if(data.success){
-                    setSuccessMessage(data.success)
-                }
-                if(data.error){
-                    setSuccessMessage(data.error)
-                }
-            })
+        const stateMaker = new StateMakerForNewAttendanceResponseRegist(
+            userId,
+            displayEventId,
+            isAttend,
+            responseMessage
+        )
+        stateMaker.returnErrorAndSuccessMessage().then((data) => {
+            if (data.success) {
+                setSuccessMessage(data.success)
+            }
+            if (data.error) {
+                setSuccessMessage(data.error)
+            }
+        })
     }
 
     const init = () => {
@@ -64,13 +69,13 @@ export default function App() {
         setIsAttend(isAttend)
         setResponseMessage(message + responseMessage)
     }
-    const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>)  => {
+    const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
-        setDisplayComponents("response")
+        setDisplayComponents('response')
     }
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
-        setDisplayComponents("response")
+        setDisplayComponents('response')
     }
     useEffect(() => {
         const dateChecker = new DateChecker()
@@ -83,7 +88,7 @@ export default function App() {
             const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
             stateMaker.returnErrorAndInfos().then((data) => {
                 console.log('!!!!!!!!!!', data.infos)
-                console.log("data",data)
+                console.log('data', data)
                 setErrorMessage(data.error)
                 if (data.infos) {
                     const sortList = dateChecker.sortTest(data.infos)
@@ -113,31 +118,31 @@ export default function App() {
             setDisplayEventId(notResEventInfo[0].attendance_request_id)
             return
         }
-        if(resedEventInfo[0] !== undefined){
+        if (resedEventInfo[0] !== undefined) {
             setDisplayEventId(resedEventInfo[0].attendance_request_id)
             return
         }
-    }, [notResEventInfo,resedEventInfo])
-    useEffect(()=>{
-        postAndReturnResponseToJson({attendanceRequestId:displayEventId},"getPaticipants")
-        .then((data:BackendReturn)=>{
+    }, [notResEventInfo, resedEventInfo])
+    useEffect(() => {
+        postAndReturnResponseToJson({ attendanceRequestId: displayEventId }, 'getPaticipants').then(
+            (data: BackendReturn) => {
+                if (data.results.error?.sqlMessage === 'データが見つかりませんでした．') {
+                    setPaticipants(['0人'])
+                }
+                if (data.results.select !== undefined) {
+                    const userData = data.results.select as { user_name: string }[]
+                    setPaticipants(userData.map((data) => data.user_name))
+                }
+                console.log('participant', data)
+                // if(data.results.select !== undefined){
+                //     const d = data.results.select
+                //     const a = d.map((data:{user_name:string})=>{
 
-            if(data.results.error?.sqlMessage === "データが見つかりませんでした．"){
-                setPaticipants(["0人"])
+                //     })
+                // }
             }
-            if(data.results.select !== undefined){
-                const userData = data.results.select as {user_name:string}[]
-                setPaticipants(userData.map(data=>data.user_name))
-            }
-            console.log("participant",data)
-            // if(data.results.select !== undefined){
-            //     const d = data.results.select
-            //     const a = d.map((data:{user_name:string})=>{
-
-            //     })
-            // }
-        })
-    },[displayEventId])
+        )
+    }, [displayEventId])
     return (
         <RecoilRoot>
             <Container>
@@ -145,21 +150,21 @@ export default function App() {
                     <input value={userId} onChange={(e) => setUserId(e.target.value)}></input>
                     <PrimarySearchAppBar></PrimarySearchAppBar>
                 </FooterContainer>
-                {errorMessage !== "" ? (
+                {errorMessage !== '' ? (
                     <BanerContainer>
-                    <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
-                </BanerContainer>
-                ):(null)}
-                {successMessage !== "" ? (
+                        <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
+                    </BanerContainer>
+                ) : null}
+                {successMessage !== '' ? (
                     <BanerContainer>
-                    <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
-                </BanerContainer>
-                ):(null)}
+                        <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
+                    </BanerContainer>
+                ) : null}
                 <MettingButtonContainer>
                     <MUIButton
-                    label={"会議を設定する"}
-                    onClick={()=>setDisplayComponents("request")}
-                    color="primary"
+                        label={'会議を設定する'}
+                        onClick={() => setDisplayComponents('request')}
+                        color="primary"
                     />
                 </MettingButtonContainer>
                 <MailContainer>
@@ -170,7 +175,7 @@ export default function App() {
                         onClickToResed={onClickToResed}
                     />
                 </MailContainer>
-                {displayComponents === "response" ? ( 
+                {displayComponents === 'response' ? (
                     returnTest(displayEventId) !== undefined ? (
                         <EventInfoContainer>
                             <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
@@ -195,7 +200,10 @@ export default function App() {
                             ))}
                             </ul> */}
                         </EventInfoContainer>
-                ):(null)) : (<MakeAttendanceRequest></MakeAttendanceRequest>)}
+                    ) : null
+                ) : (
+                    <MakeAttendanceRequest></MakeAttendanceRequest>
+                )}
                 <NextEventContainer>
                     <NestedScheduleList
                         todayScheduleInfo={todayEventInfo}
@@ -205,45 +213,48 @@ export default function App() {
                         }}
                     />
                 </NextEventContainer>
-                {displayComponents === "response" ? (
+                {displayComponents === 'response' ? (
                     <ResponseContainer>
-                    <ButtonContainer>
-                        <MUIButton label={'出席'} onClick={() => handleAttned('出席します.', true)} color={'primary'} />
-                        <MUIButton
-                            label={'欠席'}
-                            onClick={() => handleAttned('欠席します.', false)}
-                            color={'secondary'}
+                        <ButtonContainer>
+                            <MUIButton
+                                label={'出席'}
+                                onClick={() => handleAttned('出席します.', true)}
+                                color={'primary'}
+                            />
+                            <MUIButton
+                                label={'欠席'}
+                                onClick={() => handleAttned('欠席します.', false)}
+                                color={'secondary'}
+                            />
+                        </ButtonContainer>
+                        <MultilineTextFields
+                            placeholder={'メッセージ'}
+                            value={responseMessage}
+                            onChange={(e) => setResponseMessage(e.target.value)}
                         />
-                    </ButtonContainer>
-                    <MultilineTextFields
-                        placeholder={'メッセージ'}
-                        value={responseMessage}
-                        onChange={(e) => setResponseMessage(e.target.value)}
-                    />
-                    <SendButton onClick={postResponse} />
-                </ResponseContainer>
-                ) : (null) }
-                
+                        <SendButton onClick={postResponse} />
+                    </ResponseContainer>
+                ) : null}
             </Container>
         </RecoilRoot>
     )
 }
 const TitleContainer = styled.div`
     display: flex;
-    align-items:center;
-    width:100%;
+    align-items: center;
+    width: 100%;
 `
 const ButtonContainer = styled.div`
     display: flex;
     display-direction: row;
 `
 const MettingButtonContainer = styled.div`
-    display:flex;
-    margin-top:30px;
-    margin-left:30px;
-    align-items:center;
-    grid-row:2/3;
-    grid-column:1/2;
+    display: flex;
+    margin-top: 30px;
+    margin-left: 30px;
+    align-items: center;
+    grid-row: 2/3;
+    grid-column: 1/2;
 `
 const Container = styled.div`
     width: 100%;

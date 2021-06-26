@@ -28,13 +28,13 @@ export class BtoFConverter {
         if (this.checker.isSuccess()) {
             return this.backendReturnData.results.success
         }
-        if(this.checker.isOther()){
-            return [{success:"success"}]
+        if (this.checker.isOther()) {
+            return [{ success: 'success' }]
         }
     }
-    returnEmpty = ():string|undefined => {
-        if(this.checker.isEmpty()){
-            return ""
+    returnEmpty = (): string | undefined => {
+        if (this.checker.isEmpty()) {
+            return ''
         }
     }
 }

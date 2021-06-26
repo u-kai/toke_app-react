@@ -26,7 +26,7 @@ export class BackendResultsChecker {
         return false
     }
     isEmpty = () => {
-        if(this.backendResults.results.error?.sqlMessage === "データが見つかりませんでした．"){
+        if (this.backendResults.results.error?.sqlMessage === 'データが見つかりませんでした．') {
             return true
         }
         return false
