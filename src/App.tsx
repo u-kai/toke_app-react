@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { NestedScheduleList } from 'components/molecules/NestedScheduleList'
 import styled from 'styled-components'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
-import PrimarySearchAppBar from 'components/atoms/PrimarySearchAppBar'
+import { PrimarySearchAppBar } from 'components/atoms/PrimarySearchAppBar'
 import { ReturnDataForScheduleInfo } from 'types/backend-return-tyeps/ReturnDataForScheduleInfo'
 import { StateMakerForGetSchedulesInfo } from 'model/StateMaker/StateMakerForGetSchedulesInfos'
 import { userIdState } from 'store/user_id'
@@ -31,6 +31,7 @@ import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/State
 import { displayPartsToString } from 'typescript'
 import { EventInfo } from 'components/organisms/EventInfo'
 import { ResponseComponent } from 'components/organisms/ReponseComponent'
+import { StateMakerForGetResponse } from 'model/StateMaker/StateMakerForGetResponse'
 
 const dateConverter = new DateConverter()
 export default function App() {
@@ -39,43 +40,31 @@ export default function App() {
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
     const [attendEventInfo, setAttendEventInfo] = useState<ScheduleInfoResults>([])
     const [todayEventInfo, setTodayEventInfo] = useState<ScheduleInfoResults>([])
-    const [responseMessage, setResponseMessage] = useState('')
-    const [isAttend, setIsAttend] = useState(false)
+    const [responseMessage, setResponseMessage] = useState<string | undefined>()
+    const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
     const [paticipants, setPaticipants] = useState(['0人'])
     const [displayComponents, setDisplayComponents] = useState<'request' | 'response'>('response')
-    const postResponse = () => {
-        const stateMaker = new StateMakerForNewAttendanceResponseRegist(
-            userId,
-            displayEventId,
-            isAttend,
-            responseMessage
-        )
-        stateMaker.returnErrorAndSuccessMessage().then((data) => {
-            if (data.success) {
-                setSuccessMessage(data.success)
-            }
-            if (data.error) {
-                setSuccessMessage(data.error)
-            }
-        })
-    }
 
     const init = () => {
         setIsAttend(false)
     }
-    const handleAttned = (message: string, isAttend: boolean) => {
-        setIsAttend(isAttend)
-        setResponseMessage(message + responseMessage)
-    }
+
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         setDisplayComponents('response')
     }
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        setDisplayEventId(e.currentTarget.id)
+        const eventId = e.currentTarget.id
+        setDisplayEventId(eventId)
+        const stateMaker = new StateMakerForGetResponse(userId, eventId)
+        stateMaker.returnErrorAndResponseInfo().then((data) => {
+            setErrorMessage(data.error)
+            setIsAttend(data.responseInfo.isAttend)
+            setResponseMessage(data.responseInfo.message)
+        })
         setDisplayComponents('response')
     }
     useEffect(() => {
@@ -135,21 +124,17 @@ export default function App() {
                     setPaticipants(userData.map((data) => data.user_name))
                 }
                 console.log('participant', data)
-                // if(data.results.select !== undefined){
-                //     const d = data.results.select
-                //     const a = d.map((data:{user_name:string})=>{
-
-                //     })
-                // }
             }
         )
     }, [displayEventId])
+    const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setUserId(e.target.value)
+    }
     return (
         <RecoilRoot>
             <Container>
                 <FooterContainer>
-                    <input value={userId} onChange={(e) => setUserId(e.target.value)}></input>
-                    <PrimarySearchAppBar></PrimarySearchAppBar>
+                    <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
                 </FooterContainer>
                 {errorMessage !== '' ? (
                     <BanerContainer>
@@ -180,26 +165,6 @@ export default function App() {
                     returnTest(displayEventId) !== undefined ? (
                         <EventInfoContainer>
                             <EventInfo info={returnTest(displayEventId)!} participants={paticipants}></EventInfo>
-                            {/* <TitleContainer><span>出席依頼</span></TitleContainer>
-                            <div>開催者：{returnTest(displayEventId)!.organizer_name}</div>
-                            <div>目的：{returnTest(displayEventId)!.purpose}</div>
-                            <div>
-                                日時：
-                                {dateConverter.displayDateRange(
-                                    returnTest(displayEventId)!.start_date,
-                                    returnTest(displayEventId)!.end_date
-                                )}
-                            </div>
-                            <div>場所：{returnTest(displayEventId)!.location}</div>
-                            <div>持ち物：{returnTest(displayEventId)!.bring}</div>
-                            <div>概要</div>
-                            <div>{returnTest(displayEventId)!.describes}</div>
-                            <div>現在の参加者</div>
-                            <ul>
-                            {paticipants.map((paticipant)=>(
-                                <li>{paticipant}</li>
-                            ))}
-                            </ul> */}
                         </EventInfoContainer>
                     ) : null
                 ) : (
@@ -216,29 +181,13 @@ export default function App() {
                 </NextEventContainer>
                 {displayComponents === 'response' ? (
                     <ResponseContainer>
-                        <ResponseComponent eventId={displayEventId}></ResponseComponent>
+                        <ResponseComponent
+                            eventId={displayEventId}
+                            propsMessage={responseMessage}
+                            propsIsAttend={isAttend}
+                        ></ResponseComponent>
                     </ResponseContainer>
-                ) : // <ResponseContainer>
-                //     <ButtonContainer>
-                //         <MUIButton
-                //             label={'出席'}
-                //             onClick={() => handleAttned('出席します.', true)}
-                //             color={'primary'}
-                //         />
-                //         <MUIButton
-                //             label={'欠席'}
-                //             onClick={() => handleAttned('欠席します.', false)}
-                //             color={'secondary'}
-                //         />
-                //     </ButtonContainer>
-                //     <MultilineTextFields
-                //         placeholder={'メッセージ'}
-                //         value={responseMessage}
-                //         onChange={(e) => setResponseMessage(e.target.value)}
-                //     />
-                //     <SendButton onClick={postResponse} />
-                // </ResponseContainer>
-                null}
+                ) : null}
             </Container>
         </RecoilRoot>
     )
@@ -271,8 +220,8 @@ const FooterContainer = styled.div`
     // height:100%;
     grid-row: 1/2;
     grid-column: 1/4;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
 `
 const BanerContainer = styled.div`
     height: 100%;
@@ -287,8 +236,8 @@ const MailContainer = styled.div`
     height: 100%;
     grid-row: 3/4;
     grid-column: 1/2;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 10px;
 `
 const EventInfoContainer = styled.div`
@@ -303,8 +252,8 @@ const NextEventContainer = styled.div`
     height: 100%;
     grid-row: 3/4;
     grid-column: 3/4;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 10px;
 `
 const ResponseContainer = styled.div`

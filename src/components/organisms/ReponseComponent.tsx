@@ -47,6 +47,12 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
         return false
     }
     const initMessage = () => {
+        if (propsMessage === null) {
+            return ''
+        }
+        if (propsMessage === '') {
+            return ''
+        }
         if (propsMessage !== undefined) {
             return propsMessage
         }

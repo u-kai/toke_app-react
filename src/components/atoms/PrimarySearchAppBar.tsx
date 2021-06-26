@@ -80,9 +80,13 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     })
 )
-
-export default function PrimarySearchAppBar() {
+type Props = {
+    value: string
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+}
+export const PrimarySearchAppBar: React.VFC<Props> = (props) => {
     const classes = useStyles()
+    const { value, onChange } = props
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null)
 
@@ -171,7 +175,7 @@ export default function PrimarySearchAppBar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Material-UI
+                        Toke-APP
                     </Typography>
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
@@ -184,9 +188,11 @@ export default function PrimarySearchAppBar() {
                                 input: classes.inputInput,
                             }}
                             inputProps={{ 'aria-label': 'search' }}
+                            value={value}
+                            onChange={onChange}
                         />
                     </div>
-                    <div className={classes.grow} />
+                    {/* <div className={classes.grow} />
                     <div className={classes.sectionDesktop}>
                         <IconButton aria-label="show 4 new mails" color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -219,7 +225,7 @@ export default function PrimarySearchAppBar() {
                         >
                             <MoreIcon />
                         </IconButton>
-                    </div>
+                    </div> */}
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}

@@ -4,6 +4,8 @@ import { ReturnDataForLogin } from 'types/backend-return-tyeps/ReturnDataForLogi
 import { ReturnDataForScheduleInfo } from 'types/backend-return-tyeps/ReturnDataForScheduleInfo'
 import { ReturnDataForGetGroups } from 'types/backend-return-tyeps/ReturnDataForGetGroups'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
+import { ReturnDataForGetResponse } from './ReturnDataForGetResponse'
+import { ReturnDataForGetParticipants } from './ReturnDataForGetParticipants'
 export type SelectResult =
     | ReturnDataForCount
     | ReturnDataForLogin
@@ -11,4 +13,5 @@ export type SelectResult =
     | ReturnDataForGetMembers
     | ReturnDataForGetGroups
     | ScheduleInfoResults
-    | { user_name: string }[]
+    | ReturnDataForGetParticipants
+    | ReturnDataForGetResponse
