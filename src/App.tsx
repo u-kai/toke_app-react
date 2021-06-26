@@ -30,6 +30,7 @@ import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
 import { displayPartsToString } from 'typescript'
 import { EventInfo } from 'components/organisms/EventInfo'
+import { ResponseComponent } from 'components/organisms/ReponseComponent'
 
 const dateConverter = new DateConverter()
 export default function App() {
@@ -215,26 +216,29 @@ export default function App() {
                 </NextEventContainer>
                 {displayComponents === 'response' ? (
                     <ResponseContainer>
-                        <ButtonContainer>
-                            <MUIButton
-                                label={'出席'}
-                                onClick={() => handleAttned('出席します.', true)}
-                                color={'primary'}
-                            />
-                            <MUIButton
-                                label={'欠席'}
-                                onClick={() => handleAttned('欠席します.', false)}
-                                color={'secondary'}
-                            />
-                        </ButtonContainer>
-                        <MultilineTextFields
-                            placeholder={'メッセージ'}
-                            value={responseMessage}
-                            onChange={(e) => setResponseMessage(e.target.value)}
-                        />
-                        <SendButton onClick={postResponse} />
+                        <ResponseComponent eventId={displayEventId}></ResponseComponent>
                     </ResponseContainer>
-                ) : null}
+                ) : // <ResponseContainer>
+                //     <ButtonContainer>
+                //         <MUIButton
+                //             label={'出席'}
+                //             onClick={() => handleAttned('出席します.', true)}
+                //             color={'primary'}
+                //         />
+                //         <MUIButton
+                //             label={'欠席'}
+                //             onClick={() => handleAttned('欠席します.', false)}
+                //             color={'secondary'}
+                //         />
+                //     </ButtonContainer>
+                //     <MultilineTextFields
+                //         placeholder={'メッセージ'}
+                //         value={responseMessage}
+                //         onChange={(e) => setResponseMessage(e.target.value)}
+                //     />
+                //     <SendButton onClick={postResponse} />
+                // </ResponseContainer>
+                null}
             </Container>
         </RecoilRoot>
     )
@@ -307,7 +311,7 @@ const ResponseContainer = styled.div`
     height: 100%;
     grid-row: 4/5;
     grid-column: 2/3;
-    border: solid 1px gray;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    // border: solid 1px gray;
+    // box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
     margin: 10px;
 `
