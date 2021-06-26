@@ -10,13 +10,7 @@ import { Login } from 'components/pages/Login'
 
 ReactDOM.render(
     <React.StrictMode>
-        <RecoilRoot>
-            <BrowserRouter>
-                <Route exact path="/" component={Login} />
-                <Route exact path="/home" component={App} />
-                {/* <App /> */}
-            </BrowserRouter>
-        </RecoilRoot>
+        <App />
     </React.StrictMode>,
     document.getElementById('root')
 )

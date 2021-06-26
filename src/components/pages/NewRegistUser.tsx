@@ -6,44 +6,55 @@ import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
 import { useHistory, Link } from 'react-router-dom'
 export const NewRegistUser = () => {
-    const inputList = ['名前', 'パスワード']
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
-    const [successMessage, setSuccessMessage] = useState('thank')
-    const history = useHistory()
+    const [successMessage, setSuccessMessage] = useState('')
+    const [isDisable, setIsDisable] = useState(false)
     const onClick = () => {
         const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
         stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
             if (data.error === '') {
+                setError('')
+                setIsDisable(true)
                 setSuccessMessage(data.success)
             }
             setError(data.error)
         })
+    }
+    const alreadySuccess = (): boolean => {
+        return successMessage !== ''
+    }
+    const handleUserName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (alreadySuccess()) {
+            return
+        }
+        setUserName(e.target.value)
+    }
+    const handlePassword = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (alreadySuccess()) {
+            return
+        }
+        setPassword(e.target.value)
     }
     return (
         <Contener>
             <InputContener>
                 <Title>新規登録</Title>
                 <TextFieldContener>
-                    <LayoutTextField
-                        id="login_userName"
-                        value={userName}
-                        label={inputList[0]}
-                        onChange={(e) => setUserName(e.target.value)}
-                    />
+                    <LayoutTextField id="login_userName" value={userName} label={'名前'} onChange={handleUserName} />
                 </TextFieldContener>
                 <TextFieldContener>
                     <LayoutTextField
                         id="login_password"
                         type="password"
                         value={password}
-                        label={inputList[1]}
-                        onChange={(e) => setPassword(e.target.value)}
+                        label={'パスワード'}
+                        onChange={handlePassword}
                     />
                 </TextFieldContener>
                 <ButtonContener>
-                    <SendButton onClick={onClick} />
+                    <SendButton onClick={onClick} isDisabled={isDisable} />
                 </ButtonContener>
             </InputContener>
             <ErrorContener>
@@ -81,9 +92,13 @@ const InputContener = styled.div`
     justify-content: space-between;
 `
 const ErrorContener = styled.div`
-    position: absolute;
-    left: 39%;
-    top: 1%;
+    // position: absolute;
+    grid-row: 1/2;
+    grid-column: 2/3;
+    margin-top: 10px;
+    // margin-left:25%;
+    // left: 39%;
+    // top: 1%;
 `
 const SuccessContener = ErrorContener
 const TextFieldContener = styled.div`

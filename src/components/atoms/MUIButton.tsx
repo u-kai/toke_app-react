@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
     label: string
-    onClick: () => void
+    onClick?: () => void
     color: 'inherit' | 'default' | 'primary' | 'secondary' | undefined
     disable?: boolean
 }

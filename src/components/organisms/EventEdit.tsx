@@ -52,7 +52,6 @@ const dateConverter = new DateConverter()
 const today = dateConverter.forMaterialUI()
 export const EventEdit: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const bull = <span className={classes.bullet}>•</span>
     const organizerId = useRecoilValue(userIdState)
     const organizerName = useRecoilValue(userNameState)
     // console.log(organizerName)
@@ -92,6 +91,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
         })
     }, [])
     useEffect(() => {
+        console.log('infochabnge')
         setPurpose(info.purpose)
         setDate(info.start_date)
         setBring(info.bring)
