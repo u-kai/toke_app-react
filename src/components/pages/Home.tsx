@@ -21,7 +21,13 @@ import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext} from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
-// import {useUserName} from "hocks/useUserName"
+import {StateMakerForGetParticipants} from "model/StateMaker/StateMakerForGetParticipants"
+type EventInfoSource = {
+        url: "getNotRes"|'getResed'|'getEvent';
+        info: ScheduleInfoResults;
+        huck: React.Dispatch<React.SetStateAction<ScheduleInfoResults>>;
+}
+
 export const Home = () => {
     const userContext = useContext(UserIdContext)
     const bannerMessageContext = useContext(BannerMessageContext)
@@ -69,7 +75,7 @@ export const Home = () => {
         setDisplayComponents('newRequest')
         setRequestsInfo([])
     }
-    const fetchUserName = (userId:string) => {
+    const fetchAndSetUserName = (userId:string) => {
         const stateMakerUserName = new StateMakerForUserName(userId)
         stateMakerUserName.returnErrorAndUserName().then((data) => {
             if (data.userName !== '') {
@@ -80,10 +86,38 @@ export const Home = () => {
             }
         })
     }
-    // const fetchNotResEventInfo = () => {
-
-    // }
-    // const fetchUserName = useUserName(userInfo.userId)
+    const fetchAndSetEventInfo = (eventInfoSource:EventInfoSource) => {
+            const dateChecker = new DateChecker()
+            const stateMaker = new StateMakerForGetSchedulesInfo(eventInfoSource.url, userInfo.userId)
+            stateMaker.returnErrorAndInfos().then((data) => {
+                if (data.infos === undefined) {
+                    eventInfoSource.huck([])
+                }
+                bannerDispatch({ type: 'setError', value: data.error })
+                if (data.infos) {
+                    const sortList = dateChecker.sortInfo(data.infos)
+                    eventInfoSource.huck(sortList)
+                    if (eventInfoSource.url === 'getNotRes') {
+                        setDisplayEventId(sortList[0].attendance_request_id)
+                    }
+                    if (eventInfoSource.url === 'getEvent') {
+                        const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
+                        setTodayEventInfo(todayInfos)
+                    }
+                }
+            })
+    }
+    const fetchAndSetRequestInfo = (userId:string) => {
+        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
+        stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
+            if (data.infos !== undefined) {
+                setRequestsInfo(data.infos)
+            }
+            if (data.error !== '') {
+                bannerDispatch({ type: 'setError', value: data.error })
+            }
+        })
+    } 
     const initDataFetch = () => {
         const dateChecker = new DateChecker()
         const infosList = [
@@ -94,53 +128,18 @@ export const Home = () => {
 
     }
     useEffect(() => {
-        const dateChecker = new DateChecker()
-        const infosList = [
+        const infosList:EventInfoSource[] = [
             { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
             { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
             { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
         ]
         infosList.map((dataInfos) => {
-            const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userInfo.userId)
-            stateMaker.returnErrorAndInfos().then((data) => {
-                if (data.infos === undefined) {
-                    dataInfos.huck([])
-                }
-                bannerDispatch({ type: 'setError', value: data.error })
-                if (data.infos) {
-                    const sortList = dateChecker.sortInfo(data.infos)
-                    dataInfos.huck(sortList)
-                    if (dataInfos.url === 'getNotRes') {
-                        setDisplayEventId(sortList[0].attendance_request_id)
-                    }
-                    if (dataInfos.url === 'getEvent') {
-                        const todayInfos = data.infos?.filter((data) => dateChecker.isToday(data.start_date))
-                        setTodayEventInfo(todayInfos)
-                    }
-                }
-            })
+            fetchAndSetEventInfo(dataInfos)
         })
-        fetchUserName(userInfo.userId)
-        console.log("userInfo",userInfo.userName)
-        // const stateMakerUserName = new StateMakerForUserName(userInfo.userId)
-        // stateMakerUserName.returnErrorAndUserName().then((data) => {
-        //     if (data.userName !== '') {
-        //         dispatch({ type: 'inputName', value: data.userName })
-        //     }
-        //     if (data.error !== '') {
-        //         bannerDispatch({ type: 'setError', value: data.error })
-        //     }
-        // })
-        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userInfo.userId)
-        stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
-            if (data.infos !== undefined) {
-                setRequestsInfo(data.infos)
-            }
-            if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
-            }
-        })
+        fetchAndSetUserName(userInfo.userId)
+        fetchAndSetRequestInfo(userInfo.userId)
     }, [userInfo.userId])
+
     const returnTest = (id: string) => {
         if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
@@ -167,6 +166,17 @@ export const Home = () => {
         })
         setDisplayComponents('response')
     }
+    const getPariticipants = (attendanceRequestId:string) => {
+        const stateMaker = new StateMakerForGetParticipants(attendanceRequestId)
+        stateMaker.returnErrorAndParticipants().then((data)=>{
+            if(data.error !== ""){
+                bannerDispatch({type:"setError",value:data.error})
+            }
+            if(data.error === ""){
+                setPaticipants(data.participants)
+            }
+        })
+    }
     useEffect(() => {
         if (notResEventInfo[0] !== undefined) {
             setDisplayEventId(notResEventInfo[0].attendance_request_id)
@@ -181,17 +191,18 @@ export const Home = () => {
         }
     }, [notResEventInfo, resedEventInfo, requestsInfo])
     useEffect(() => {
-        postAndReturnResponseToJson({ attendanceRequestId: displayEventId }, 'getPaticipants').then(
-            (data: BackendReturn) => {
-                if (data.results.error?.sqlMessage === 'データが見つかりませんでした．') {
-                    setPaticipants(['0人'])
-                }
-                if (data.results.select !== undefined) {
-                    const userData = data.results.select as { user_name: string }[]
-                    setPaticipants(userData.map((data) => data.user_name))
-                }
-            }
-        )
+        getPariticipants(displayEventId)
+        // postAndReturnResponseToJson({ attendanceRequestId: displayEventId }, 'getPaticipants').then(
+        //     (data: BackendReturn) => {
+        //         if (data.results.error?.sqlMessage === 'データが見つかりませんでした．') {
+        //             setPaticipants(['0人'])
+        //         }
+        //         if (data.results.select !== undefined) {
+        //             const userData = data.results.select as { user_name: string }[]
+        //             setPaticipants(userData.map((data) => data.user_name))
+        //         }
+        //     }
+        // )
     }, [displayEventId])
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         dispatch({ type: 'inputId', value: e.target.value })

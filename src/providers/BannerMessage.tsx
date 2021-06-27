@@ -18,8 +18,6 @@ const reducer = (state: Banner, action: { type: ActionType; value: string }): Ba
             return { ...state, status: 'error', message: action.value }
         case 'setSuccess':
             return { ...state, status: 'success', message: action.value }
-        // case "setInfomation":
-        //     return {...state,status:"socektIo",message:action.value}
         default:
             return { ...state }
     }
