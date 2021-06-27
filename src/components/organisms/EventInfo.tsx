@@ -29,7 +29,6 @@ type Props = {
 const dateConverter = new DateConverter()
 export const EventInfo: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const bull = <span className={classes.bullet}>•</span>
     const { info, participants } = props
     return (
         <Card className={classes.root}>

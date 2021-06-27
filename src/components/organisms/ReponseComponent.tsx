@@ -2,17 +2,17 @@ import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import styled from 'styled-components'
-import { useEffect, useState, useReducer,useContext } from 'react'
+import { useEffect, useState, useReducer, useContext } from 'react'
 import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { SendButton } from 'components/atoms/SendButton'
 import { MUIButton } from 'components/atoms/MUIButton'
-import {IsAttendAndMessageContext} from "providers/IsAttendAndMessage"
-import {UserIdContext} from "providers/UserIdProvider"
-import {BannerMessageContext} from "providers/BannerMessage"
-import {ResponseInfoContext} from "providers/ResponseInfoProvider"
+import { IsAttendAndMessageContext } from 'providers/IsAttendAndMessage'
+import { UserIdContext } from 'providers/UserIdProvider'
+import { BannerMessageContext } from 'providers/BannerMessage'
+import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -37,11 +37,11 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const { eventId } = props
     const context = useContext(ResponseInfoContext)
-    const {responseInfo,responseInfoDispatch} = context
+    const { responseInfo, responseInfoDispatch } = context
     const userIdContext = useContext(UserIdContext)
-    const {userInfo} = userIdContext
-    const bannerMessageContext  = useContext(BannerMessageContext)
-    const {bannerDispatch} = bannerMessageContext
+    const { userInfo } = userIdContext
+    const bannerMessageContext = useContext(BannerMessageContext)
+    const { bannerDispatch } = bannerMessageContext
     const postResponse = () => {
         const stateMaker = new StateMakerForNewAttendanceResponseRegist(
             userInfo.userId,
@@ -58,12 +58,11 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             }
         })
     }
-
     const onClickToAbsent = () => {
-        responseInfoDispatch({ type: 'selectAbsent'})
+        responseInfoDispatch({ type: 'selectAbsent' })
     }
     const onClickToAttend = () => {
-        responseInfoDispatch({type:"selectAttend"})
+        responseInfoDispatch({ type: 'selectAttend' })
     }
     return (
         <Card className={classes.root}>

@@ -8,11 +8,11 @@ type IsAttendAndMessageStateType = {
     responseMessage: string
 }
 type IsAttendAndMessageContextType = {
-    isAttendAndMessage:IsAttendAndMessageStateType
-    isAttendAndMessageDispatch:React.Dispatch<{
-        type:ActionType
-        value?:string
-        setState?:IsAttendAndMessageStateType
+    isAttendAndMessage: IsAttendAndMessageStateType
+    isAttendAndMessageDispatch: React.Dispatch<{
+        type: ActionType
+        value?: string
+        setState?: IsAttendAndMessageStateType
     }>
 }
 const reducer = (

@@ -80,7 +80,6 @@ export const EventEdit: React.VFC<Props> = (props) => {
         })
     }, [])
     useEffect(() => {
-        console.log('infochabnge')
         setPurpose(info.purpose)
         setDate(info.start_date)
         setBring(info.bring)
@@ -107,7 +106,6 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const changeLocation = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setLocation(e.target.value)
     }
-    console.log(memberIds)
     const test = () => {
         setIsSend(true)
         const stateMaker = new StateMakerForNewEventRegist(
