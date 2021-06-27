@@ -10,19 +10,19 @@ export class DateChecker {
             today.getDate() === compare.getDate()
         )
     }
+    // sortInfo = (infos: ScheduleInfoResults) => {
+    //     const dateIndex: { [key: string]: number } = {}
+    //     const dateInfos = infos.map((info, i) => {
+    //         dateIndex[info.attendance_request_id] = i
+    //         return info.start_date
+    //     })
+    //     console.log('dateInfos', dateInfos)
+    //     console.log('dateIndex', dateIndex)
+    //     const sortList = this.sortAsc(dateInfos)
+    //     const indexs = sortList.map((date) => dateIndex[date])
+    //     return indexs.map((i) => infos[i])
+    // }
     sortInfo = (infos: ScheduleInfoResults) => {
-        const dateIndex: { [key: string]: number } = {}
-        const dateInfos = infos.map((info, i) => {
-            dateIndex[info.attendance_request_id] = i
-            return info.start_date
-        })
-        console.log('dateInfos', dateInfos)
-        console.log('dateIndex', dateIndex)
-        const sortList = this.sortAsc(dateInfos)
-        const indexs = sortList.map((date) => dateIndex[date])
-        return indexs.map((i) => infos[i])
-    }
-    sortTest = (infos: ScheduleInfoResults) => {
         const minDate: ScheduleInfo = {
             attendance_request_id: '',
             start_date: '1999-01-01',
@@ -49,7 +49,6 @@ export class DateChecker {
             clone[temp] = minDate
         }
         maxList.pop()
-        console.log('max', maxList)
         return maxList
     }
     sortAsc = (dates: string[]) => {

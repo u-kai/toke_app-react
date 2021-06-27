@@ -21,6 +21,7 @@ import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext} from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
+// import {useUserName} from "hocks/useUserName"
 export const Home = () => {
     const userContext = useContext(UserIdContext)
     const bannerMessageContext = useContext(BannerMessageContext)
@@ -68,6 +69,30 @@ export const Home = () => {
         setDisplayComponents('newRequest')
         setRequestsInfo([])
     }
+    const fetchUserName = (userId:string) => {
+        const stateMakerUserName = new StateMakerForUserName(userId)
+        stateMakerUserName.returnErrorAndUserName().then((data) => {
+            if (data.userName !== '') {
+                dispatch({ type: 'inputName', value: data.userName })
+            }
+            if (data.error !== '') {
+                bannerDispatch({ type: 'setError', value: data.error })
+            }
+        })
+    }
+    // const fetchNotResEventInfo = () => {
+
+    // }
+    // const fetchUserName = useUserName(userInfo.userId)
+    const initDataFetch = () => {
+        const dateChecker = new DateChecker()
+        const infosList = [
+            { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
+            { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
+            { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
+        ]
+
+    }
     useEffect(() => {
         const dateChecker = new DateChecker()
         const infosList = [
@@ -83,7 +108,7 @@ export const Home = () => {
                 }
                 bannerDispatch({ type: 'setError', value: data.error })
                 if (data.infos) {
-                    const sortList = dateChecker.sortTest(data.infos)
+                    const sortList = dateChecker.sortInfo(data.infos)
                     dataInfos.huck(sortList)
                     if (dataInfos.url === 'getNotRes') {
                         setDisplayEventId(sortList[0].attendance_request_id)
@@ -95,15 +120,17 @@ export const Home = () => {
                 }
             })
         })
-        const stateMakerUserName = new StateMakerForUserName(userInfo.userId)
-        stateMakerUserName.returnErrorAndUserName().then((data) => {
-            if (data.userName !== '') {
-                dispatch({ type: 'inputName', value: data.userName })
-            }
-            if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
-            }
-        })
+        fetchUserName(userInfo.userId)
+        console.log("userInfo",userInfo.userName)
+        // const stateMakerUserName = new StateMakerForUserName(userInfo.userId)
+        // stateMakerUserName.returnErrorAndUserName().then((data) => {
+        //     if (data.userName !== '') {
+        //         dispatch({ type: 'inputName', value: data.userName })
+        //     }
+        //     if (data.error !== '') {
+        //         bannerDispatch({ type: 'setError', value: data.error })
+        //     }
+        // })
         const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userInfo.userId)
         stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
             if (data.infos !== undefined) {
