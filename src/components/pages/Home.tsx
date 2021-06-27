@@ -20,7 +20,7 @@ import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
 import { StateMakerForGetParticipants } from 'model/StateMaker/StateMakerForGetParticipants'
-import {EventInfoSource} from "types/ui-types/EventInfoSource"
+import { EventInfoSource } from 'types/ui-types/EventInfoSource'
 import { fetchAndSetAllEvent } from 'functions/fetchAndSetData/fetchAndSetEventInfo'
 import { insertInitDisplay } from 'functions/fetchAndSetData/insertInitDisplay'
 import { displayAndEventInfoDispatch } from 'reducers/DisplayAndEventInfo'
@@ -126,8 +126,8 @@ export const Home = () => {
         infosList.map((dataInfos) => {
             //fetchAndSetEventInfo(dataInfos)
             fetchAndSetAllEvent(userInfo.userId)
-            displayAndEventInfoDispatch({type:"initializeDisplay"})
-            displayAndEventInfoDispatch({type:"insertTodayEvents"})
+            displayAndEventInfoDispatch({ type: 'initializeDisplay' })
+            displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
         })
         fetchAndSetUserName(userInfo.userId)
         fetchAndSetRequestInfo(userInfo.userId)

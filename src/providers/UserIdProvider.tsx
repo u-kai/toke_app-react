@@ -23,7 +23,7 @@ type UserIdContextType = {
 }
 const initState: UserState = {
     userId: '3',
-    userName: '有働開',
+    userName: '',
 }
 export const UserIdContext = createContext<UserIdContextType>({} as UserIdContextType)
 export const UserIdProvider: VFC<ChildrenProps> = (props) => {
