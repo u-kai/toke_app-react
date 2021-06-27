@@ -1,31 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
 import { ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateConverter } from 'model/DateConverter'
 import { OutlineChip } from 'components/atoms/OutLineChip'
-import { userNameState } from 'store/user_name'
 import { dateCalculater } from 'functions/dateCalculater'
-import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
-import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
 import { StateMakerForNewGroupRegist } from 'model/StateMaker/StateMakerForNewGroupRegist'
-import React, { useEffect, useState,useContext } from 'react'
-import { LayoutTextField } from 'components/atoms/LayoutTextField'
+import React, { useEffect, useState, useContext } from 'react'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { SendButton } from 'components/atoms/SendButton'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { TimePicker } from 'components/atoms/TimePicker'
-import { useRecoilValue } from 'recoil'
-import { userIdState } from 'store/user_id'
 import TextField from '@material-ui/core/TextField'
 import { UserIdContext } from 'providers/UserIdProvider'
 const useStyles = makeStyles({
@@ -54,10 +44,7 @@ const today = dateConverter.forMaterialUI()
 export const EventEdit: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const context = useContext(UserIdContext)
-    const {userInfo,dispatch} = context
-    // const organizerId = useRecoilValue(userIdState)
-    // const organizerName = useRecoilValue(userNameState)
-    // console.log(organizerName)
+    const { userInfo, dispatch } = context
     const {
         info = {
             purpose: '',
@@ -72,7 +59,6 @@ export const EventEdit: React.VFC<Props> = (props) => {
         },
         participants = [],
     } = props
-    const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState(info.purpose)
     const [date, setDate] = useState(info.start_date)
     const [requestTime, setRequestTime] = useState('00:30')

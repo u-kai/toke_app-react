@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer,useContext } from 'react'
+import React, { useEffect, useState, useReducer, useContext } from 'react'
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
 import { SocketIo } from 'components/organisms/SocketIo'
 import socketIOClient from 'socket.io-client'
@@ -23,13 +23,13 @@ import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
 import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
-
-
+import { BannerMessageContext, BannerMessageProvider } from 'providers/BannerMessage'
 
 export const Home = () => {
-    const context = useContext(UserIdContext)
-    const {userInfo,dispatch} = context
-    console.log(context)
+    const userContext = useContext(UserIdContext)
+    const bannerMessageContext = useContext(BannerMessageContext)
+    const { userInfo, dispatch } = userContext
+    const { bannerMessage, bannerDispatch } = bannerMessageContext
     // const [userId, setUserId] = useRecoilState(userIdState)
     // const [userName, setUserName] = useRecoilState(userNameState)
     const [message, setMessage] = useRecoilState(messageState)
@@ -40,8 +40,8 @@ export const Home = () => {
     const [requestsInfo, setRequestsInfo] = useState<ScheduleInfoResults>([])
     const [isAttend, setIsAttend] = useState<boolean | undefined>()
     const [displayEventId, setDisplayEventId] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
+    // const [errorMessage, setErrorMessage] = useState('')
+    // const [successMessage, setSuccessMessage] = useState('')
     const [paticipants, setPaticipants] = useState(['0人'])
     const [displayComponents, setDisplayComponents] = useState<'editRequest' | 'response' | 'newRequest'>('response')
     console.log('userName', userInfo.userName)
@@ -65,7 +65,7 @@ export const Home = () => {
         stateMaker.returnErrorAndResponseInfo().then((data) => {
             console.log('infi', data)
             if (data.error !== '') {
-                setErrorMessage(data.error)
+                bannerDispatch({ type: 'setError', value: data.error })
                 return
             }
             setIsAttend(data.responseInfo.isAttend)
@@ -91,7 +91,7 @@ export const Home = () => {
                 if (data.infos === undefined) {
                     dataInfos.huck([])
                 }
-                setErrorMessage(data.error)
+                bannerDispatch({ type: 'setError', value: data.error })
                 if (data.infos) {
                     const sortList = dateChecker.sortTest(data.infos)
                     console.log(sortList)
@@ -112,10 +112,10 @@ export const Home = () => {
         stateMakerUserName.returnErrorAndUserName().then((data) => {
             console.log('usreName!!!!!!!!!!!', data)
             if (data.userName !== '') {
-                dispatch({type:"inputName",value:(data.userName)})
+                dispatch({ type: 'inputName', value: data.userName })
             }
             if (data.error !== '') {
-                setErrorMessage(data.error)
+                bannerDispatch({ type: 'setError', value: data.error })
             }
         })
         const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userInfo.userId)
@@ -125,7 +125,7 @@ export const Home = () => {
                 setRequestsInfo(data.infos)
             }
             if (data.error !== '') {
-                setErrorMessage(data.error)
+                bannerDispatch({ type: 'setError', value: data.error })
             }
         })
     }, [userInfo.userId])
@@ -168,22 +168,16 @@ export const Home = () => {
         )
     }, [displayEventId])
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        dispatch({type:"inputId",value:e.target.value})
+        dispatch({ type: 'inputId', value: e.target.value })
     }
     return (
-        // <RecoilRoot>
         <Container>
             <FooterContainer>
                 <PrimarySearchAppBar value={userInfo.userId} onChange={changeUserId}></PrimarySearchAppBar>
             </FooterContainer>
-            {errorMessage !== '' ? (
+            {bannerMessage.message !== '' && bannerMessage.message !== undefined ? (
                 <BanerContainer>
-                    <SimpleAlert message={errorMessage} severity={'error'}></SimpleAlert>
-                </BanerContainer>
-            ) : null}
-            {successMessage !== '' ? (
-                <BanerContainer>
-                    <SimpleAlert message={successMessage} severity={'success'}></SimpleAlert>
+                    <SimpleAlert message={bannerMessage.message} severity={bannerMessage.status}></SimpleAlert>
                 </BanerContainer>
             ) : null}
             <MettingButtonContainer>
@@ -225,7 +219,6 @@ export const Home = () => {
                 </ResponseContainer>
             ) : null}
         </Container>
-        // </RecoilRoot>
     )
 }
 const TitleContainer = styled.div`
