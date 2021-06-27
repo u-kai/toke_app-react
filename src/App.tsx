@@ -6,9 +6,11 @@ import { Home } from 'components/pages/Home'
 import { Login } from 'components/pages/Login'
 import { UserIdContext, UserIdProvider } from 'providers/UserIdProvider'
 import { BannerMessageProvider } from 'providers/BannerMessage'
+import {IsAttendAndMessageProvider} from "providers/IsAttendAndMessage"
 export default function App() {
     return (
         <UserIdProvider>
+            <IsAttendAndMessageProvider>
             <BannerMessageProvider>
                 <RecoilRoot>
                     <BrowserRouter>
@@ -18,6 +20,7 @@ export default function App() {
                     </BrowserRouter>
                 </RecoilRoot>
             </BannerMessageProvider>
+            </IsAttendAndMessageProvider>
         </UserIdProvider>
     )
 }
