@@ -1,16 +1,48 @@
-import React, { useState } from 'react'
+import React, { useState,useReducer } from 'react'
 import styled from 'styled-components'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
-import { useHistory, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useGetRecoilValueInfo_UNSTABLE } from 'recoil'
+
 export const NewRegistUser = () => {
+    const [isDisable, setIsDisable] = useState(false)
+    const isRockInput = (success:string):boolean => {
+        return success !== ""
+    }
+    const reducer = (state:NewRegistUserInfo,action:{type:string,value:string}) => {
+        switch(action.type){
+            case "inputName":
+                return  isRockInput(state.message.success) ? state : {...state,userName:action.value} 
+            case "inputPassword":
+                return isRockInput(state.message.success) ? state : {...state,password:action.value}
+            case "isMatch":
+                console.log("match")
+                return state
+            default:
+                return state
+        }
+    }
+    type NewRegistUserInfo = {
+            userName:string,
+            password:string,
+            message:{
+                error:string,
+                success:string
+            }
+    }
+    const initState:NewRegistUserInfo = {
+            userName:"",
+            password:"",
+            message:{error:"",success:""}
+        }
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
-    const [isDisable, setIsDisable] = useState(false)
+    const [newRegisterUser,dispatch] = useReducer(reducer,initState)
     const onClick = () => {
         const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
         stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
@@ -31,11 +63,14 @@ export const NewRegistUser = () => {
         }
         setUserName(e.target.value)
     }
-    const handlePassword = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (alreadySuccess()) {
-            return
-        }
-        setPassword(e.target.value)
+    // const handlePassword = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     if (alreadySuccess()) {
+    //         return
+    //     }
+    //     setPassword(e.target.value)
+    // }
+    const handlePassword = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        dispatch({type:"inputPussword",value:e.target.value})
     }
     return (
         <Contener>
@@ -48,7 +83,7 @@ export const NewRegistUser = () => {
                     <LayoutTextField
                         id="login_password"
                         type="password"
-                        value={password}
+                        value={newRegisterUser.password}
                         label={'パスワード'}
                         onChange={handlePassword}
                     />

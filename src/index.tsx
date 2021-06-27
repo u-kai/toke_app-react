@@ -3,10 +3,7 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { RecoilRoot } from 'recoil'
-import { Router } from 'express'
-import { BrowserRouter, Route } from 'react-router-dom'
-import { Login } from 'components/pages/Login'
+
 
 ReactDOM.render(
     <React.StrictMode>
