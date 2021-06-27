@@ -5,25 +5,25 @@ export class StateMakerForGetParticipants extends StateMaker {
     constructor(attendanceRequestId: string) {
         super(new DataPosterForGetParitcipants(attendanceRequestId))
     }
-    returnError = (data: BackendReturn): string | ""  => {
-        if(data.results.error !== undefined && data.results.error.sqlMessage !== 'データが見つかりませんでした．'){
-            return "error something wrong at get participants!"
+    returnError = (data: BackendReturn): string | '' => {
+        if (data.results.error !== undefined && data.results.error.sqlMessage !== 'データが見つかりませんでした．') {
+            return 'error something wrong at get participants!'
         }
-        return ""
+        return ''
     }
-    returnParticipants = (data:BackendReturn):string[] => {
-        if(data.results.error?.sqlMessage === 'データが見つかりませんでした．'){
-            return ["0人"]
+    returnParticipants = (data: BackendReturn): string[] => {
+        if (data.results.error?.sqlMessage === 'データが見つかりませんでした．') {
+            return ['0人']
         }
         if (data.results.select !== undefined) {
             const userData = data.results.select as { user_name: string }[]
-            return userData.map(data=>data.user_name)
+            return userData.map((data) => data.user_name)
         }
-        return ["undefine"]
+        return ['undefine']
     }
     returnErrorAndParticipants = async (): Promise<{
         error: string | ''
-        participants:string[]
+        participants: string[]
     }> => {
         return this.postData().then((data) => {
             return { error: this.returnError(data), participants: this.returnParticipants(data) }
