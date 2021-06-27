@@ -24,26 +24,14 @@ import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetR
 import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 
-type HomeState = {
-    userId: string
-    userName: string
-    message: string
-}
-type ActionType = 'inputUserId'
 
-const reducer = (state: HomeState, action: { type: ActionType; value: string }) => {
-    switch (action.type) {
-        case 'inputUserId':
-            return { ...state, userId: action.value }
-    }
-}
 
 export const Home = () => {
     const context = useContext(UserIdContext)
-    const {userId,setUserId} = context
+    const {userInfo,dispatch} = context
     console.log(context)
     // const [userId, setUserId] = useRecoilState(userIdState)
-    const [userName, setUserName] = useRecoilState(userNameState)
+    // const [userName, setUserName] = useRecoilState(userNameState)
     const [message, setMessage] = useRecoilState(messageState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])
     const [resedEventInfo, setResedEventInfo] = useState<ScheduleInfoResults>([])
@@ -56,7 +44,7 @@ export const Home = () => {
     const [successMessage, setSuccessMessage] = useState('')
     const [paticipants, setPaticipants] = useState(['0人'])
     const [displayComponents, setDisplayComponents] = useState<'editRequest' | 'response' | 'newRequest'>('response')
-    console.log('userName', userName)
+    console.log('userName', userInfo.userName)
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         setIsAttend(false)
@@ -73,7 +61,7 @@ export const Home = () => {
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const eventId = e.currentTarget.id
         setDisplayEventId(eventId)
-        const stateMaker = new StateMakerForGetResponse(userId, eventId)
+        const stateMaker = new StateMakerForGetResponse(userInfo.userId, eventId)
         stateMaker.returnErrorAndResponseInfo().then((data) => {
             console.log('infi', data)
             if (data.error !== '') {
@@ -98,7 +86,7 @@ export const Home = () => {
             // { url:"getRequests",info:notResEventInfo,huck:setRequestsInfo}
         ]
         infosList.map((dataInfos) => {
-            const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userId)
+            const stateMaker = new StateMakerForGetSchedulesInfo(dataInfos.url, userInfo.userId)
             stateMaker.returnErrorAndInfos().then((data) => {
                 if (data.infos === undefined) {
                     dataInfos.huck([])
@@ -120,17 +108,17 @@ export const Home = () => {
                 }
             })
         })
-        const stateMakerUserName = new StateMakerForUserName(userId)
+        const stateMakerUserName = new StateMakerForUserName(userInfo.userId)
         stateMakerUserName.returnErrorAndUserName().then((data) => {
             console.log('usreName!!!!!!!!!!!', data)
             if (data.userName !== '') {
-                setUserName(data.userName)
+                dispatch({type:"inputName",value:(data.userName)})
             }
             if (data.error !== '') {
                 setErrorMessage(data.error)
             }
         })
-        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
+        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userInfo.userId)
         stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
             console.log('request', data)
             if (data.infos !== undefined) {
@@ -140,7 +128,7 @@ export const Home = () => {
                 setErrorMessage(data.error)
             }
         })
-    }, [userId])
+    }, [userInfo.userId])
     const returnTest = (id: string) => {
         if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
             const clone = Object.assign([], notResEventInfo)
@@ -180,13 +168,13 @@ export const Home = () => {
         )
     }, [displayEventId])
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setUserId(e.target.value)
+        dispatch({type:"inputId",value:e.target.value})
     }
     return (
         // <RecoilRoot>
         <Container>
             <FooterContainer>
-                <PrimarySearchAppBar value={userId} onChange={changeUserId}></PrimarySearchAppBar>
+                <PrimarySearchAppBar value={userInfo.userId} onChange={changeUserId}></PrimarySearchAppBar>
             </FooterContainer>
             {errorMessage !== '' ? (
                 <BanerContainer>
