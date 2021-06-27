@@ -12,6 +12,7 @@ import { MUIButton } from 'components/atoms/MUIButton'
 import {IsAttendAndMessageContext} from "providers/IsAttendAndMessage"
 import {UserIdContext} from "providers/UserIdProvider"
 import {BannerMessageContext} from "providers/BannerMessage"
+import {ResponseInfoContext} from "providers/ResponseInfoProvider"
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -32,49 +33,11 @@ type Props = {
     eventId: string
 }
 
-type ActionType = 'pushAttend' | 'pushAbsent' | 'inputMessage' | 'sendSuccess' | 'sendError'
-type ResponseComponentState = {
-    isPush: {
-        attend: boolean
-        absent: boolean
-    }
-    choiceMessage: '欠席を選択されています．' | '出席を選択されています．'
-}
-
-const reducer = (
-    state: ResponseComponentState,
-    action: { type: ActionType}
-): ResponseComponentState => {
-    switch (action.type) {
-        case 'pushAbsent':
-            return {
-                ...state,
-                isPush: { attend: false, absent: true },
-                choiceMessage: '欠席を選択されています．',
-            }
-        case 'pushAttend':
-            return {
-                ...state,
-                isPush: { attend: true, absent: false },
-                choiceMessage: '出席を選択されています．',
-            }
-        default:
-            return state
-    }
-}
-const initState: ResponseComponentState = {
-    isPush: {
-        attend: false,
-        absent: true,
-    },
-    choiceMessage: '欠席を選択されています．',
-}
 export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const { eventId } = props
-    const [isPushAndChoiceMessage, isPushAndChoiceMessageDispatch] = useReducer(reducer, initState)
-    const context = useContext(IsAttendAndMessageContext)
-    const {isAttendAndMessage,isAttendAndMessageDispatch} = context
+    const context = useContext(ResponseInfoContext)
+    const {responseInfo,responseInfoDispatch} = context
     const userIdContext = useContext(UserIdContext)
     const {userInfo} = userIdContext
     const bannerMessageContext  = useContext(BannerMessageContext)
@@ -83,8 +46,8 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
         const stateMaker = new StateMakerForNewAttendanceResponseRegist(
             userInfo.userId,
             eventId,
-            isAttendAndMessage.isAttend,
-            isAttendAndMessage.responseMessage
+            responseInfo.isAttend,
+            responseInfo.responseMessage
         )
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
             if (data.success) {
@@ -95,28 +58,35 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             }
         })
     }
+
+    const onClickToAbsent = () => {
+        responseInfoDispatch({ type: 'selectAbsent'})
+    }
+    const onClickToAttend = () => {
+        responseInfoDispatch({type:"selectAttend"})
+    }
     return (
         <Card className={classes.root}>
             <CardContent>
                 <ButtonContainer>
                     <MUIButton
                         label={'出席'}
-                        onClick={() => isPushAndChoiceMessageDispatch({ type: 'pushAttend'})}
+                        onClick={onClickToAttend}
                         color={'primary'}
-                        disable={isPushAndChoiceMessage.isPush.attend}
+                        disable={responseInfo.isPush.attend}
                     />
                     <MUIButton
                         label={'欠席'}
-                        onClick={() => isPushAndChoiceMessageDispatch({ type: 'pushAbsent'})}
+                        onClick={onClickToAbsent}
                         color={'secondary'}
-                        disable={isPushAndChoiceMessage.isPush.absent}
+                        disable={responseInfo.isPush.absent}
                     />
-                    <AbsentOrAttend>{isPushAndChoiceMessage.choiceMessage}</AbsentOrAttend>
+                    <AbsentOrAttend>{responseInfo.choiceMessage}</AbsentOrAttend>
                 </ButtonContainer>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
-                    value={isAttendAndMessage.responseMessage}
-                    onChange={(e) => isAttendAndMessageDispatch({ type: 'inputMessage', value: e.target.value })}
+                    value={responseInfo.responseMessage}
+                    onChange={(e) => responseInfoDispatch({ type: 'inputMessage', value: e.target.value })}
                 />
                 <SendButton onClick={postResponse} />
             </CardContent>

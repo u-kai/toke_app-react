@@ -25,11 +25,14 @@ import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext, BannerMessageProvider } from 'providers/BannerMessage'
 import {IsAttendAndMessageContext} from "providers/IsAttendAndMessage"
+import {ResponseInfoContext} from "providers/ResponseInfoProvider"
 export const Home = () => {
     const userContext = useContext(UserIdContext)
     const bannerMessageContext = useContext(BannerMessageContext)
     const { userInfo, dispatch } = userContext
-    const {isAttendAndMessage,isAttendAndMessageDispatch} = useContext(IsAttendAndMessageContext)
+    // const {isAttendAndMessage,isAttendAndMessageDispatch} = useContext(IsAttendAndMessageContext)
+    const responseInfoContext = useContext(ResponseInfoContext)
+    const {responseInfo,responseInfoDispatch} = responseInfoContext
     const { bannerMessage, bannerDispatch } = bannerMessageContext
     // const [userId, setUserId] = useRecoilState(userIdState)
     // const [userName, setUserName] = useRecoilState(userNameState)
@@ -49,13 +52,14 @@ export const Home = () => {
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         // setIsAttend(false)
-        isAttendAndMessageDispatch({type:"selectAbsent"})
+        // isAttendAndMessageDispatch({type:"selectAbsent"})
+        responseInfoDispatch({type:"selectAbsent"})
         // setMessage('')
         setDisplayComponents('response')
     }
     const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
-        isAttendAndMessageDispatch({type:"setState"})
+        // responseInfoDispatch({type:""})
         // setMessage('')
         setDisplayComponents('editRequest')
     }
@@ -72,7 +76,7 @@ export const Home = () => {
             }
             // setIsAttend(data.responseInfo.isAttend)
             // setMessage(data.responseInfo.message)
-            isAttendAndMessageDispatch({type:"setState",
+            responseInfoDispatch({type:"setState",
             setState:{
                 isAttend:data.responseInfo.isAttend,
                 responseMessage:data.responseInfo.message
@@ -147,6 +151,23 @@ export const Home = () => {
             return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
         }
     }
+    const onClickToSchedule = (e:React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setDisplayEventId(e.currentTarget.id)
+        const stateMaker = new StateMakerForGetResponse(userInfo.userId,e.currentTarget.id)
+        stateMaker.returnErrorAndResponseInfo().then((data)=>{
+            if(data.error !== ""){
+                bannerDispatch({type:"setError",value:data.error})
+            }
+            if(data.error === ""){
+                console.log("setState",data)
+                responseInfoDispatch({type:"setState",setState:{
+                    isAttend:data.responseInfo.isAttend,
+                    responseMessage:data.responseInfo.message
+                   }
+                })
+            }
+        })
+    }
     useEffect(() => {
         if (notResEventInfo[0] !== undefined) {
             setDisplayEventId(notResEventInfo[0].attendance_request_id)
@@ -215,9 +236,7 @@ export const Home = () => {
                 <NestedScheduleList
                     todayScheduleInfo={todayEventInfo}
                     allScheduleInfo={attendEventInfo}
-                    onClickToDetail={(e) => {
-                        setDisplayEventId(e.currentTarget.id)
-                    }}
+                    onClickToDetail={onClickToSchedule}
                 />
             </NextEventContainer>
             {displayComponents === 'response' ? (
