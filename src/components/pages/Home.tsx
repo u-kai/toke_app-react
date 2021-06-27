@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useReducer } from 'react'
+import React, { useEffect, useState, useReducer,useContext } from 'react'
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
 import { SocketIo } from 'components/organisms/SocketIo'
 import socketIOClient from 'socket.io-client'
@@ -22,23 +22,27 @@ import { userNameState } from 'store/user_name'
 import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
 import { EventEdit } from 'components/organisms/EventEdit'
+import { UserIdContext } from 'providers/UserIdProvider'
 
 type HomeState = {
-    userId:string
-    userName:string
-    message:string
+    userId: string
+    userName: string
+    message: string
 }
-type ActionType = "inputUserId"
+type ActionType = 'inputUserId'
 
-const reducer = (state:HomeState, action:{type:ActionType,value:string}) => {
-    switch(action.type){
-        case "inputUserId":
-            return {...state,userId:action.value}
+const reducer = (state: HomeState, action: { type: ActionType; value: string }) => {
+    switch (action.type) {
+        case 'inputUserId':
+            return { ...state, userId: action.value }
     }
 }
 
 export const Home = () => {
-    const [userId, setUserId] = useRecoilState(userIdState)
+    const context = useContext(UserIdContext)
+    const {userId,setUserId} = context
+    console.log(context)
+    // const [userId, setUserId] = useRecoilState(userIdState)
     const [userName, setUserName] = useRecoilState(userNameState)
     const [message, setMessage] = useRecoilState(messageState)
     const [notResEventInfo, setNotResEventInfo] = useState<ScheduleInfoResults>([])

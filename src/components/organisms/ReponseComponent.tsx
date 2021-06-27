@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import styled from 'styled-components'
-import { useEffect, useState,useReducer } from 'react'
+import { useEffect, useState, useReducer } from 'react'
 import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
@@ -31,65 +31,85 @@ type Props = {
     eventId: string
 }
 
-type ActionType = "pushAttend" | "pushAbsent" | "inputMessage" | "sendSuccess" | "sendError"
+type ActionType = 'pushAttend' | 'pushAbsent' | 'inputMessage' | 'sendSuccess' | 'sendError'
 type ResponseComponentState = {
-    isPush:{
-        attend:boolean
-        absent:boolean
+    isPush: {
+        attend: boolean
+        absent: boolean
     }
-    isAttend:boolean
-    responseMessage:string
-    choiceMessage:"欠席を選択されています．"|"出席を選択されています．"
-    bannerMessage:{
-        success:string
-        error:string
+    isAttend: boolean
+    responseMessage: string
+    choiceMessage: '欠席を選択されています．' | '出席を選択されています．'
+    bannerMessage: {
+        success: string
+        error: string
     }
 }
 
-const reducer = (state:ResponseComponentState,action:{type:ActionType,value:string}):ResponseComponentState => {
-    switch(action.type){
-        case "inputMessage":
-            return {...state,responseMessage:action.value}
-        case "pushAbsent":
-            return {...state,isPush:{attend:false,absent:true},isAttend:false,choiceMessage:"欠席を選択されています．",responseMessage:action.value}
-        case "pushAttend":
-            return {...state,isPush:{attend:true,absent:false},isAttend:true,choiceMessage:"出席を選択されています．",responseMessage:action.value,}
-        case "sendError":
-            return {...state,bannerMessage:{error:action.value,success:""}}
-        case "sendSuccess":
-            return {...state,bannerMessage:{success:action.value,error:""}}
+const reducer = (
+    state: ResponseComponentState,
+    action: { type: ActionType; value: string }
+): ResponseComponentState => {
+    switch (action.type) {
+        case 'inputMessage':
+            return { ...state, responseMessage: action.value }
+        case 'pushAbsent':
+            return {
+                ...state,
+                isPush: { attend: false, absent: true },
+                isAttend: false,
+                choiceMessage: '欠席を選択されています．',
+                responseMessage: action.value,
+            }
+        case 'pushAttend':
+            return {
+                ...state,
+                isPush: { attend: true, absent: false },
+                isAttend: true,
+                choiceMessage: '出席を選択されています．',
+                responseMessage: action.value,
+            }
+        case 'sendError':
+            return { ...state, bannerMessage: { error: action.value, success: '' } }
+        case 'sendSuccess':
+            return { ...state, bannerMessage: { success: action.value, error: '' } }
         default:
             return state
     }
 }
-const initState:ResponseComponentState = {
-    isAttend:false,
-    isPush:{
-        attend:false,
-        absent:true
+const initState: ResponseComponentState = {
+    isAttend: false,
+    isPush: {
+        attend: false,
+        absent: true,
     },
-    responseMessage:"欠席します．",
-    choiceMessage:"欠席を選択されています．",
-    bannerMessage:{
-        success:"",
-        error:""
+    responseMessage: '欠席します．',
+    choiceMessage: '欠席を選択されています．',
+    bannerMessage: {
+        success: '',
+        error: '',
     },
 }
 export const ResponseComponent: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const { eventId } = props
-    const [state,dispatch] = useReducer(reducer,initState)
+    const [state, dispatch] = useReducer(reducer, initState)
     // const [message, setMessage] = useRecoilState(messageState)
     // const [successMessage, setSuccessMessage] = useState('')
     const [userId, setUserId] = useRecoilState(userIdState)
     const postResponse = () => {
-        const stateMaker = new StateMakerForNewAttendanceResponseRegist(userId, eventId, state.isAttend, state.responseMessage)
+        const stateMaker = new StateMakerForNewAttendanceResponseRegist(
+            userId,
+            eventId,
+            state.isAttend,
+            state.responseMessage
+        )
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
             if (data.success) {
-                dispatch({type:"sendSuccess",value:"返信が成功しました！"})
+                dispatch({ type: 'sendSuccess', value: '返信が成功しました！' })
             }
             if (data.error) {
-                dispatch({type:"sendError",value:data.error})
+                dispatch({ type: 'sendError', value: data.error })
             }
         })
     }
@@ -99,24 +119,22 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
                 <ButtonContainer>
                     <MUIButton
                         label={'出席'}
-                        onClick={() => dispatch({type:"pushAttend",value:"出席します．"})}
+                        onClick={() => dispatch({ type: 'pushAttend', value: '出席します．' })}
                         color={'primary'}
                         disable={state.isPush.attend}
                     />
                     <MUIButton
                         label={'欠席'}
-                        onClick={() => dispatch({type:"pushAbsent",value:"欠席します．"})}
+                        onClick={() => dispatch({ type: 'pushAbsent', value: '欠席します．' })}
                         color={'secondary'}
                         disable={state.isPush.absent}
                     />
-                    <AbsentOrAttend>
-                        {state.choiceMessage}
-                    </AbsentOrAttend>
+                    <AbsentOrAttend>{state.choiceMessage}</AbsentOrAttend>
                 </ButtonContainer>
                 <MultilineTextFields
                     placeholder={'メッセージ'}
                     value={state.responseMessage}
-                    onChange={(e) => dispatch({type:"inputMessage",value:e.target.value})}
+                    onChange={(e) => dispatch({ type: 'inputMessage', value: e.target.value })}
                 />
                 <SendButton onClick={postResponse} />
             </CardContent>

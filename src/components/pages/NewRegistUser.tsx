@@ -40,7 +40,6 @@ const initState: NewRegistUserInfo = {
 }
 
 export const NewRegistUser = () => {
-   
     const [newRegisterUser, dispatch] = useReducer(reducer, initState)
     const sendData = () => {
         const stateMakerForNewUser = new StateMakerForNewUserRegist(newRegisterUser.userName, newRegisterUser.password)
