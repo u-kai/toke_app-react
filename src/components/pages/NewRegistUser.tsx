@@ -1,83 +1,69 @@
-import React, { useState,useReducer } from 'react'
+import React, { useState, useReducer } from 'react'
 import styled from 'styled-components'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
 import { Link } from 'react-router-dom'
-import { useGetRecoilValueInfo_UNSTABLE } from 'recoil'
+const isRockInput = (success: string): boolean => {
+    return success !== ''
+}
+type NewRegistUserInfo = {
+    userName: string
+    password: string
+    message: {
+        error: string
+        success: string
+    }
+    isDisable: boolean
+}
+type ActionType = 'inputUserName' | 'inputPassword' | 'sendSuccess' | 'sendError'
+const reducer = (state: NewRegistUserInfo, action: { type: ActionType; value: string }) => {
+    switch (action.type) {
+        case 'inputUserName':
+            return isRockInput(state.message.success) ? state : { ...state, userName: action.value }
+        case 'inputPassword':
+            return isRockInput(state.message.success) ? state : { ...state, password: action.value }
+        case 'sendSuccess':
+            return { ...state, message: { success: action.value, error: '' }, isDisable: true }
+        case 'sendError':
+            return { ...state, message: { error: action.value, success: '' } }
+        default:
+            return state
+    }
+}
+const initState: NewRegistUserInfo = {
+    userName: '',
+    password: '',
+    message: { error: '', success: '' },
+    isDisable: false,
+}
 
 export const NewRegistUser = () => {
-    const [isDisable, setIsDisable] = useState(false)
-    const isRockInput = (success:string):boolean => {
-        return success !== ""
-    }
-    const reducer = (state:NewRegistUserInfo,action:{type:string,value:string}) => {
-        switch(action.type){
-            case "inputName":
-                return  isRockInput(state.message.success) ? state : {...state,userName:action.value} 
-            case "inputPassword":
-                return isRockInput(state.message.success) ? state : {...state,password:action.value}
-            case "isMatch":
-                console.log("match")
-                return state
-            default:
-                return state
-        }
-    }
-    type NewRegistUserInfo = {
-            userName:string,
-            password:string,
-            message:{
-                error:string,
-                success:string
-            }
-    }
-    const initState:NewRegistUserInfo = {
-            userName:"",
-            password:"",
-            message:{error:"",success:""}
-        }
-    const [userName, setUserName] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
-    const [newRegisterUser,dispatch] = useReducer(reducer,initState)
-    const onClick = () => {
-        const stateMakerForNewUser = new StateMakerForNewUserRegist(userName, password)
+   
+    const [newRegisterUser, dispatch] = useReducer(reducer, initState)
+    const sendData = () => {
+        const stateMakerForNewUser = new StateMakerForNewUserRegist(newRegisterUser.userName, newRegisterUser.password)
         stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
             if (data.error === '') {
-                setError('')
-                setIsDisable(true)
-                setSuccessMessage(data.success)
+                dispatch({ type: 'sendSuccess', value: 'ご登録ありがとうございます！' })
             }
-            setError(data.error)
+            if (data.error !== '') {
+                dispatch({ type: 'sendError', value: data.error })
+            }
         })
-    }
-    const alreadySuccess = (): boolean => {
-        return successMessage !== ''
-    }
-    const handleUserName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (alreadySuccess()) {
-            return
-        }
-        setUserName(e.target.value)
-    }
-    // const handlePassword = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     if (alreadySuccess()) {
-    //         return
-    //     }
-    //     setPassword(e.target.value)
-    // }
-    const handlePassword = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        dispatch({type:"inputPussword",value:e.target.value})
     }
     return (
         <Contener>
             <InputContener>
                 <Title>新規登録</Title>
                 <TextFieldContener>
-                    <LayoutTextField id="login_userName" value={userName} label={'名前'} onChange={handleUserName} />
+                    <LayoutTextField
+                        id="login_userName"
+                        value={newRegisterUser.userName}
+                        label={'名前'}
+                        onChange={(e) => dispatch({ type: 'inputUserName', value: e.target.value })}
+                    />
                 </TextFieldContener>
                 <TextFieldContener>
                     <LayoutTextField
@@ -85,20 +71,22 @@ export const NewRegistUser = () => {
                         type="password"
                         value={newRegisterUser.password}
                         label={'パスワード'}
-                        onChange={handlePassword}
+                        onChange={(e) => dispatch({ type: 'inputPassword', value: e.target.value })}
                     />
                 </TextFieldContener>
                 <ButtonContener>
-                    <SendButton onClick={onClick} isDisabled={isDisable} />
+                    <SendButton onClick={sendData} isDisabled={newRegisterUser.isDisable} />
                 </ButtonContener>
             </InputContener>
             <ErrorContener>
-                {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
+                {newRegisterUser.message.error.length !== 0 ? (
+                    <SimpleAlert message={newRegisterUser.message.error} severity={'error'} />
+                ) : null}
             </ErrorContener>
             <SuccessContener>
-                {successMessage.length !== 0 ? (
+                {newRegisterUser.message.success.length !== 0 ? (
                     <SimpleAlert
-                        message={successMessage}
+                        message={newRegisterUser.message.success}
                         severity={'success'}
                         children={<Link to={'/'}>ログインページでログインしてください</Link>}
                     />

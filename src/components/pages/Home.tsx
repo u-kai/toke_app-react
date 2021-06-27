@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useReducer } from 'react'
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
 import { SocketIo } from 'components/organisms/SocketIo'
 import socketIOClient from 'socket.io-client'
@@ -13,7 +12,6 @@ import { userIdState } from 'store/user_id'
 import { ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateChecker } from 'model/DateChecker'
 import { MUIButton } from 'components/atoms/MUIButton'
-import { DateConverter } from 'model/DateConverter'
 import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
 import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
 import { EventInfo } from 'components/organisms/EventInfo'
@@ -24,7 +22,21 @@ import { userNameState } from 'store/user_name'
 import { StateMakerForUserName } from 'model/StateMaker/StateMakerForUserName'
 import { StateMakerForGetRequestInfos } from 'model/StateMaker/StateMakerForGetRequestInfos'
 import { EventEdit } from 'components/organisms/EventEdit'
-const dateConverter = new DateConverter()
+
+type HomeState = {
+    userId:string
+    userName:string
+    message:string
+}
+type ActionType = "inputUserId"
+
+const reducer = (state:HomeState, action:{type:ActionType,value:string}) => {
+    switch(action.type){
+        case "inputUserId":
+            return {...state,userId:action.value}
+    }
+}
+
 export const Home = () => {
     const [userId, setUserId] = useRecoilState(userIdState)
     const [userName, setUserName] = useRecoilState(userNameState)
