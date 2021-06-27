@@ -18,7 +18,7 @@ import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
 import { StateMakerForNewGroupRegist } from 'model/StateMaker/StateMakerForNewGroupRegist'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { SendButton } from 'components/atoms/SendButton'
@@ -27,6 +27,7 @@ import { TimePicker } from 'components/atoms/TimePicker'
 import { useRecoilValue } from 'recoil'
 import { userIdState } from 'store/user_id'
 import TextField from '@material-ui/core/TextField'
+import { UserIdContext } from 'providers/UserIdProvider'
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -52,8 +53,10 @@ const dateConverter = new DateConverter()
 const today = dateConverter.forMaterialUI()
 export const EventEdit: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const organizerId = useRecoilValue(userIdState)
-    const organizerName = useRecoilValue(userNameState)
+    const context = useContext(UserIdContext)
+    const {userInfo,dispatch} = context
+    // const organizerId = useRecoilValue(userIdState)
+    // const organizerName = useRecoilValue(userNameState)
     // console.log(organizerName)
     const {
         info = {
@@ -61,8 +64,8 @@ export const EventEdit: React.VFC<Props> = (props) => {
             location: '',
             describes: '',
             bring: '',
-            organizer_id: organizerId,
-            organizer_name: organizerName,
+            organizer_id: userInfo.userId,
+            organizer_name: userInfo.userName,
             date: new Date().toString(),
             start_date: today,
             end_date: '',
@@ -83,7 +86,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const [memberNames, setMemberNames] = useState([''])
     const [selectedMembers, setSelectedMembers] = useState<string[]>(participants)
     useEffect(() => {
-        const stateMaker = new StateMakerForGetMembers(organizerId)
+        const stateMaker = new StateMakerForGetMembers(userInfo.userId)
         stateMaker.returnErrorAndIdsNames().then((data) => {
             setError(data.error)
             setMemberIds(data.data.ids)
@@ -125,8 +128,8 @@ export const EventEdit: React.VFC<Props> = (props) => {
             purpose,
             bring,
             desc,
-            organizerId,
-            organizerName,
+            userInfo.userId,
+            userInfo.userName,
             location,
             date,
             dateCalculater(date, requestTime),
