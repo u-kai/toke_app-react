@@ -13,7 +13,7 @@ type EventInfos = {
     requestEventInfo: ScheduleInfoResults
 }
 type DisplayAndEventInfo = {
-    displayEventId: string
+    displayEventId?: string
     infos:EventInfos
     displayEventInfo?: ScheduleInfo
     displayComponentsType: 'editRequest' | 'response' | 'newRequest'
@@ -34,9 +34,7 @@ export type EventInfoActionType =
 
 
 const idToDisplayEventInfo = (id: string,infos:EventInfos) => {
-    console.log("allInfos",infos)
     const numberOfLengthOver0 = Object.values(infos).filter(info=>info.length > 0)
-    console.log("number0",numberOfLengthOver0)
     if (numberOfLengthOver0.length > 0) {
         const allEventInfo = numberOfLengthOver0.flat()
         return allEventInfo.filter((info) =>info.attendance_request_id.toString() === id.toString())[0]
@@ -108,7 +106,7 @@ export const displayAndEventInfoReducer = (state:DisplayAndEventInfo,action:{
         case "selectMyRequest":
             return {...state,displayEventId:action.id!,displayComponentsType:"editRequest",displayEventInfo:idToDisplayEventInfo(action.id!,state.infos)}
         case "createNewRequest":
-            return {...state,displayEventId:"",displayComponentsType:"newRequest",displayEventInfo:undefined}
+            return {...state,displayEventId:undefined,displayComponentsType:"newRequest",displayEventInfo:undefined}
         default:
             return displayAndEventInfoInitState
     }

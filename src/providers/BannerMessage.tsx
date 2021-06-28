@@ -2,22 +2,24 @@ import React, { useReducer, createContext, VFC } from 'react'
 import { ChildrenProps } from 'types/ui-types/ChildrenProps'
 import { Banner } from 'types/ui-types/Banner'
 
-type ActionType = 'setError' | 'setSuccess' | 'setInfomation'
+type ActionType = 'setError' | 'setSuccess' | 'setInfomation'|"resetMessage"
 type BannerMessageContextType = {
     bannerMessage: Banner
     bannerDispatch: React.Dispatch<{
         type: ActionType
-        value: string
+        value?: string
     }>
 }
 
 const initState: Banner = {}
-const reducer = (state: Banner, action: { type: ActionType; value: string }): Banner => {
+const reducer = (state: Banner, action: { type: ActionType; value?: string }): Banner => {
     switch (action.type) {
         case 'setError':
             return { ...state, status: 'error', message: action.value }
         case 'setSuccess':
             return { ...state, status: 'success', message: action.value }
+        case "resetMessage":
+            return {...state,status:undefined,message:undefined}
         default:
             return { ...state }
     }

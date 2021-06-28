@@ -34,7 +34,7 @@ export const useDisplayEventInfo = () => {
             if (data.infos) {
                 const sortList = dateChecker.sortInfo(data.infos)
                 displayAndEventInfoDispatch({type:setEventInfo.action,info:sortList})
-                bannerDispatch({ type: 'setError', value: "" })
+                bannerDispatch({ type: "resetMessage"})
             }
             return
         })
@@ -50,6 +50,7 @@ export const useDisplayEventInfo = () => {
         stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
             if (data.infos !== undefined) {
                 displayAndEventInfoDispatch({type:"insertMyRequests",info:data.infos})
+                bannerDispatch({type:"resetMessage"})
             }
             if (data.error !== '') {
                 bannerDispatch({ type: 'setError', value: data.error })
