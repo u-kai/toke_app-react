@@ -21,10 +21,12 @@ import { BannerMessageContext } from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
 import { StateMakerForGetParticipants } from 'model/StateMaker/StateMakerForGetParticipants'
 import { EventInfoSource } from 'types/ui-types/EventInfoSource'
-import { fetchAndSetAllEvent } from 'functions/fetchAndSetData/fetchAndSetEventInfo'
-import { insertInitDisplay } from 'functions/fetchAndSetData/insertInitDisplay'
-import { displayAndEventInfoDispatch } from 'reducers/DisplayAndEventInfo'
+//import { fetchAndSetAllEvent } from 'functions/fetchAndSetData/fetchAndSetEventInfo'
+// import { insertInitDisplay } from 'functions/fetchAndSetData/insertInitDisplay'
+// import { displayAndEventInfoDispatch } from 'reducers/DisplayAndEventInfo'
+import {useDisplayEventInfo} from "hocks/useDisplayEventInfo"
 export const Home = () => {
+    const {fetchAndSetAllEvent,displayAndEventInfoDispatch,displayAndEventInfo,fetchAndSetRequestInfo} = useDisplayEventInfo()
     const userContext = useContext(UserIdContext)
     const bannerMessageContext = useContext(BannerMessageContext)
     const { userInfo, dispatch } = userContext
@@ -39,24 +41,17 @@ export const Home = () => {
     const [displayEventId, setDisplayEventId] = useState('')
     const [paticipants, setPaticipants] = useState(['0人'])
     const [displayComponents, setDisplayComponents] = useState<'editRequest' | 'response' | 'newRequest'>('response')
-    const infosList: EventInfoSource[] = [
-        { url: 'getNotRes', info: notResEventInfo, huck: setNotResEventInfo },
-        { url: 'getResed', info: resedEventInfo, huck: setResedEventInfo },
-        { url: 'getEvent', info: attendEventInfo, huck: setAttendEventInfo },
-    ]
+   
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        setDisplayEventId(e.currentTarget.id)
+        displayAndEventInfoDispatch({type:"selectNotResed",id:e.currentTarget.id})
         responseInfoDispatch({ type: 'selectAbsent' })
-        setDisplayComponents('response')
     }
     const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        setDisplayEventId(e.currentTarget.id)
-        setDisplayComponents('editRequest')
+        displayAndEventInfoDispatch({type:"selectMyRequest",id:e.currentTarget.id})
     }
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const eventId = e.currentTarget.id
-        setDisplayEventId(eventId)
-        const stateMaker = new StateMakerForGetResponse(userInfo.userId, eventId)
+        displayAndEventInfoDispatch({type:"selectResed",id:e.currentTarget.id})
+        const stateMaker = new StateMakerForGetResponse(userInfo.userId, e.currentTarget.id)
         stateMaker.returnErrorAndResponseInfo().then((data) => {
             if (data.error !== '') {
                 bannerDispatch({ type: 'setError', value: data.error })
@@ -70,11 +65,12 @@ export const Home = () => {
                 },
             })
         })
-        setDisplayComponents('response')
+        
     }
     const createNewEvent = () => {
-        setDisplayComponents('newRequest')
-        setRequestsInfo([])
+        // setDisplayComponents('newRequest')
+        // setRequestsInfo([])
+        displayAndEventInfoDispatch({type:"createNewRequest"})
     }
     const fetchAndSetUserName = (userId: string) => {
         const stateMakerUserName = new StateMakerForUserName(userId)
@@ -108,38 +104,33 @@ export const Home = () => {
     //         }
     //     })
     // }
-    const fetchAndSetRequestInfo = (userId: string) => {
-        const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
-        stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
-            if (data.infos !== undefined) {
-                setRequestsInfo(data.infos)
-            }
-            if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
-            }
-        })
-    }
-    const initDataFetch = () => {
-        const dateChecker = new DateChecker()
-    }
+    // const fetchAndSetRequestInfo = (userId: string) => {
+    //     const stateMakerforRequestInfo = new StateMakerForGetRequestInfos(userId)
+    //     stateMakerforRequestInfo.returnErrorAndInfos().then((data) => {
+    //         if (data.infos !== undefined) {
+    //             setRequestsInfo(data.infos)
+    //         }
+    //         if (data.error !== '') {
+    //             bannerDispatch({ type: 'setError', value: data.error })
+    //         }
+    //     })
+    // }
+    
     useEffect(() => {
-        infosList.map((dataInfos) => {
-            //fetchAndSetEventInfo(dataInfos)
-            fetchAndSetAllEvent(userInfo.userId)
-            displayAndEventInfoDispatch({ type: 'initializeDisplay' })
-            displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
-        })
+        fetchAndSetAllEvent(userInfo.userId)
+        displayAndEventInfoDispatch({ type: 'initializeDisplay' })
+        displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
         fetchAndSetUserName(userInfo.userId)
         fetchAndSetRequestInfo(userInfo.userId)
     }, [userInfo.userId])
 
-    const idToDisplayInfo = (id: string) => {
-        if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
-            const clone = Object.assign([], notResEventInfo)
-            const allEventInfo = clone.concat(resedEventInfo, attendEventInfo, requestsInfo)
-            return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
-        }
-    }
+    // const idToDisplayInfo = (id: string) => {
+    //     if (notResEventInfo.length !== 0 || resedEventInfo.length !== 0 || requestsInfo.length !== 0) {
+    //         const clone = Object.assign([], notResEventInfo)
+    //         const allEventInfo = clone.concat(resedEventInfo, attendEventInfo, requestsInfo)
+    //         return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
+    //     }
+    // }
     const onClickToSchedule = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDisplayEventId(e.currentTarget.id)
         const stateMaker = new StateMakerForGetResponse(userInfo.userId, e.currentTarget.id)
@@ -184,12 +175,13 @@ export const Home = () => {
         }
     }
     useEffect(() => {
-        selectInitDisplayInfo()
-    }, [notResEventInfo, resedEventInfo, requestsInfo])
+        // selectInitDisplayInfo()
+        displayAndEventInfoDispatch({type:"initializeDisplay"})
+    }, [displayAndEventInfo.infos.resedInfo, displayAndEventInfo.infos.notResInfo, displayAndEventInfo.infos.requestEventInfo])
 
     useEffect(() => {
-        getPariticipants(displayEventId)
-    }, [displayEventId])
+        getPariticipants(displayAndEventInfo.displayEventId)
+    }, [displayAndEventInfo.displayEventId])
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         dispatch({ type: 'inputId', value: e.target.value })
     }
@@ -208,35 +200,35 @@ export const Home = () => {
             </MettingButtonContainer>
             <MailContainer>
                 <NestedMailList
-                    notResMailsInfo={notResEventInfo}
-                    resedMailsInfo={resedEventInfo}
-                    requestMailsInfo={requestsInfo}
+                    notResMailsInfo={displayAndEventInfo.infos.notResInfo}
+                    resedMailsInfo={displayAndEventInfo.infos.resedInfo}
+                    requestMailsInfo={displayAndEventInfo.infos.requestEventInfo}
                     onClickToNotRes={onClickToNotResed}
                     onClickToResed={onClickToResed}
                     onClickToRequest={onClickToRequest}
                 />
             </MailContainer>
             <EventInfoContainer>
-                {displayComponents === 'response' ? (
-                    idToDisplayInfo(displayEventId) !== undefined ? (
-                        <EventInfo info={idToDisplayInfo(displayEventId)!} participants={paticipants}></EventInfo>
+                {displayAndEventInfo.displayComponentsType === 'response' ? (
+                    displayAndEventInfo.displayEventInfo !== undefined ? (
+                        <EventInfo info={displayAndEventInfo.displayEventInfo!} participants={paticipants}></EventInfo>
                     ) : null
-                ) : displayComponents === 'editRequest' ? (
-                    <EventEdit info={idToDisplayInfo(displayEventId)!} participants={paticipants} />
+                ) : displayAndEventInfo.displayComponentsType === 'editRequest' ? (
+                    <EventEdit info={displayAndEventInfo.displayEventInfo!} participants={paticipants} />
                 ) : (
                     <EventEdit />
                 )}
             </EventInfoContainer>
             <NextEventContainer>
                 <NestedScheduleList
-                    todayScheduleInfo={todayEventInfo}
-                    allScheduleInfo={attendEventInfo}
+                    todayScheduleInfo={displayAndEventInfo.infos.todayEventInfo}
+                    allScheduleInfo={displayAndEventInfo.infos.attendEventInfo}
                     onClickToDetail={onClickToSchedule}
                 />
             </NextEventContainer>
-            {displayComponents === 'response' ? (
+            {displayAndEventInfo.displayComponentsType === 'response' ? (
                 <ResponseContainer>
-                    <ResponseComponent eventId={displayEventId}></ResponseComponent>
+                    <ResponseComponent eventId={displayAndEventInfo.displayEventId}></ResponseComponent>
                 </ResponseContainer>
             ) : null}
         </Container>
