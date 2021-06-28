@@ -1,41 +1,37 @@
 import styled, { keyframes } from 'styled-components'
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
 import { useHistory, Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
-import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil'
-import { userIdState } from 'store/user_id'
-import { userNameState } from 'store/user_name'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
+import {UserIdContext} from "providers/UserIdProvider"
 export const Login = () => {
     const [error, setError] = useState('')
     const history = useHistory()
-    const inputList = ['名前', 'パスワード']
-    const setUserId = useSetRecoilState(userIdState)
-    const [userName, setUserName] = useRecoilState(userNameState)
-    const [password, setPassword] = useState('udomaki')
+    const context = useContext(UserIdContext)
+    const {userInfo,dispatch} = context
+    const [password, setPassword] = useState('')
     const onClick = () => {
-        const stateMaker = new StateMakerForLogin(userName, password)
+        const stateMaker = new StateMakerForLogin(userInfo.userName, password)
         stateMaker.returnErrorAndUserId().then((errorAndUserId: { error: string | ''; userId: string | '' }) => {
             setError(errorAndUserId.error)
-            setUserId(errorAndUserId.userId)
+            dispatch({type:"inputId",value:errorAndUserId.userId})
             if (errorAndUserId.error === '') {
                 history.push('/home')
             }
         })
     }
     return (
-        // <RecoilRoot>
         <Contener>
             <InputContener>
                 <Title>ログイン</Title>
                 <TextFieldContener>
                     <LayoutTextField
                         id="login_userName"
-                        value={userName}
-                        label={inputList[0]}
-                        onChange={(e) => setUserName(e.target.value)}
+                        value={userInfo.userName}
+                        label={'名前'}
+                        onChange={(e) =>dispatch({type:"inputName",value:e.target.value})}
                     />
                 </TextFieldContener>
                 <TextFieldContener>
@@ -43,7 +39,7 @@ export const Login = () => {
                         id="login_password"
                         type="password"
                         value={password}
-                        label={inputList[1]}
+                        label={'パスワード'}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </TextFieldContener>
@@ -58,7 +54,6 @@ export const Login = () => {
                 {error.length !== 0 ? <SimpleAlert message={error} severity={'error'} /> : null}
             </ErrorContener>
         </Contener>
-        // </RecoilRoot>
     )
 }
 

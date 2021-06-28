@@ -28,8 +28,8 @@ export const Home = () => {
     const { userInfo, dispatch } = userContext
     const responseInfoContext = useContext(ResponseInfoContext)
     const { responseInfoDispatch } = responseInfoContext
-    const { bannerMessage } = bannerMessageContext
-
+    const { bannerMessage,bannerDispatch } = bannerMessageContext
+    // const [socket,setSocket]
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
         responseInfoDispatch({ type: 'selectAbsent' })
@@ -55,6 +55,7 @@ export const Home = () => {
         displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
         fetchAndSetUserName(userInfo.userId)
         fetchAndSetRequestInfo(userInfo.userId)
+        
     }, [userInfo.userId])
 
     useEffect(() => {
