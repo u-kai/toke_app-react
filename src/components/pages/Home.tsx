@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { SocketIo } from 'components/organisms/SocketIo'
 import socketIOClient from 'socket.io-client'
 import { NestedMailList } from 'components/molecules/NestedMailList'
@@ -9,59 +9,44 @@ import { PrimarySearchAppBar } from 'components/atoms/PrimarySearchAppBar'
 import { MUIButton } from 'components/atoms/MUIButton'
 import { EventInfo } from 'components/organisms/EventInfo'
 import { ResponseComponent } from 'components/organisms/ReponseComponent'
-import { StateMakerForGetResponse } from 'model/StateMaker/StateMakerForGetResponse'
 import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
-import { StateMakerForGetParticipants } from 'model/StateMaker/StateMakerForGetParticipants'
-import {useUserName} from "hocks/useUserName"
-import {useDisplayEventInfo} from "hocks/useDisplayEventInfo"
-import {useResponseInfo} from "hocks/useResponseInfo"
+import { useUserName } from 'hocks/useUserName'
+import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
+import { useResponseInfo } from 'hocks/useResponseInfo'
+import { useParticipants } from 'hocks/useParitcipants'
 export const Home = () => {
-    const {fetchAndSetResponseInfo} = useResponseInfo()
-    const {fetchAndSetAllEvent,displayAndEventInfoDispatch,displayAndEventInfo,fetchAndSetRequestInfo} = useDisplayEventInfo()
-    const {fetchAndSetUserName} = useUserName()
+    const { fetchAndSetResponseInfo } = useResponseInfo()
+    const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
+        useDisplayEventInfo()
+    const { fetchAndSetUserName } = useUserName()
+    const { participants, getPariticipants } = useParticipants()
     const userContext = useContext(UserIdContext)
     const bannerMessageContext = useContext(BannerMessageContext)
     const { userInfo, dispatch } = userContext
     const responseInfoContext = useContext(ResponseInfoContext)
     const { responseInfoDispatch } = responseInfoContext
-    const { bannerMessage, bannerDispatch } = bannerMessageContext
-    const [paticipants, setPaticipants] = useState(['0人'])
+    const { bannerMessage } = bannerMessageContext
 
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({type:"selectNotResed",id:e.currentTarget.id})
+        displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
         responseInfoDispatch({ type: 'selectAbsent' })
     }
     const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({type:"selectMyRequest",id:e.currentTarget.id})
+        displayAndEventInfoDispatch({ type: 'selectMyRequest', id: e.currentTarget.id })
     }
     const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({type:"selectResed",id:e.currentTarget.id})
-        // const stateMaker = new StateMakerForGetResponse(userInfo.userId, e.currentTarget.id)
-        // stateMaker.returnErrorAndResponseInfo().then((data) => {
-        //     if (data.error !== '') {
-        //         bannerDispatch({ type: 'setError', value: data.error })
-        //         return
-        //     }
-        //     if(data.error === "") {
-        //         responseInfoDispatch({
-        //             type: 'setState',
-        //             setState: {
-        //                 isAttend: data.responseInfo.isAttend,
-        //                 responseMessage: data.responseInfo.message,
-        //             },
-        //         })
-        //         bannerDispatch({type:"resetMessage"})
-        //     }
-            
-        // })
-        fetchAndSetResponseInfo(userInfo.userId,e.currentTarget.id)
-        
+        displayAndEventInfoDispatch({ type: 'selectResed', id: e.currentTarget.id })
+        fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
     }
     const onClickToCreateNewEvent = () => {
-        displayAndEventInfoDispatch({type:"createNewRequest"})
+        displayAndEventInfoDispatch({ type: 'createNewRequest' })
+    }
+    const onClickToSchedule = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        displayAndEventInfoDispatch({ type: 'selectAttendEvent', id: e.currentTarget.id })
+        fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
     }
 
     useEffect(() => {
@@ -72,43 +57,16 @@ export const Home = () => {
         fetchAndSetRequestInfo(userInfo.userId)
     }, [userInfo.userId])
 
-    const onClickToSchedule = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({type:"selectAttendEvent",id:e.currentTarget.id})
-        const stateMaker = new StateMakerForGetResponse(userInfo.userId, e.currentTarget.id)
-        stateMaker.returnErrorAndResponseInfo().then((data) => {
-            if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
-            }
-            if (data.error === '') {
-                responseInfoDispatch({
-                    type: 'setState',
-                    setState: {
-                        isAttend: data.responseInfo.isAttend,
-                        responseMessage: data.responseInfo.message,
-                    },
-                })
-                bannerDispatch({type:"resetMessage"})
-            }
-        })
-    }
-    const getPariticipants = (attendanceRequestId: string) => {
-        const stateMaker = new StateMakerForGetParticipants(attendanceRequestId)
-        stateMaker.returnErrorAndParticipants().then((data) => {
-            if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
-            }
-            if (data.error === '') {
-                setPaticipants(data.participants)
-            }
-        })
-    }
+    useEffect(() => {
+        displayAndEventInfoDispatch({ type: 'initializeDisplay' })
+    }, [
+        displayAndEventInfo.infos.resedInfo,
+        displayAndEventInfo.infos.notResInfo,
+        displayAndEventInfo.infos.requestEventInfo,
+    ])
 
     useEffect(() => {
-        displayAndEventInfoDispatch({type:"initializeDisplay"})
-    }, [displayAndEventInfo.infos.resedInfo, displayAndEventInfo.infos.notResInfo, displayAndEventInfo.infos.requestEventInfo])
-
-    useEffect(() => {
-        if(displayAndEventInfo.displayEventId !== undefined){
+        if (displayAndEventInfo.displayEventId !== undefined) {
             getPariticipants(displayAndEventInfo.displayEventId!)
         }
     }, [displayAndEventInfo.displayEventId])
@@ -141,10 +99,10 @@ export const Home = () => {
             <EventInfoContainer>
                 {displayAndEventInfo.displayComponentsType === 'response' ? (
                     displayAndEventInfo.displayEventInfo !== undefined ? (
-                        <EventInfo info={displayAndEventInfo.displayEventInfo!} participants={paticipants}></EventInfo>
+                        <EventInfo info={displayAndEventInfo.displayEventInfo!} participants={participants}></EventInfo>
                     ) : null
                 ) : displayAndEventInfo.displayComponentsType === 'editRequest' ? (
-                    <EventEdit info={displayAndEventInfo.displayEventInfo!} participants={paticipants} />
+                    <EventEdit info={displayAndEventInfo.displayEventInfo!} participants={participants} />
                 ) : (
                     <EventEdit />
                 )}
