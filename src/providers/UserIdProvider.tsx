@@ -22,7 +22,7 @@ type UserIdContextType = {
     }>
 }
 const initState: UserState = {
-    userId: '3',
+    userId: '1',
     userName: '',
 }
 export const UserIdContext = createContext<UserIdContextType>({} as UserIdContextType)

@@ -74,22 +74,25 @@ export const displayAndEventInfoReducer = (
 ): DisplayAndEventInfo => {
     switch (action.type) {
         case 'insertReseds':
-            state.infos.resedInfo = action.info!
+            state.infos.resedInfo = [...action.info!]
             return { ...state }
         case 'insertNotReseds':
-            state.infos.notResInfo = action.info!
+            state.infos.notResInfo = [...action.info!]
             return { ...state }
         case 'insertAttendEvents':
-            state.infos.attendEventInfo = action.info!
+            state.infos.attendEventInfo = [...action.info!]
             return { ...state }
         case 'insertMyRequests':
-            state.infos.requestEventInfo = action.info!
+            state.infos.requestEventInfo = [...action.info!]
             return { ...state }
         case 'insertTodayEvents': {
             const dateChecker = new DateChecker()
-            const todayInfo = state.infos.attendEventInfo.filter((data) => dateChecker.isToday(data.start_date))
-            state.infos.todayEventInfo = todayInfo
-            return { ...state }
+            console.log("what happen",state.infos.attendEventInfo.map(data=>dateChecker.isToday(data.start_date)))
+            const todayInfo = state.infos.attendEventInfo.filter(data => dateChecker.isToday(data.start_date))
+            state.infos.todayEventInfo = [...todayInfo]
+            console.log("state",state)
+            console.log("today",todayInfo)
+            return { ...state, }
         }
         case 'initializeDisplay':
             if (returnInfoForInitDisplay(state.infos) !== undefined) {
