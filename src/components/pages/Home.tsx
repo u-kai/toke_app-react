@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react'
-import { SocketIo } from 'components/organisms/SocketIo'
-import socketIOClient from 'socket.io-client'
+// import { SocketIo } from 'components/organisms/SocketIo'
+// import socketIOClient from 'socket.io-client'
 import { NestedMailList } from 'components/molecules/NestedMailList'
 import { NestedScheduleList } from 'components/molecules/NestedScheduleList'
 import styled from 'styled-components'
@@ -17,7 +17,7 @@ import { useUserName } from 'hocks/useUserName'
 import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
 import { useResponseInfo } from 'hocks/useResponseInfo'
 import { useParticipants } from 'hocks/useParitcipants'
-export const Home = () => {
+export const Home = ():JSX.Element => {
     const { fetchAndSetResponseInfo } = useResponseInfo()
     const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
         useDisplayEventInfo()
@@ -30,6 +30,8 @@ export const Home = () => {
     const { responseInfoDispatch } = responseInfoContext
     const { bannerMessage,bannerDispatch } = bannerMessageContext
     // const [socket,setSocket]
+
+
     const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
         responseInfoDispatch({ type: 'selectAbsent' })
@@ -49,14 +51,37 @@ export const Home = () => {
         fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
     }
 
+    const initHome = ():Promise<void> => {
+        return new Promise((resolve)=>{
+            fetchAndSetAllEvent(userInfo.userId)
+            displayAndEventInfoDispatch({ type: 'initializeDisplay' })
+            displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
+            fetchAndSetUserName(userInfo.userId)
+            fetchAndSetRequestInfo(userInfo.userId)
+            resolve()
+        })
+    }
+    const displaySuccessAt3Sec = ():Promise<void>=>{
+        return new Promise((resolve)=>{
+            setTimeout(()=>{
+                resolve()
+            },3000)
+        })
+    }
+
     useEffect(() => {
-        fetchAndSetAllEvent(userInfo.userId)
-        displayAndEventInfoDispatch({ type: 'initializeDisplay' })
-        displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
-        fetchAndSetUserName(userInfo.userId)
-        fetchAndSetRequestInfo(userInfo.userId)
-        
+        initHome()
     }, [userInfo.userId])
+
+    useEffect(()=>{
+        if(bannerMessage.message === "送信が完了しました" || bannerMessage.message === "返信が成功しました！"){
+            (async()=>{
+                await initHome()
+                await displaySuccessAt3Sec()
+            })()
+        }
+        
+    },[bannerMessage.status])
 
     useEffect(() => {
         displayAndEventInfoDispatch({ type: 'initializeDisplay' })
@@ -67,10 +92,12 @@ export const Home = () => {
     ])
 
     useEffect(() => {
-        if (displayAndEventInfo.displayEventId !== undefined) {
-            getPariticipants(displayAndEventInfo.displayEventId!)
+        if (displayAndEventInfo.displayEventId !== undefined && displayAndEventInfo.displayEventId !== null) {
+            console.log(displayAndEventInfo.displayEventId)
+            getPariticipants(displayAndEventInfo.displayEventId)
         }
     }, [displayAndEventInfo.displayEventId])
+
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         dispatch({ type: 'inputId', value: e.target.value })
     }

@@ -48,6 +48,7 @@ export const useDisplayEventInfo = () => {
             }
             if (data.infos === undefined) {
                 displayAndEventInfoDispatch({ type: setEventInfo.action, info: [] })
+                bannerDispatch({ type: 'resetMessage' })
             }
             return
         })

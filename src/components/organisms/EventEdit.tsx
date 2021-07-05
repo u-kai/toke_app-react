@@ -18,6 +18,8 @@ import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { TimePicker } from 'components/atoms/TimePicker'
 import TextField from '@material-ui/core/TextField'
 import { UserIdContext } from 'providers/UserIdProvider'
+import { BannerMessageContext } from 'providers/BannerMessage'
+
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -44,7 +46,10 @@ const today = dateConverter.forMaterialUI()
 export const EventEdit: React.VFC<Props> = (props) => {
     const classes = useStyles()
     const context = useContext(UserIdContext)
-    const { userInfo, dispatch } = context
+    const bannerContext = useContext(BannerMessageContext)
+    const {bannerMessage,bannerDispatch} = bannerContext
+
+    const { userInfo } = context
     const {
         info = {
             purpose: '',
@@ -66,7 +71,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const [desc, setDesc] = useState(info.describes)
     const [location, setLocation] = useState(info.location)
     const [isSend, setIsSend] = useState(false)
-    const [error, setError] = useState('')
+    // const [error, setError] = useState('')
     const [groupName, setGroupName] = useState('')
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
@@ -74,18 +79,12 @@ export const EventEdit: React.VFC<Props> = (props) => {
     useEffect(() => {
         const stateMaker = new StateMakerForGetMembers(userInfo.userId)
         stateMaker.returnErrorAndIdsNames().then((data) => {
-            setError(data.error)
+            bannerDispatch({type:"setError",value:data.error})
             setMemberIds(data.data.ids)
             setMemberNames(data.data.names)
         })
     }, [])
-    useEffect(() => {
-        setPurpose(info.purpose)
-        setDate(info.start_date)
-        setBring(info.bring)
-        setDesc(info.describes)
-        setLocation(info.location)
-    }, [info])
+  
     const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
     }
@@ -120,17 +119,14 @@ export const EventEdit: React.VFC<Props> = (props) => {
             memberIds
         )
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
-            setError(data.error)
-            console.log('success', data.success)
+            if(data.error === ""){
+                bannerDispatch({type:"setSuccess",value:data.success})
+                return 
+            }
+            bannerDispatch({type:"setError",value:data.error})
         })
     }
-    const testGroup = () => {
-        const stateMakerForNewGroup = new StateMakerForNewGroupRegist(memberIds, groupName)
-        stateMakerForNewGroup.returnErrorAndSuccessMessage().then((data) => {
-            console.log(data.error)
-            console.log(data.success)
-        })
-    }
+
     const changeMembers = (event: React.ChangeEvent<{ value: unknown }>) => {
         console.log('selected members', event.target.value)
         setSelectedMembers(event.target.value as string[])
@@ -181,7 +177,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
                         placeholder={'メンバーを選択'}
                         selectNames={selectedMembers}
                     />
-                    <SendButton onClick={() => console.log('click')}></SendButton>
+                    <SendButton onClick={test}></SendButton>
                 </DisplayFlexContainer>
             </CardContent>
         </Card>
