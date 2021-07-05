@@ -55,17 +55,17 @@ export const Home = ():JSX.Element => {
         return new Promise((resolve)=>{
             fetchAndSetAllEvent(userInfo.userId)
             displayAndEventInfoDispatch({ type: 'initializeDisplay' })
-            displayAndEventInfoDispatch({ type: 'insertTodayEvents' })
             fetchAndSetUserName(userInfo.userId)
             fetchAndSetRequestInfo(userInfo.userId)
             resolve()
         })
     }
-    const displaySuccessAt3Sec = ():Promise<void>=>{
+    const displaySuccessAtSec = ():Promise<void>=>{
         return new Promise((resolve)=>{
             setTimeout(()=>{
+                initHome()
                 resolve()
-            },3000)
+            },1000)
         })
     }
 
@@ -76,8 +76,7 @@ export const Home = ():JSX.Element => {
     useEffect(()=>{
         if(bannerMessage.message === "送信が完了しました" || bannerMessage.message === "返信が成功しました！"){
             (async()=>{
-                await initHome()
-                await displaySuccessAt3Sec()
+                await displaySuccessAtSec()
             })()
         }
         

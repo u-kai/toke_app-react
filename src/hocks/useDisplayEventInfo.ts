@@ -45,6 +45,9 @@ export const useDisplayEventInfo = () => {
                 const sortList = dateChecker.sortInfo(data.infos)
                 displayAndEventInfoDispatch({ type: setEventInfo.action, info: sortList })
                 bannerDispatch({ type: 'resetMessage' })
+                if(setEventInfo.url === "getEvent"){
+                    displayAndEventInfoDispatch({type:"insertTodayEvents"})
+                }
             }
             if (data.infos === undefined) {
                 displayAndEventInfoDispatch({ type: setEventInfo.action, info: [] })
