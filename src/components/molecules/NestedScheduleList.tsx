@@ -1,4 +1,4 @@
-import React, { VFC } from 'react'
+import React, { useCallback, VFC } from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import List from '@material-ui/core/List'
@@ -6,12 +6,8 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Collapse from '@material-ui/core/Collapse'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import DraftsIcon from '@material-ui/icons/Drafts'
-import SendIcon from '@material-ui/icons/Send'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
-import StarBorder from '@material-ui/icons/StarBorder'
 import { SimpleBadge } from 'components/atoms/SimpleBadge'
 import { DateConverter } from 'model/DateConverter'
 import { MailDisplayInfo } from 'types/ui-types/MailDisplayInfo'
@@ -36,17 +32,19 @@ type Props = {
 }
 
 const dateConverter = new DateConverter()
-export const NestedScheduleList: VFC<Props> = (props) => {
+export const NestedScheduleList: VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
     const { todayScheduleInfo, allScheduleInfo, onClickToDetail } = props
-    const handleClickForNotRes = () => {
+    const handleClickForNotRes = useCallback(() => {
         setNotResOpen(!notResOpen)
-    }
-    const handleClickForResed = () => {
+    },[setNotResOpen])
+
+    const handleClickForResed = useCallback(() => {
         setResedOpen(!resedOpen)
-    }
+    },[setResedOpen])
+    
     const display = (data: MailDisplayInfo): string => {
         return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
     }
@@ -110,4 +108,4 @@ export const NestedScheduleList: VFC<Props> = (props) => {
             </Collapse>
         </List>
     )
-}
+})

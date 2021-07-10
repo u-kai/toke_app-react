@@ -10,9 +10,6 @@ import { userIdState } from 'store/user_id'
 import { userNameState } from 'store/user_name'
 import { dateCalculater } from 'functions/dateCalculater'
 import { DateConverter } from 'model/DateConverter'
-import { postAndReturnResponseToJson } from 'functions/postAndReturnResponseToJson'
-import { BackendReturn } from 'types/backend-return-tyeps/BackendReturn'
-import { BackendResultsChecker } from 'model/BackendResultsChecker'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
@@ -23,7 +20,6 @@ const today = dateConverter.forMaterialUI()
 export const MakeAttendanceRequest = () => {
     const organizerId = useRecoilValue(userIdState)
     const organizerName = useRecoilValue(userNameState)
-    const idList = ['purpose', 'date', 'brings', 'desc']
     const [purpose, setPurpose] = useState('')
     const [date, setDate] = useState(today)
     const [requestTime, setRequestTime] = useState('00:30')
@@ -32,8 +28,6 @@ export const MakeAttendanceRequest = () => {
     const [location, setLocation] = useState('')
     const [isSend, setIsSend] = useState(false)
     const [error, setError] = useState('')
-    // const [groupIds,setGroupIds] = useState([""])
-    // const [groupNames,setGroupNames] = useState([""])
     const [groupName, setGroupName] = useState('')
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])

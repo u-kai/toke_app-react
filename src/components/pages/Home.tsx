@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from 'react'
-// import { SocketIo } from 'components/organisms/SocketIo'
-// import socketIOClient from 'socket.io-client'
+import React, { useEffect, useContext, useState, useCallback } from 'react'
+import { SocketIo } from 'components/organisms/SocketIo'
+import socketIOClient from 'socket.io-client'
 import { NestedMailList } from 'components/molecules/NestedMailList'
 import { NestedScheduleList } from 'components/molecules/NestedScheduleList'
 import styled from 'styled-components'
@@ -17,6 +17,7 @@ import { useUserName } from 'hocks/useUserName'
 import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
 import { useResponseInfo } from 'hocks/useResponseInfo'
 import { useParticipants } from 'hocks/useParitcipants'
+import { url } from 'datas/urls/url'
 export const Home = ():JSX.Element => {
     const { fetchAndSetResponseInfo } = useResponseInfo()
     const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
@@ -28,28 +29,32 @@ export const Home = ():JSX.Element => {
     const { userInfo, dispatch } = userContext
     const responseInfoContext = useContext(ResponseInfoContext)
     const { responseInfoDispatch } = responseInfoContext
-    const { bannerMessage,bannerDispatch } = bannerMessageContext
-    // const [socket,setSocket]
-
-
-    const onClickToNotResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const { bannerMessage} = bannerMessageContext
+    const [socket,setSocket] = useState(socketIOClient(`${url}`))
+    
+    
+    const onClickToNotResed = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
         responseInfoDispatch({ type: 'selectAbsent' })
-    }
-    const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    },[displayAndEventInfoDispatch])
+
+    const onClickToRequest = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectMyRequest', id: e.currentTarget.id })
-    }
-    const onClickToResed = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    },[displayAndEventInfoDispatch])
+
+    const onClickToResed = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectResed', id: e.currentTarget.id })
         fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
-    }
-    const onClickToCreateNewEvent = () => {
+    },[displayAndEventInfoDispatch])
+
+    const onClickToCreateNewEvent = useCallback(() => {
         displayAndEventInfoDispatch({ type: 'createNewRequest' })
-    }
-    const onClickToSchedule = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    },[])
+
+    const onClickToSchedule = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         displayAndEventInfoDispatch({ type: 'selectAttendEvent', id: e.currentTarget.id })
         fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
-    }
+    },[displayAndEventInfoDispatch])
 
     const initHome = ():Promise<void> => {
         return new Promise((resolve)=>{
@@ -75,9 +80,7 @@ export const Home = ():JSX.Element => {
 
     useEffect(()=>{
         if(bannerMessage.message === "送信が完了しました" || bannerMessage.message === "返信が成功しました！"){
-            (async()=>{
-                await displaySuccessAtSec()
-            })()
+            displaySuccessAtSec()
         }
         
     },[bannerMessage.status])

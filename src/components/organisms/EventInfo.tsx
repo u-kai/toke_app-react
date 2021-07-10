@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateConverter } from 'model/DateConverter'
 import { OutlineChip } from 'components/atoms/OutLineChip'
+import React from "react"
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -27,7 +28,7 @@ type Props = {
     participants: string[]
 }
 const dateConverter = new DateConverter()
-export const EventInfo: React.VFC<Props> = (props) => {
+export const EventInfo: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const { info, participants } = props
     return (
@@ -54,7 +55,7 @@ export const EventInfo: React.VFC<Props> = (props) => {
             </CardContent>
         </Card>
     )
-}
+})
 const Container = styled.div`
     display: flex;
     flex-wrap: wrap;

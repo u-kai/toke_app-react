@@ -10,8 +10,7 @@ import { dateCalculater } from 'functions/dateCalculater'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
 import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
 import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
-import { StateMakerForNewGroupRegist } from 'model/StateMaker/StateMakerForNewGroupRegist'
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { SendButton } from 'components/atoms/SendButton'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
@@ -43,11 +42,11 @@ type Props = {
 }
 const dateConverter = new DateConverter()
 const today = dateConverter.forMaterialUI()
-export const EventEdit: React.VFC<Props> = (props) => {
+export const EventEdit: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const context = useContext(UserIdContext)
     const bannerContext = useContext(BannerMessageContext)
-    const {bannerMessage,bannerDispatch} = bannerContext
+    const {bannerDispatch} = bannerContext
 
     const { userInfo } = context
     const {
@@ -72,7 +71,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
     const [location, setLocation] = useState(info.location)
     const [isSend, setIsSend] = useState(false)
     // const [error, setError] = useState('')
-    const [groupName, setGroupName] = useState('')
+    
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
     const [selectedMembers, setSelectedMembers] = useState<string[]>(participants)
@@ -85,26 +84,25 @@ export const EventEdit: React.VFC<Props> = (props) => {
         })
     }, [])
   
-    const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const changePurpose = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPurpose(e.target.value)
-    }
-    const changeBring = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    },[setPurpose])
+
+    const changeBring = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setBring(e.target.value)
-    }
-    const changeDesc = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    },[setBring])
+    const changeDesc = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setDesc(e.target.value)
-    }
-    const changeDate = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e.target.value)
+    },[setDesc])
+    const changeDate = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setDate(e.target.value)
-    }
-    const changeRequestTime = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(dateCalculater(date, e.target.value))
+    },[setDesc])
+    const changeRequestTime = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRequestTime(e.target.value)
-    }
-    const changeLocation = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    },[setRequestTime])
+    const changeLocation = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setLocation(e.target.value)
-    }
+    },[setLocation])
     const test = () => {
         setIsSend(true)
         const stateMaker = new StateMakerForNewEventRegist(
@@ -127,10 +125,9 @@ export const EventEdit: React.VFC<Props> = (props) => {
         })
     }
 
-    const changeMembers = (event: React.ChangeEvent<{ value: unknown }>) => {
-        console.log('selected members', event.target.value)
+    const changeMembers = useCallback((event: React.ChangeEvent<{ value: unknown }>) => {
         setSelectedMembers(event.target.value as string[])
-    }
+    },[setSelectedMembers])
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -182,7 +179,7 @@ export const EventEdit: React.VFC<Props> = (props) => {
             </CardContent>
         </Card>
     )
-}
+})
 const Container = styled.div`
     display: flex;
     flex-wrap: wrap;

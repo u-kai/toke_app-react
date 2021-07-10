@@ -2,14 +2,11 @@ import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import styled from 'styled-components'
-import { useEffect, useState, useReducer, useContext } from 'react'
+import React,{ useContext, useCallback } from 'react'
 import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
-import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil'
-import { userIdState } from 'store/user_id'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { SendButton } from 'components/atoms/SendButton'
 import { MUIButton } from 'components/atoms/MUIButton'
-import { IsAttendAndMessageContext } from 'providers/IsAttendAndMessage'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
@@ -33,7 +30,7 @@ type Props = {
     eventId: string
 }
 
-export const ResponseComponent: React.VFC<Props> = (props) => {
+export const ResponseComponent: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const { eventId } = props
     const context = useContext(ResponseInfoContext)
@@ -58,12 +55,12 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             }
         })
     }
-    const onClickToAbsent = () => {
+    const onClickToAbsent = useCallback(() => {
         responseInfoDispatch({ type: 'selectAbsent' })
-    }
-    const onClickToAttend = () => {
+    },[])
+    const onClickToAttend = useCallback(() => {
         responseInfoDispatch({ type: 'selectAttend' })
-    }
+    },[])
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -91,7 +88,7 @@ export const ResponseComponent: React.VFC<Props> = (props) => {
             </CardContent>
         </Card>
     )
-}
+})
 
 const ButtonContainer = styled.div`
     display: flex;

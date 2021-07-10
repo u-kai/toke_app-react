@@ -5,7 +5,7 @@ import { CardContainer } from 'components/atoms/CardContainer'
 import { ScheduleCardProps } from 'types/ui-types/ScheduleCardProps'
 
 const dateConverter = new DateConverter()
-export const ScheduleCard: VFC<ScheduleCardProps> = (props) => {
+export const ScheduleCard: VFC<ScheduleCardProps> = React.memo((props) => {
     const today = dateConverter.displayToday()
     return (
         <CardContainer>
@@ -30,7 +30,7 @@ export const ScheduleCard: VFC<ScheduleCardProps> = (props) => {
             </ScheduleContainer>
         </CardContainer>
     )
-}
+})
 
 const Dates = styled.div`
     font-size: 16px;
