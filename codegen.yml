@@ -1,0 +1,16 @@
+overwrite: true
+documents:
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
+generates:
+  ./src/types/generated/graphql.ts:
+    schema: ./src/schema.graphql
+    config:
+      #uhseIndexSignature: true
+      withHooks: true
+      # リゾルバーのためのContextの型をsrc/types/context.d.tsから読み込む
+      #contextType: ../context#Context
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo

@@ -7,6 +7,7 @@ import {  UserIdProvider } from 'providers/UserIdProvider'
 import { BannerMessageProvider } from 'providers/BannerMessage'
 import { IsAttendAndMessageProvider } from 'providers/IsAttendAndMessage'
 import { ResponseInfoProvider } from 'providers/ResponseInfoProvider'
+import { GraphUserReg } from 'components/pages/NewRegiGraph'
 export default function App() {
     return (
         <UserIdProvider>
@@ -17,6 +18,7 @@ export default function App() {
                                 <Route exact path="/" component={Login} />
                                 <Route exact path="/home" component={Home} />
                                 <Route exact path="/newRegistUser" component={NewRegistUser} />
+                                {/* <GraphUserReg></GraphUserReg> */}
                             </BrowserRouter>
                     </BannerMessageProvider>
                 </IsAttendAndMessageProvider>

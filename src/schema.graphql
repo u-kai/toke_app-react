@@ -1,0 +1,40 @@
+type User {
+    userId:ID
+    userName:String
+    password:String
+}
+
+type Event {
+    eventId:ID
+    eventName:String
+    eventPurpose:String
+    eventStartDate:String
+    eventEndDate:String
+    eventOrganizerName:String
+    eventOrganizerId:String
+    eventPartisipantsID:[ID]
+    eventPatisipants:[String]
+}
+
+type EventTypes {
+    getResponsed:[Event] 
+    getNotResponse:[Event]
+    getAttendEvent:[Event]
+}
+
+input NewRegistUser {
+    userName:String
+}
+type Message{
+    success:String
+    error:String
+}
+
+type Mutation {
+    createEvent(userId:ID):Event
+    newRegistUser(userName:String,password:String):Message    
+}
+
+type Query {
+    getInitEventData(userId:ID):EventTypes
+}
