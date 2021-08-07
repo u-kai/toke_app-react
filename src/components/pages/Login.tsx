@@ -1,27 +1,36 @@
 import styled from 'styled-components'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
 import { useHistory, Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
-import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 import { UserIdContext } from 'providers/UserIdProvider'
+import { useLoginLazyQuery } from 'types/generated/graphql'
 export const Login: React.VFC = () => {
     const [error, setError] = useState('')
     const history = useHistory()
     const context = useContext(UserIdContext)
     const { userInfo, dispatch } = context
     const [password, setPassword] = useState('')
-    const onClick = () => {
-        const stateMaker = new StateMakerForLogin(userInfo.userName, password)
-        stateMaker.returnErrorAndUserId().then((errorAndUserId: { error: string | ''; userId: string | '' }) => {
-            setError(errorAndUserId.error)
-            dispatch({ type: 'inputId', value: errorAndUserId.userId })
-            if (errorAndUserId.error === '') {
-                history.push('/home')
-            }
+    const [login, { data }] = useLoginLazyQuery()
+    const onClick = async () => {
+        login({
+            variables: {
+                userName: userInfo.userName,
+                userPassword: password,
+            },
         })
     }
+    useEffect(() => {
+        if (data?.login.error) {
+            setError(data.login.error.errorMessage)
+            return
+        }
+        if (data?.login.userInfo) {
+            dispatch({ type: 'inputId', value: data.login.userInfo.userId })
+            history.push('/home')
+        }
+    }, [data?.login])
     return (
         <Contener>
             <InputContener>
