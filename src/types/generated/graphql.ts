@@ -14,91 +14,104 @@ export type Scalars = {
   Float: number;
 };
 
+export type AttendEvent = {
+  __typename?: 'AttendEvent';
+  events?: Maybe<Array<Maybe<Event>>>;
+  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
+};
+
 export type Event = {
   __typename?: 'Event';
-  eventId?: Maybe<Scalars['ID']>;
-  eventName?: Maybe<Scalars['String']>;
-  eventPurpose?: Maybe<Scalars['String']>;
-  eventStartDate?: Maybe<Scalars['String']>;
-  eventEndDate?: Maybe<Scalars['String']>;
-  eventOrganizerName?: Maybe<Scalars['String']>;
-  eventOrganizerId?: Maybe<Scalars['String']>;
-  eventPartisipantsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  eventPatisipants?: Maybe<Array<Maybe<Scalars['String']>>>;
+  eventId: Scalars['ID'];
+  purpose?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['String']>;
+  endDate?: Maybe<Scalars['String']>;
+  organizerId: Scalars['ID'];
+  organizerName?: Maybe<Scalars['String']>;
+  describes?: Maybe<Scalars['String']>;
+  bring?: Maybe<Scalars['String']>;
 };
 
-export type EventTypes = {
-  __typename?: 'EventTypes';
-  getResponsed?: Maybe<Array<Maybe<Event>>>;
-  getNotResponse?: Maybe<Array<Maybe<Event>>>;
-  getAttendEvent?: Maybe<Array<Maybe<Event>>>;
-};
-
-export type Message = {
-  __typename?: 'Message';
-  success?: Maybe<Scalars['String']>;
-  error?: Maybe<Scalars['String']>;
+export type HomeEvents = {
+  __typename?: 'HomeEvents';
+  resedEvent?: Maybe<ResedEvent>;
+  notResEvent?: Maybe<NotResEvent>;
+  attendEvent?: Maybe<AttendEvent>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createEvent?: Maybe<Event>;
-  newRegistUser?: Maybe<Message>;
-};
-
-
-export type MutationCreateEventArgs = {
-  userId?: Maybe<Scalars['ID']>;
+  newRegistUser?: Maybe<Scalars['Boolean']>;
 };
 
 
 export type MutationNewRegistUserArgs = {
-  userName?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
+  input: NewUser;
 };
 
-export type NewRegistUser = {
-  userName?: Maybe<Scalars['String']>;
+export type MyEvent = {
+  __typename?: 'MyEvent';
+  events?: Maybe<Array<Maybe<Event>>>;
+  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
+};
+
+export type NewUser = {
+  userName: Scalars['String'];
+  userPassword: Scalars['String'];
+};
+
+export type NotResEvent = {
+  __typename?: 'NotResEvent';
+  events?: Maybe<Array<Maybe<Event>>>;
+  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
+};
+
+export type Paticipant = {
+  __typename?: 'Paticipant';
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  getInitEventData?: Maybe<EventTypes>;
+  home?: Maybe<HomeEvents>;
 };
 
 
-export type QueryGetInitEventDataArgs = {
-  userId?: Maybe<Scalars['ID']>;
+export type QueryHomeArgs = {
+  userId: Scalars['ID'];
+};
+
+export type ResedEvent = {
+  __typename?: 'ResedEvent';
+  events?: Maybe<Array<Maybe<Event>>>;
+  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
 };
 
 export type User = {
   __typename?: 'User';
-  userId?: Maybe<Scalars['ID']>;
   userName?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
+  userId: Scalars['ID'];
+  userPassword?: Maybe<Scalars['String']>;
 };
 
 export type NewRegistUserMutationVariables = Exact<{
-  userName?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
+  userName: Scalars['String'];
+  userPassword: Scalars['String'];
 }>;
 
 
 export type NewRegistUserMutation = (
   { __typename?: 'Mutation' }
-  & { newRegistUser?: Maybe<(
-    { __typename?: 'Message' }
-    & Pick<Message, 'success' | 'error'>
-  )> }
+  & Pick<Mutation, 'newRegistUser'>
 );
 
 
 export const NewRegistUserDocument = gql`
-    mutation newRegistUser($userName: String, $password: String) {
-  newRegistUser(userName: $userName, password: $password) {
-    success
-    error
-  }
+    mutation NewRegistUser($userName: String!, $userPassword: String!) {
+  newRegistUser(input: {userName: $userName, userPassword: $userPassword})
 }
     `;
 export type NewRegistUserMutationFn = Apollo.MutationFunction<NewRegistUserMutation, NewRegistUserMutationVariables>;
@@ -117,7 +130,7 @@ export type NewRegistUserMutationFn = Apollo.MutationFunction<NewRegistUserMutat
  * const [newRegistUserMutation, { data, loading, error }] = useNewRegistUserMutation({
  *   variables: {
  *      userName: // value for 'userName'
- *      password: // value for 'password'
+ *      userPassword: // value for 'userPassword'
  *   },
  * });
  */

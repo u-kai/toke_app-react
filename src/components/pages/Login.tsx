@@ -1,22 +1,22 @@
 import styled, { keyframes } from 'styled-components'
-import React, { useState,useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
 import { useHistory, Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
-import {UserIdContext} from "providers/UserIdProvider"
+import { UserIdContext } from 'providers/UserIdProvider'
 export const Login = () => {
     const [error, setError] = useState('')
     const history = useHistory()
     const context = useContext(UserIdContext)
-    const {userInfo,dispatch} = context
+    const { userInfo, dispatch } = context
     const [password, setPassword] = useState('')
     const onClick = () => {
         const stateMaker = new StateMakerForLogin(userInfo.userName, password)
         stateMaker.returnErrorAndUserId().then((errorAndUserId: { error: string | ''; userId: string | '' }) => {
             setError(errorAndUserId.error)
-            dispatch({type:"inputId",value:errorAndUserId.userId})
+            dispatch({ type: 'inputId', value: errorAndUserId.userId })
             if (errorAndUserId.error === '') {
                 history.push('/home')
             }
@@ -31,7 +31,7 @@ export const Login = () => {
                         id="login_userName"
                         value={userInfo.userName}
                         label={'名前'}
-                        onChange={(e) =>dispatch({type:"inputName",value:e.target.value})}
+                        onChange={(e) => dispatch({ type: 'inputName', value: e.target.value })}
                     />
                 </TextFieldContener>
                 <TextFieldContener>

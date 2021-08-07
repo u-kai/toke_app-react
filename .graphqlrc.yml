@@ -1,2 +1,2 @@
-schema: 'schema.graphql'
+schema: '../toke_app-back/schema.graphql'
 documents: 'src/**/*.{graphql,js,ts,jsx,tsx}'

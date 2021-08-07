@@ -1,0 +1,3 @@
+mutation NewRegistUser($userName: String!, $userPassword: String!) {
+    newRegistUser(input: { userName: $userName, userPassword: $userPassword })
+}

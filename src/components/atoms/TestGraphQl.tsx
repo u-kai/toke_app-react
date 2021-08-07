@@ -14,7 +14,7 @@
 //        getAttendEvent{
 //            eventNamed
 //        }
-//    } 
+//    }
 // }
 
 // `
@@ -22,15 +22,15 @@
 // }
 
 // export const TestGraphQL = () => {
-    
+
 //     const [data,setData] = React.useState("")
 //     const {event}  = useGetInitEventDataQuery({
 //         onCompleted({getInitEventData}){
-    
+
 //         }
 //     })
 //     return (
 //         <button onClick={()=>setData("chinko")}></button>
 //     )
 // }
-export const test = ""
+export const test = ''

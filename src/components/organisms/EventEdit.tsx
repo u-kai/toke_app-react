@@ -46,7 +46,7 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const context = useContext(UserIdContext)
     const bannerContext = useContext(BannerMessageContext)
-    const {bannerDispatch} = bannerContext
+    const { bannerDispatch } = bannerContext
 
     const { userInfo } = context
     const {
@@ -71,38 +71,56 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
     const [location, setLocation] = useState(info.location)
     const [isSend, setIsSend] = useState(false)
     // const [error, setError] = useState('')
-    
+
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
     const [selectedMembers, setSelectedMembers] = useState<string[]>(participants)
     useEffect(() => {
         const stateMaker = new StateMakerForGetMembers(userInfo.userId)
         stateMaker.returnErrorAndIdsNames().then((data) => {
-            bannerDispatch({type:"setError",value:data.error})
+            bannerDispatch({ type: 'setError', value: data.error })
             setMemberIds(data.data.ids)
             setMemberNames(data.data.names)
         })
     }, [])
-  
-    const changePurpose = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setPurpose(e.target.value)
-    },[setPurpose])
 
-    const changeBring = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setBring(e.target.value)
-    },[setBring])
-    const changeDesc = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setDesc(e.target.value)
-    },[setDesc])
-    const changeDate = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setDate(e.target.value)
-    },[setDesc])
-    const changeRequestTime = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRequestTime(e.target.value)
-    },[setRequestTime])
-    const changeLocation = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setLocation(e.target.value)
-    },[setLocation])
+    const changePurpose = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setPurpose(e.target.value)
+        },
+        [setPurpose]
+    )
+
+    const changeBring = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setBring(e.target.value)
+        },
+        [setBring]
+    )
+    const changeDesc = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setDesc(e.target.value)
+        },
+        [setDesc]
+    )
+    const changeDate = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setDate(e.target.value)
+        },
+        [setDesc]
+    )
+    const changeRequestTime = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setRequestTime(e.target.value)
+        },
+        [setRequestTime]
+    )
+    const changeLocation = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setLocation(e.target.value)
+        },
+        [setLocation]
+    )
     const test = () => {
         setIsSend(true)
         const stateMaker = new StateMakerForNewEventRegist(
@@ -117,17 +135,20 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
             memberIds
         )
         stateMaker.returnErrorAndSuccessMessage().then((data) => {
-            if(data.error === ""){
-                bannerDispatch({type:"setSuccess",value:data.success})
-                return 
+            if (data.error === '') {
+                bannerDispatch({ type: 'setSuccess', value: data.success })
+                return
             }
-            bannerDispatch({type:"setError",value:data.error})
+            bannerDispatch({ type: 'setError', value: data.error })
         })
     }
 
-    const changeMembers = useCallback((event: React.ChangeEvent<{ value: unknown }>) => {
-        setSelectedMembers(event.target.value as string[])
-    },[setSelectedMembers])
+    const changeMembers = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            setSelectedMembers(event.target.value as string[])
+        },
+        [setSelectedMembers]
+    )
     return (
         <Card className={classes.root}>
             <CardContent>

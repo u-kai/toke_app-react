@@ -18,7 +18,7 @@ import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
 import { useResponseInfo } from 'hocks/useResponseInfo'
 import { useParticipants } from 'hocks/useParitcipants'
 import { url } from 'datas/urls/url'
-export const Home = ():JSX.Element => {
+export const Home = (): JSX.Element => {
     const { fetchAndSetResponseInfo } = useResponseInfo()
     const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
         useDisplayEventInfo()
@@ -29,35 +29,46 @@ export const Home = ():JSX.Element => {
     const { userInfo, dispatch } = userContext
     const responseInfoContext = useContext(ResponseInfoContext)
     const { responseInfoDispatch } = responseInfoContext
-    const { bannerMessage} = bannerMessageContext
-    const [socket,setSocket] = useState(socketIOClient(`${url}`))
-    
-    
-    const onClickToNotResed = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
-        responseInfoDispatch({ type: 'selectAbsent' })
-    },[displayAndEventInfoDispatch])
+    const { bannerMessage } = bannerMessageContext
+    const [socket, setSocket] = useState(socketIOClient(`${url}`))
 
-    const onClickToRequest = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({ type: 'selectMyRequest', id: e.currentTarget.id })
-    },[displayAndEventInfoDispatch])
+    const onClickToNotResed = useCallback(
+        (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            displayAndEventInfoDispatch({ type: 'selectNotResed', id: e.currentTarget.id })
+            responseInfoDispatch({ type: 'selectAbsent' })
+        },
+        [displayAndEventInfoDispatch]
+    )
 
-    const onClickToResed = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({ type: 'selectResed', id: e.currentTarget.id })
-        fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
-    },[displayAndEventInfoDispatch])
+    const onClickToRequest = useCallback(
+        (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            displayAndEventInfoDispatch({ type: 'selectMyRequest', id: e.currentTarget.id })
+        },
+        [displayAndEventInfoDispatch]
+    )
+
+    const onClickToResed = useCallback(
+        (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            displayAndEventInfoDispatch({ type: 'selectResed', id: e.currentTarget.id })
+            fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
+        },
+        [displayAndEventInfoDispatch]
+    )
 
     const onClickToCreateNewEvent = useCallback(() => {
         displayAndEventInfoDispatch({ type: 'createNewRequest' })
-    },[])
+    }, [])
 
-    const onClickToSchedule = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        displayAndEventInfoDispatch({ type: 'selectAttendEvent', id: e.currentTarget.id })
-        fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
-    },[displayAndEventInfoDispatch])
+    const onClickToSchedule = useCallback(
+        (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            displayAndEventInfoDispatch({ type: 'selectAttendEvent', id: e.currentTarget.id })
+            fetchAndSetResponseInfo(userInfo.userId, e.currentTarget.id)
+        },
+        [displayAndEventInfoDispatch]
+    )
 
-    const initHome = ():Promise<void> => {
-        return new Promise((resolve)=>{
+    const initHome = (): Promise<void> => {
+        return new Promise((resolve) => {
             fetchAndSetAllEvent(userInfo.userId)
             displayAndEventInfoDispatch({ type: 'initializeDisplay' })
             fetchAndSetUserName(userInfo.userId)
@@ -65,12 +76,12 @@ export const Home = ():JSX.Element => {
             resolve()
         })
     }
-    const displaySuccessAtSec = ():Promise<void>=>{
-        return new Promise((resolve)=>{
-            setTimeout(()=>{
+    const displaySuccessAtSec = (): Promise<void> => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
                 initHome()
                 resolve()
-            },1000)
+            }, 1000)
         })
     }
 
@@ -78,12 +89,11 @@ export const Home = ():JSX.Element => {
         initHome()
     }, [userInfo.userId])
 
-    useEffect(()=>{
-        if(bannerMessage.message === "送信が完了しました" || bannerMessage.message === "返信が成功しました！"){
+    useEffect(() => {
+        if (bannerMessage.message === '送信が完了しました' || bannerMessage.message === '返信が成功しました！') {
             displaySuccessAtSec()
         }
-        
-    },[bannerMessage.status])
+    }, [bannerMessage.status])
 
     useEffect(() => {
         displayAndEventInfoDispatch({ type: 'initializeDisplay' })

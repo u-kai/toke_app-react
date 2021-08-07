@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import styled from 'styled-components'
-import React,{ useContext, useCallback } from 'react'
+import React, { useContext, useCallback } from 'react'
 import { StateMakerForNewAttendanceResponseRegist } from 'model/StateMaker/StateMakerForNewAttendanceResponseRegist'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
 import { SendButton } from 'components/atoms/SendButton'
@@ -57,10 +57,10 @@ export const ResponseComponent: React.VFC<Props> = React.memo((props) => {
     }
     const onClickToAbsent = useCallback(() => {
         responseInfoDispatch({ type: 'selectAbsent' })
-    },[])
+    }, [])
     const onClickToAttend = useCallback(() => {
         responseInfoDispatch({ type: 'selectAttend' })
-    },[])
+    }, [])
     return (
         <Card className={classes.root}>
             <CardContent>

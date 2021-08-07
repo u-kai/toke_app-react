@@ -1,3 +1,1 @@
-export type Context = {
-    
-}
+export type Context = {}

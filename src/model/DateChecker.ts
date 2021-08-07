@@ -10,7 +10,7 @@ export class DateChecker {
             today.getDate() === compare.getDate()
         )
     }
-    
+
     sortInfo = (infos: ScheduleInfoResults) => {
         const minDate: ScheduleInfo = {
             attendance_request_id: '',

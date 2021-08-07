@@ -1,16 +1,18 @@
 overwrite: true
 documents:
-  - ./src/**/*.tsx
-  - ./src/**/*.ts
+    #- ./src/**/*.tsx
+    - ./src/**/*.graphql
 generates:
-  ./src/types/generated/graphql.ts:
-    schema: ./src/schema.graphql
-    config:
-      #uhseIndexSignature: true
-      withHooks: true
-      # リゾルバーのためのContextの型をsrc/types/context.d.tsから読み込む
-      #contextType: ../context#Context
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-react-apollo
+    ./src/types/generated/graphql.ts:
+        schema: ../toke_app-back/schema.graphql
+        config:
+            #uhseIndexSignature: true
+            withHooks: true
+            withComponent: false
+            withHOC: false
+            # リゾルバーのためのContextの型をsrc/types/context.d.tsから読み込む
+            #contextType: ../context#Context
+        plugins:
+            - typescript
+            - typescript-operations
+            - typescript-react-apollo

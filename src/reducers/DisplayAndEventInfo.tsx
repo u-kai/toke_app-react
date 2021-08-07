@@ -87,12 +87,15 @@ export const displayAndEventInfoReducer = (
             return { ...state }
         case 'insertTodayEvents': {
             const dateChecker = new DateChecker()
-            console.log("what happen",state.infos.attendEventInfo.map(data=>dateChecker.isToday(data.start_date)))
-            const todayInfo = state.infos.attendEventInfo.filter(data => dateChecker.isToday(data.start_date))
+            console.log(
+                'what happen',
+                state.infos.attendEventInfo.map((data) => dateChecker.isToday(data.start_date))
+            )
+            const todayInfo = state.infos.attendEventInfo.filter((data) => dateChecker.isToday(data.start_date))
             state.infos.todayEventInfo = [...todayInfo]
-            console.log("state",state)
-            console.log("today",todayInfo)
-            return { ...state, }
+            console.log('state', state)
+            console.log('today', todayInfo)
+            return { ...state }
         }
         case 'initializeDisplay':
             if (returnInfoForInitDisplay(state.infos) !== undefined) {

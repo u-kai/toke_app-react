@@ -39,12 +39,12 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
     const { todayScheduleInfo, allScheduleInfo, onClickToDetail } = props
     const handleClickForNotRes = useCallback(() => {
         setNotResOpen(!notResOpen)
-    },[setNotResOpen])
+    }, [setNotResOpen])
 
     const handleClickForResed = useCallback(() => {
         setResedOpen(!resedOpen)
-    },[setResedOpen])
-    
+    }, [setResedOpen])
+
     const display = (data: MailDisplayInfo): string => {
         return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
     }
