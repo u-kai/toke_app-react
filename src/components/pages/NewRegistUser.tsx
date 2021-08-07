@@ -1,59 +1,54 @@
-import React, { useState, useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import styled from 'styled-components'
 import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
-import { StateMakerForNewUserRegist } from 'model/StateMaker/StateMakerForNewUserRegist'
 import { Link } from 'react-router-dom'
 import { useNewRegistUserMutation } from 'types/generated/graphql'
 
-const isRockInput = (success: string): boolean => {
-    return success !== ''
-}
 type NewRegistUserInfo = {
     userName: string
     password: string
-    //  message: {
-    //      error: string
-    //      success: string
-    //  }
     message: {
-        error?: 'エラーです．異なるユーザー名及び異なるパスワードを記入してください．'
-        success?: '新規登録ありがとうございます．'
+        error?: 'エラーです．異なるユーザー名及び異なるパスワードを記入してください．' | string
+        success?: '新規登録ありがとうございます．' | string
     }
-    isSuccess: boolean
     isDisable: boolean
 }
 type ActionType = 'inputUserName' | 'inputPassword' | 'sendSuccess' | 'sendError'
 const reducer = (state: NewRegistUserInfo, action: { type: ActionType; value: string }): NewRegistUserInfo => {
     switch (action.type) {
         case 'inputUserName':
-            //return isRockInput(state.message.success) ? state : { ...state, userName: action.value }
-            return state.isSuccess
+            return state.isDisable
                 ? { ...state, message: { success: '新規登録ありがとうございます．' } }
                 : { ...state, userName: action.value }
         case 'inputPassword':
-            //return isRockInput(state.message.success) ? state : { ...state, password: action.value }
-            return state.isSuccess
+            return state.isDisable
                 ? {
                       ...state,
                       message: { error: 'エラーです．異なるユーザー名及び異なるパスワードを記入してください．' },
                   }
                 : { ...state, password: action.value }
         case 'sendSuccess':
-            return {
-                ...state,
-                message: { success: '新規登録ありがとうございます．', error: undefined },
-                isDisable: true,
-            }
+            return action.value === ''
+                ? {
+                      ...state,
+                      message: { success: '新規登録ありがとうございます．', error: undefined },
+                      isDisable: true,
+                  }
+                : { ...state, message: { success: action.value, error: undefined }, isDisable: true }
         case 'sendError':
-            return {
-                ...state,
-                message: {
-                    error: 'エラーです．異なるユーザー名及び異なるパスワードを記入してください．',
-                    success: undefined,
-                },
-            }
+            return action.value === ''
+                ? {
+                      ...state,
+                      message: {
+                          error: 'エラーです．異なるユーザー名及び異なるパスワードを記入してください．',
+                          success: undefined,
+                      },
+                      isDisable: false,
+                  }
+                : { ...state, message: { error: action.value, success: undefined } }
+
         default:
             return state
     }
@@ -65,31 +60,29 @@ const initState: NewRegistUserInfo = {
         success: undefined,
         error: undefined,
     },
-    isSuccess: false,
     isDisable: false,
 }
 
-export const NewRegistUser = () => {
+export const NewRegistUser: React.VFC = () => {
     const [newRegisterUser, dispatch] = useReducer(reducer, initState)
-    const [newRegistUser, { data, loading, error }] = useNewRegistUserMutation({
+    const [newRegistUser, { data }] = useNewRegistUserMutation({
         variables: { userName: newRegisterUser.userName, userPassword: newRegisterUser.password },
     })
     const sendData = async () => {
-        //const stateMakerForNewUser = new StateMakerForNewUserRegist(newRegisterUser.userName, newRegisterUser.password)
         try {
-            newRegistUser()
+            await newRegistUser()
         } catch (e) {
-            console.log(e)
+            dispatch({ type: 'sendError', value: 'サーバーがダウンしています．管理者に問い合わせください．' })
         }
-        // stateMakerForNewUser.returnErrorAndSuccessMessage().then((data) => {
-        //     if (data.error === '') {
-        //         dispatch({ type: 'sendSuccess', value: 'ご登録ありがとうございます！' })
-        //     }
-        //     if (data.error !== '') {
-        //         dispatch({ type: 'sendError', value: data.error })
-        //     }
-        // })
     }
+    useEffect(() => {
+        if (data?.newRegistUser) {
+            dispatch({ type: 'sendSuccess', value: '' })
+        }
+        if (data?.newRegistUser === false) {
+            dispatch({ type: 'sendError', value: '' })
+        }
+    }, [data])
     return (
         <Contener>
             <InputContener>
@@ -116,14 +109,14 @@ export const NewRegistUser = () => {
                 </ButtonContener>
             </InputContener>
             <ErrorContener>
-                {data?.newRegistUser === false ? (
-                    <SimpleAlert message={newRegisterUser.message.error!} severity={'error'} />
+                {data?.newRegistUser === false && newRegisterUser.message.error !== undefined ? (
+                    <SimpleAlert message={newRegisterUser.message.error} severity={'error'} />
                 ) : null}
             </ErrorContener>
             <SuccessContener>
-                {data?.newRegistUser === true ? (
+                {data?.newRegistUser === true && newRegisterUser.message.success ? (
                     <SimpleAlert
-                        message={newRegisterUser.message.success!}
+                        message={newRegisterUser.message.success}
                         severity={'success'}
                         children={<Link to={'/'}>ログインページでログインしてください</Link>}
                     />

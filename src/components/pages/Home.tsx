@@ -1,6 +1,4 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react'
-import { SocketIo } from 'components/organisms/SocketIo'
-import socketIOClient from 'socket.io-client'
+import React, { useEffect, useContext, useCallback } from 'react'
 import { NestedMailList } from 'components/molecules/NestedMailList'
 import { NestedScheduleList } from 'components/molecules/NestedScheduleList'
 import styled from 'styled-components'
@@ -17,7 +15,6 @@ import { useUserName } from 'hocks/useUserName'
 import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
 import { useResponseInfo } from 'hocks/useResponseInfo'
 import { useParticipants } from 'hocks/useParitcipants'
-import { url } from 'datas/urls/url'
 export const Home = (): JSX.Element => {
     const { fetchAndSetResponseInfo } = useResponseInfo()
     const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
@@ -30,7 +27,6 @@ export const Home = (): JSX.Element => {
     const responseInfoContext = useContext(ResponseInfoContext)
     const { responseInfoDispatch } = responseInfoContext
     const { bannerMessage } = bannerMessageContext
-    const [socket, setSocket] = useState(socketIOClient(`${url}`))
 
     const onClickToNotResed = useCallback(
         (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -138,11 +134,12 @@ export const Home = (): JSX.Element => {
             </MailContainer>
             <EventInfoContainer>
                 {displayAndEventInfo.displayComponentsType === 'response' ? (
-                    displayAndEventInfo.displayEventInfo !== undefined ? (
-                        <EventInfo info={displayAndEventInfo.displayEventInfo!} participants={participants}></EventInfo>
+                    displayAndEventInfo.displayEventInfo !== undefined &&
+                    displayAndEventInfo.displayEventInfo !== null ? (
+                        <EventInfo info={displayAndEventInfo.displayEventInfo} participants={participants}></EventInfo>
                     ) : null
                 ) : displayAndEventInfo.displayComponentsType === 'editRequest' ? (
-                    <EventEdit info={displayAndEventInfo.displayEventInfo!} participants={participants} />
+                    <EventEdit info={displayAndEventInfo.displayEventInfo} participants={participants} />
                 ) : (
                     <EventEdit />
                 )}
@@ -154,9 +151,10 @@ export const Home = (): JSX.Element => {
                     onClickToDetail={onClickToSchedule}
                 />
             </NextEventContainer>
-            {displayAndEventInfo.displayComponentsType === 'response' ? (
+            {displayAndEventInfo.displayComponentsType === 'response' &&
+            displayAndEventInfo.displayEventId !== undefined ? (
                 <ResponseContainer>
-                    <ResponseComponent eventId={displayAndEventInfo.displayEventId!}></ResponseComponent>
+                    <ResponseComponent eventId={displayAndEventInfo.displayEventId}></ResponseComponent>
                 </ResponseContainer>
             ) : null}
         </Container>

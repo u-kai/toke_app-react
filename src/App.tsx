@@ -9,7 +9,7 @@ import { IsAttendAndMessageProvider } from 'providers/IsAttendAndMessage'
 import { ResponseInfoProvider } from 'providers/ResponseInfoProvider'
 import { ApolloProvider } from '@apollo/client'
 import { apolloClient } from 'graphqls/graphql'
-export default function App() {
+export const App: React.VFC = () => {
     return (
         <ApolloProvider client={apolloClient}>
             <UserIdProvider>
@@ -20,7 +20,6 @@ export default function App() {
                                 <Route exact path="/" component={Login} />
                                 <Route exact path="/home" component={Home} />
                                 <Route exact path="/newRegistUser" component={NewRegistUser} />
-                                {/* <GraphUserReg></GraphUserReg> */}
                             </BrowserRouter>
                         </BannerMessageProvider>
                     </IsAttendAndMessageProvider>

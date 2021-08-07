@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import React, { useState, useContext } from 'react'
 import { SendButton } from 'components/atoms/SendButton'
 import { LayoutTextField } from '../atoms/LayoutTextField'
@@ -6,7 +6,7 @@ import { useHistory, Link } from 'react-router-dom'
 import { SimpleAlert } from '../atoms/SimpleAletert'
 import { StateMakerForLogin } from 'model/StateMaker/StateMakerForLogin'
 import { UserIdContext } from 'providers/UserIdProvider'
-export const Login = () => {
+export const Login: React.VFC = () => {
     const [error, setError] = useState('')
     const history = useHistory()
     const context = useContext(UserIdContext)
