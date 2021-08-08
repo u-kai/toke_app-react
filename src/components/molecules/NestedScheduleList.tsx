@@ -73,7 +73,7 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
                             key={`todayScheduleItem${i}`}
                             button
                             className={classes.nested}
-                            id={todayInfo.attendance_request_id}
+                            id={todayInfo.event_id}
                             onClick={onClickToDetail}
                         >
                             <ListItemText key={`todayScheduleItemText${i}`} primary={display(todayInfo)}></ListItemText>
@@ -95,7 +95,7 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
                             key={`scheduleInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={scheduleInfo.attendance_request_id}
+                            id={scheduleInfo.event_id}
                             onClick={onClickToDetail}
                         >
                             <ListItemText

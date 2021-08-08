@@ -18,6 +18,7 @@ import { TimePicker } from 'components/atoms/TimePicker'
 import TextField from '@material-ui/core/TextField'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
+import { useCreateNewEventMutation } from 'types/generated/graphql'
 
 const useStyles = makeStyles({
     root: {
@@ -69,9 +70,8 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
     const [bring, setBring] = useState(info.bring)
     const [desc, setDesc] = useState(info.describes)
     const [location, setLocation] = useState(info.location)
-    const [isSend, setIsSend] = useState(false)
-    // const [error, setError] = useState('')
-
+    const [createNewEvent, { data }] = useCreateNewEventMutation()
+    console.log('event data is ', data)
     const [memberIds, setMemberIds] = useState([''])
     const [memberNames, setMemberNames] = useState([''])
     const [selectedMembers, setSelectedMembers] = useState<string[]>(participants)
@@ -122,25 +122,38 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
         [setLocation]
     )
     const test = () => {
-        setIsSend(true)
-        const stateMaker = new StateMakerForNewEventRegist(
-            purpose,
-            bring,
-            desc,
-            userInfo.userId,
-            userInfo.userName,
-            location,
-            date,
-            dateCalculater(date, requestTime),
-            memberIds
-        )
-        stateMaker.returnErrorAndSuccessMessage().then((data) => {
-            if (data.error === '') {
-                bannerDispatch({ type: 'setSuccess', value: data.success })
-                return
-            }
-            bannerDispatch({ type: 'setError', value: data.error })
+        createNewEvent({
+            variables: {
+                location,
+                purpose,
+                end_date: dateCalculater(date, requestTime),
+                paticipantsIds: memberIds,
+                bring,
+                describes: desc,
+                start_date: date,
+                organizer_id: userInfo.userId,
+                organizer_name: userInfo.userName,
+                date: date,
+            },
         })
+        //  const stateMaker = new StateMakerForNewEventRegist(
+        //      purpose,
+        //      bring,
+        //      desc,
+        //      userInfo.userId,
+        //      userInfo.userName,
+        //      location,
+        //      date,
+        //      dateCalculater(date, requestTime),
+        //      memberIds
+        //  )
+        //  stateMaker.returnErrorAndSuccessMessage().then((data) => {
+        //      if (data.error === '') {
+        //          bannerDispatch({ type: 'setSuccess', value: data.success })
+        //          return
+        //      }
+        //      bannerDispatch({ type: 'setError', value: data.error })
+        //  })
     }
 
     const changeMembers = useCallback(

@@ -31,6 +31,7 @@ const dateConverter = new DateConverter()
 export const EventInfo: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
     const { info, participants } = props
+    console.log('dadta info ', info)
     return (
         <Card className={classes.root}>
             <CardContent>

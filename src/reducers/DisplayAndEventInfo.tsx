@@ -36,7 +36,7 @@ const idToDisplayEventInfo = (id: string, infos: EventInfos) => {
     const numberOfLengthOver0 = Object.values(infos).filter((info) => info.length > 0)
     if (numberOfLengthOver0.length > 0) {
         const allEventInfo = numberOfLengthOver0.flat()
-        return allEventInfo.filter((info) => info.attendance_request_id.toString() === id.toString())[0]
+        return allEventInfo.filter((info) => info.event_id.toString() === id.toString())[0]
     }
     return
 }
@@ -93,8 +93,6 @@ export const displayAndEventInfoReducer = (
             )
             const todayInfo = state.infos.attendEventInfo.filter((data) => dateChecker.isToday(data.start_date))
             state.infos.todayEventInfo = [...todayInfo]
-            console.log('state', state)
-            console.log('today', todayInfo)
             return { ...state }
         }
         case 'initializeDisplay':
@@ -103,7 +101,7 @@ export const displayAndEventInfoReducer = (
                     ...state,
                     displayComponentsType: 'response',
                     displayEventInfo: returnInfoForInitDisplay(state.infos),
-                    displayEventId: returnInfoForInitDisplay(state.infos)!.attendance_request_id,
+                    displayEventId: returnInfoForInitDisplay(state.infos)!.event_id,
                 }
             }
             return { ...state, displayComponentsType: 'newRequest', displayEventId: '' }

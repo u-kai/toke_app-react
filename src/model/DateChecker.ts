@@ -13,7 +13,7 @@ export class DateChecker {
 
     sortInfo = (infos: ScheduleInfoResults) => {
         const minDate: ScheduleInfo = {
-            attendance_request_id: '',
+            event_id: '',
             start_date: '1999-01-01',
             end_date: '',
             purpose: '',

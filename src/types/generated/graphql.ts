@@ -17,8 +17,39 @@ export type Scalars = {
 export type AttendEvent = {
   __typename?: 'AttendEvent';
   events?: Maybe<Array<Maybe<Event>>>;
-  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
 };
+
+export type CreateNewEvent = {
+  start_date: Scalars['String'];
+  end_date: Scalars['String'];
+  location: Scalars['String'];
+  organizer_id: Scalars['ID'];
+  organizer_name: Scalars['String'];
+  describes: Scalars['String'];
+  bring: Scalars['String'];
+  purpose: Scalars['String'];
+  paticipantsIds: Array<Scalars['ID']>;
+  date: Scalars['String'];
+};
+
+export type CreateNewEventResult = {
+  __typename?: 'CreateNewEventResult';
+  newEvent?: Maybe<Event>;
+  error?: Maybe<Error>;
+};
+
+export type DisplayEvent = {
+  __typename?: 'DisplayEvent';
+  event?: Maybe<Event>;
+  type: DisplayType;
+  paticipants?: Maybe<Array<Paticipant>>;
+};
+
+export enum DisplayType {
+  Myevent = 'MYEVENT',
+  Newevent = 'NEWEVENT',
+  Editevent = 'EDITEVENT'
+}
 
 export type Error = {
   __typename?: 'Error';
@@ -27,23 +58,26 @@ export type Error = {
 
 export type Event = {
   __typename?: 'Event';
-  eventId: Scalars['ID'];
-  purpose?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['String']>;
-  endDate?: Maybe<Scalars['String']>;
-  organizerId: Scalars['ID'];
-  organizerName?: Maybe<Scalars['String']>;
-  describes?: Maybe<Scalars['String']>;
-  bring?: Maybe<Scalars['String']>;
+  event_id: Scalars['ID'];
+  purpose: Scalars['String'];
+  date: Scalars['String'];
+  location: Scalars['String'];
+  start_date: Scalars['String'];
+  end_date: Scalars['String'];
+  organizer_id: Scalars['ID'];
+  organizer_name: Scalars['String'];
+  describes: Scalars['String'];
+  bring: Scalars['String'];
 };
 
 export type HomeEvents = {
   __typename?: 'HomeEvents';
-  resedEvent?: Maybe<ResedEvent>;
-  notResEvent?: Maybe<NotResEvent>;
-  attendEvent?: Maybe<AttendEvent>;
+  requestEvent: Array<Event>;
+  displayEvent: DisplayEvent;
+  resedEvent: Array<Event>;
+  notResEvent: Array<Event>;
+  attendEvent: Array<Event>;
+  error?: Maybe<Error>;
 };
 
 export type LoginResult = {
@@ -55,6 +89,7 @@ export type LoginResult = {
 export type Mutation = {
   __typename?: 'Mutation';
   newRegistUser?: Maybe<Scalars['Boolean']>;
+  createNewEvent: CreateNewEventResult;
 };
 
 
@@ -62,10 +97,20 @@ export type MutationNewRegistUserArgs = {
   input: NewUser;
 };
 
+
+export type MutationCreateNewEventArgs = {
+  input: CreateNewEvent;
+};
+
+export enum MutationType {
+  Changeresponse = 'CHANGERESPONSE',
+  Sendresponse = 'SENDRESPONSE',
+  Createnewevent = 'CREATENEWEVENT'
+}
+
 export type MyEvent = {
   __typename?: 'MyEvent';
   events?: Maybe<Array<Maybe<Event>>>;
-  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
 };
 
 export type NewUser = {
@@ -76,23 +121,22 @@ export type NewUser = {
 export type NotResEvent = {
   __typename?: 'NotResEvent';
   events?: Maybe<Array<Maybe<Event>>>;
-  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
 };
 
 export type Paticipant = {
   __typename?: 'Paticipant';
-  id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  user_id: Scalars['ID'];
+  user_name: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  home?: Maybe<HomeEvents>;
+  getHomeEvents: HomeEvents;
   login: LoginResult;
 };
 
 
-export type QueryHomeArgs = {
+export type QueryGetHomeEventsArgs = {
   userId: Scalars['ID'];
 };
 
@@ -105,7 +149,16 @@ export type QueryLoginArgs = {
 export type ResedEvent = {
   __typename?: 'ResedEvent';
   events?: Maybe<Array<Maybe<Event>>>;
-  paticipants?: Maybe<Array<Maybe<Paticipant>>>;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  sendRequest: Event;
+};
+
+
+export type SubscriptionSendRequestArgs = {
+  paticipantId: Scalars['ID'];
 };
 
 export type User = {
@@ -114,6 +167,34 @@ export type User = {
   userId: Scalars['ID'];
   userPassword?: Maybe<Scalars['String']>;
 };
+
+export type CreateNewEventMutationVariables = Exact<{
+  location: Scalars['String'];
+  end_date: Scalars['String'];
+  describes: Scalars['String'];
+  bring: Scalars['String'];
+  start_date: Scalars['String'];
+  organizer_id: Scalars['ID'];
+  organizer_name: Scalars['String'];
+  purpose: Scalars['String'];
+  date: Scalars['String'];
+  paticipantsIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type CreateNewEventMutation = (
+  { __typename?: 'Mutation' }
+  & { createNewEvent: (
+    { __typename?: 'CreateNewEventResult' }
+    & { error?: Maybe<(
+      { __typename?: 'Error' }
+      & Pick<Error, 'errorMessage'>
+    )>, newEvent?: Maybe<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'event_id'>
+    )> }
+  ) }
+);
 
 export type NewRegistUserMutationVariables = Exact<{
   userName: Scalars['String'];
@@ -124,6 +205,44 @@ export type NewRegistUserMutationVariables = Exact<{
 export type NewRegistUserMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'newRegistUser'>
+);
+
+export type GetHomeEventsQueryVariables = Exact<{
+  userId: Scalars['ID'];
+}>;
+
+
+export type GetHomeEventsQuery = (
+  { __typename?: 'Query' }
+  & { getHomeEvents: (
+    { __typename?: 'HomeEvents' }
+    & { error?: Maybe<(
+      { __typename?: 'Error' }
+      & Pick<Error, 'errorMessage'>
+    )>, attendEvent: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
+    )>, notResEvent: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
+    )>, requestEvent: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
+    )>, resedEvent: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
+    )>, displayEvent: (
+      { __typename?: 'DisplayEvent' }
+      & Pick<DisplayEvent, 'type'>
+      & { paticipants?: Maybe<Array<(
+        { __typename?: 'Paticipant' }
+        & Pick<Paticipant, 'user_id' | 'user_name'>
+      )>>, event?: Maybe<(
+        { __typename?: 'Event' }
+        & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
+      )> }
+    ) }
+  ) }
 );
 
 export type LoginQueryVariables = Exact<{
@@ -146,7 +265,69 @@ export type LoginQuery = (
   ) }
 );
 
+export type SendRequestSubscriptionVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
+
+export type SendRequestSubscription = (
+  { __typename?: 'Subscription' }
+  & { sendRequest: (
+    { __typename?: 'Event' }
+    & Pick<Event, 'purpose' | 'location'>
+  ) }
+);
+
+
+export const CreateNewEventDocument = gql`
+    mutation CreateNewEvent($location: String!, $end_date: String!, $describes: String!, $bring: String!, $start_date: String!, $organizer_id: ID!, $organizer_name: String!, $purpose: String!, $date: String!, $paticipantsIds: [ID!]!) {
+  createNewEvent(
+    input: {location: $location, end_date: $end_date, describes: $describes, bring: $bring, start_date: $start_date, organizer_name: $organizer_name, organizer_id: $organizer_id, purpose: $purpose, paticipantsIds: $paticipantsIds, date: $date}
+  ) {
+    error {
+      errorMessage
+    }
+    newEvent {
+      event_id
+    }
+  }
+}
+    `;
+export type CreateNewEventMutationFn = Apollo.MutationFunction<CreateNewEventMutation, CreateNewEventMutationVariables>;
+
+/**
+ * __useCreateNewEventMutation__
+ *
+ * To run a mutation, you first call `useCreateNewEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewEventMutation, { data, loading, error }] = useCreateNewEventMutation({
+ *   variables: {
+ *      location: // value for 'location'
+ *      end_date: // value for 'end_date'
+ *      describes: // value for 'describes'
+ *      bring: // value for 'bring'
+ *      start_date: // value for 'start_date'
+ *      organizer_id: // value for 'organizer_id'
+ *      organizer_name: // value for 'organizer_name'
+ *      purpose: // value for 'purpose'
+ *      date: // value for 'date'
+ *      paticipantsIds: // value for 'paticipantsIds'
+ *   },
+ * });
+ */
+export function useCreateNewEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewEventMutation, CreateNewEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNewEventMutation, CreateNewEventMutationVariables>(CreateNewEventDocument, options);
+      }
+export type CreateNewEventMutationHookResult = ReturnType<typeof useCreateNewEventMutation>;
+export type CreateNewEventMutationResult = Apollo.MutationResult<CreateNewEventMutation>;
+export type CreateNewEventMutationOptions = Apollo.BaseMutationOptions<CreateNewEventMutation, CreateNewEventMutationVariables>;
 export const NewRegistUserDocument = gql`
     mutation NewRegistUser($userName: String!, $userPassword: String!) {
   newRegistUser(input: {userName: $userName, userPassword: $userPassword})
@@ -179,6 +360,115 @@ export function useNewRegistUserMutation(baseOptions?: Apollo.MutationHookOption
 export type NewRegistUserMutationHookResult = ReturnType<typeof useNewRegistUserMutation>;
 export type NewRegistUserMutationResult = Apollo.MutationResult<NewRegistUserMutation>;
 export type NewRegistUserMutationOptions = Apollo.BaseMutationOptions<NewRegistUserMutation, NewRegistUserMutationVariables>;
+export const GetHomeEventsDocument = gql`
+    query GetHomeEvents($userId: ID!) {
+  getHomeEvents(userId: $userId) {
+    error {
+      errorMessage
+    }
+    attendEvent {
+      event_id
+      purpose
+      location
+      date
+      describes
+      bring
+      describes
+      start_date
+      end_date
+      organizer_id
+      organizer_name
+    }
+    notResEvent {
+      event_id
+      purpose
+      location
+      date
+      describes
+      bring
+      describes
+      start_date
+      end_date
+      organizer_id
+      organizer_name
+    }
+    requestEvent {
+      event_id
+      purpose
+      location
+      date
+      describes
+      bring
+      describes
+      start_date
+      end_date
+      organizer_id
+      organizer_name
+    }
+    resedEvent {
+      event_id
+      purpose
+      location
+      date
+      describes
+      bring
+      describes
+      start_date
+      end_date
+      organizer_id
+      organizer_name
+    }
+    displayEvent {
+      paticipants {
+        user_id
+        user_name
+      }
+      type
+      event {
+        event_id
+        purpose
+        location
+        date
+        describes
+        bring
+        describes
+        start_date
+        end_date
+        organizer_id
+        organizer_name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetHomeEventsQuery__
+ *
+ * To run a query within a React component, call `useGetHomeEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHomeEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetHomeEventsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetHomeEventsQuery(baseOptions: Apollo.QueryHookOptions<GetHomeEventsQuery, GetHomeEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetHomeEventsQuery, GetHomeEventsQueryVariables>(GetHomeEventsDocument, options);
+      }
+export function useGetHomeEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHomeEventsQuery, GetHomeEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetHomeEventsQuery, GetHomeEventsQueryVariables>(GetHomeEventsDocument, options);
+        }
+export type GetHomeEventsQueryHookResult = ReturnType<typeof useGetHomeEventsQuery>;
+export type GetHomeEventsLazyQueryHookResult = ReturnType<typeof useGetHomeEventsLazyQuery>;
+export type GetHomeEventsQueryResult = Apollo.QueryResult<GetHomeEventsQuery, GetHomeEventsQueryVariables>;
 export const LoginDocument = gql`
     query Login($userName: String!, $userPassword: String!) {
   login(userName: $userName, userPassword: $userPassword) {
@@ -221,3 +511,34 @@ export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Logi
 export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
 export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
 export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
+export const SendRequestDocument = gql`
+    subscription SendRequest($id: ID!) {
+  sendRequest(paticipantId: $id) {
+    purpose
+    location
+  }
+}
+    `;
+
+/**
+ * __useSendRequestSubscription__
+ *
+ * To run a query within a React component, call `useSendRequestSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSendRequestSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSendRequestSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSendRequestSubscription(baseOptions: Apollo.SubscriptionHookOptions<SendRequestSubscription, SendRequestSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SendRequestSubscription, SendRequestSubscriptionVariables>(SendRequestDocument, options);
+      }
+export type SendRequestSubscriptionHookResult = ReturnType<typeof useSendRequestSubscription>;
+export type SendRequestSubscriptionResult = Apollo.SubscriptionResult<SendRequestSubscription>;

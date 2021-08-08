@@ -9,6 +9,7 @@ import { IsAttendAndMessageProvider } from 'providers/IsAttendAndMessage'
 import { ResponseInfoProvider } from 'providers/ResponseInfoProvider'
 import { ApolloProvider } from '@apollo/client'
 import { apolloClient } from 'graphqls/graphql'
+import { Test } from 'components/pages/Test'
 export const App: React.VFC = () => {
     return (
         <ApolloProvider client={apolloClient}>
@@ -16,11 +17,12 @@ export const App: React.VFC = () => {
                 <ResponseInfoProvider>
                     <IsAttendAndMessageProvider>
                         <BannerMessageProvider>
-                            <BrowserRouter>
+                            {/* <BrowserRouter>
                                 <Route exact path="/" component={Login} />
                                 <Route exact path="/home" component={Home} />
                                 <Route exact path="/newRegistUser" component={NewRegistUser} />
-                            </BrowserRouter>
+                            </BrowserRouter> */}
+                            <Test></Test>
                         </BannerMessageProvider>
                     </IsAttendAndMessageProvider>
                 </ResponseInfoProvider>

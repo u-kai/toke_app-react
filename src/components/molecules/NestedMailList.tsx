@@ -43,18 +43,27 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
     const [requestOpen, setRequestOpen] = React.useState(false)
     const { notResMailsInfo, resedMailsInfo, requestMailsInfo, onClickToNotRes, onClickToResed, onClickToRequest } =
         props
-    const handleClickForNotRes = useCallback(() => {
+    //  const handleClickForNotRes = useCallback(() => {
+    //      setNotResOpen(!notResOpen)
+    //      console.log('not res open')
+    //  }, [setNotResOpen])
+    const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
-    }, [setNotResOpen])
+    }
 
-    const handleClickForResed = useCallback(() => {
+    //  const handleClickForResed = useCallback(() => {
+    //      setResedOpen(!resedOpen)
+    //}, [setResedOpen])
+
+    // const handleClickForRequest = useCallback(() => {
+    //     setRequestOpen(!requestOpen)
+    // }, [setRequestOpen])
+    const handleClickForResed = () => {
         setResedOpen(!resedOpen)
-    }, [setResedOpen])
-
-    const handleClickForRequest = useCallback(() => {
+    }
+    const handleClickForRequest = () => {
         setRequestOpen(!requestOpen)
-    }, [setRequestOpen])
-
+    }
     const display = (data: MailDisplayInfo): string => {
         return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
     }
@@ -84,7 +93,7 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`notResInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={notResInfo.attendance_request_id}
+                            id={notResInfo.event_id}
                             onClick={onClickToNotRes}
                         >
                             <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
@@ -106,7 +115,7 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`resedInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={resedInfo.attendance_request_id}
+                            id={resedInfo.event_id}
                             onClick={onClickToResed}
                         >
                             <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
@@ -128,7 +137,7 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`sendInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={sendInfo.attendance_request_id}
+                            id={sendInfo.event_id}
                             onClick={onClickToRequest}
                         >
                             <ListItemText key={`sendInfoItemText${i}`} primary={display(sendInfo)}></ListItemText>
