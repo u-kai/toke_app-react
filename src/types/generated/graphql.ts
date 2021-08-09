@@ -70,6 +70,18 @@ export type Event = {
   bring: Scalars['String'];
 };
 
+export type GetPaticipantsResults = {
+  __typename?: 'GetPaticipantsResults';
+  paticipants: Array<Paticipant>;
+  error?: Maybe<Error>;
+};
+
+export type GetUsers = {
+  __typename?: 'GetUsers';
+  users?: Maybe<Array<Maybe<User>>>;
+  error?: Maybe<Error>;
+};
+
 export type HomeEvents = {
   __typename?: 'HomeEvents';
   requestEvent: Array<Event>;
@@ -129,10 +141,20 @@ export type Paticipant = {
   user_name: Scalars['String'];
 };
 
+export type PaticipantsAndMyResponse = {
+  __typename?: 'PaticipantsAndMyResponse';
+  paticipants: Array<Paticipant>;
+  response?: Maybe<Response>;
+  error?: Maybe<Error>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getHomeEvents: HomeEvents;
   login: LoginResult;
+  getUsers: GetUsers;
+  getPaticipants: GetPaticipantsResults;
+  getPaticipantsAndMyResponse?: Maybe<PaticipantsAndMyResponse>;
 };
 
 
@@ -146,9 +168,34 @@ export type QueryLoginArgs = {
   userPassword: Scalars['String'];
 };
 
+
+export type QueryGetUsersArgs = {
+  user_id: Scalars['String'];
+};
+
+
+export type QueryGetPaticipantsArgs = {
+  event_id: Scalars['String'];
+};
+
+
+export type QueryGetPaticipantsAndMyResponseArgs = {
+  event_id: Scalars['String'];
+  user_id: Scalars['String'];
+};
+
 export type ResedEvent = {
   __typename?: 'ResedEvent';
   events?: Maybe<Array<Maybe<Event>>>;
+};
+
+export type Response = {
+  __typename?: 'Response';
+  user_id: Scalars['ID'];
+  event_id: Scalars['String'];
+  is_attendance: Scalars['Boolean'];
+  is_response: Scalars['Boolean'];
+  message: Scalars['String'];
 };
 
 export type Subscription = {
@@ -163,8 +210,8 @@ export type SubscriptionSendRequestArgs = {
 
 export type User = {
   __typename?: 'User';
-  userName?: Maybe<Scalars['String']>;
-  userId: Scalars['ID'];
+  user_name?: Maybe<Scalars['String']>;
+  user_id: Scalars['ID'];
   userPassword?: Maybe<Scalars['String']>;
 };
 
@@ -245,6 +292,45 @@ export type GetHomeEventsQuery = (
   ) }
 );
 
+export type GetPaticipantsQueryVariables = Exact<{
+  event_id: Scalars['String'];
+}>;
+
+
+export type GetPaticipantsQuery = (
+  { __typename?: 'Query' }
+  & { getPaticipants: (
+    { __typename?: 'GetPaticipantsResults' }
+    & { paticipants: Array<(
+      { __typename?: 'Paticipant' }
+      & Pick<Paticipant, 'user_id' | 'user_name'>
+    )>, error?: Maybe<(
+      { __typename?: 'Error' }
+      & Pick<Error, 'errorMessage'>
+    )> }
+  ) }
+);
+
+export type GetPaticipantsAndResponseQueryVariables = Exact<{
+  user_id: Scalars['String'];
+  event_id: Scalars['String'];
+}>;
+
+
+export type GetPaticipantsAndResponseQuery = (
+  { __typename?: 'Query' }
+  & { getPaticipantsAndMyResponse?: Maybe<(
+    { __typename?: 'PaticipantsAndMyResponse' }
+    & { paticipants: Array<(
+      { __typename?: 'Paticipant' }
+      & Pick<Paticipant, 'user_name'>
+    )>, response?: Maybe<(
+      { __typename?: 'Response' }
+      & Pick<Response, 'event_id' | 'is_attendance' | 'is_response' | 'message'>
+    )> }
+  )> }
+);
+
 export type LoginQueryVariables = Exact<{
   userName: Scalars['String'];
   userPassword: Scalars['String'];
@@ -257,7 +343,7 @@ export type LoginQuery = (
     { __typename?: 'LoginResult' }
     & { userInfo?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'userId' | 'userName'>
+      & Pick<User, 'user_id' | 'user_name'>
     )>, error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'errorMessage'>
@@ -469,12 +555,97 @@ export function useGetHomeEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetHomeEventsQueryHookResult = ReturnType<typeof useGetHomeEventsQuery>;
 export type GetHomeEventsLazyQueryHookResult = ReturnType<typeof useGetHomeEventsLazyQuery>;
 export type GetHomeEventsQueryResult = Apollo.QueryResult<GetHomeEventsQuery, GetHomeEventsQueryVariables>;
+export const GetPaticipantsDocument = gql`
+    query GetPaticipants($event_id: String!) {
+  getPaticipants(event_id: $event_id) {
+    paticipants {
+      user_id
+      user_name
+    }
+    error {
+      errorMessage
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPaticipantsQuery__
+ *
+ * To run a query within a React component, call `useGetPaticipantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaticipantsQuery({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *   },
+ * });
+ */
+export function useGetPaticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetPaticipantsQuery, GetPaticipantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPaticipantsQuery, GetPaticipantsQueryVariables>(GetPaticipantsDocument, options);
+      }
+export function useGetPaticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaticipantsQuery, GetPaticipantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPaticipantsQuery, GetPaticipantsQueryVariables>(GetPaticipantsDocument, options);
+        }
+export type GetPaticipantsQueryHookResult = ReturnType<typeof useGetPaticipantsQuery>;
+export type GetPaticipantsLazyQueryHookResult = ReturnType<typeof useGetPaticipantsLazyQuery>;
+export type GetPaticipantsQueryResult = Apollo.QueryResult<GetPaticipantsQuery, GetPaticipantsQueryVariables>;
+export const GetPaticipantsAndResponseDocument = gql`
+    query GetPaticipantsAndResponse($user_id: String!, $event_id: String!) {
+  getPaticipantsAndMyResponse(user_id: $user_id, event_id: $event_id) {
+    paticipants {
+      user_name
+    }
+    response {
+      event_id
+      is_attendance
+      is_response
+      message
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPaticipantsAndResponseQuery__
+ *
+ * To run a query within a React component, call `useGetPaticipantsAndResponseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaticipantsAndResponseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaticipantsAndResponseQuery({
+ *   variables: {
+ *      user_id: // value for 'user_id'
+ *      event_id: // value for 'event_id'
+ *   },
+ * });
+ */
+export function useGetPaticipantsAndResponseQuery(baseOptions: Apollo.QueryHookOptions<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>(GetPaticipantsAndResponseDocument, options);
+      }
+export function useGetPaticipantsAndResponseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>(GetPaticipantsAndResponseDocument, options);
+        }
+export type GetPaticipantsAndResponseQueryHookResult = ReturnType<typeof useGetPaticipantsAndResponseQuery>;
+export type GetPaticipantsAndResponseLazyQueryHookResult = ReturnType<typeof useGetPaticipantsAndResponseLazyQuery>;
+export type GetPaticipantsAndResponseQueryResult = Apollo.QueryResult<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>;
 export const LoginDocument = gql`
     query Login($userName: String!, $userPassword: String!) {
   login(userName: $userName, userPassword: $userPassword) {
     userInfo {
-      userId
-      userName
+      user_id
+      user_name
     }
     error {
       errorMessage

@@ -24,15 +24,21 @@ type UIInfo = {
         displayEventId?: string
         displayType: DisplayType
         event?: EventInfo
-        paticipants: string[]
+        paticipants?: string[]
     }
     eventsInfos: EventsInfos
 }
 
-export type UIInfoActionType = 'getHomeEvents'
+export type UIInfoActionType = 'getHomeEvents' | 'clickEvent' | 'clickMyRequest' | 'createNewEvent'
 export const UIInfoReducer = (
     state: UIInfo,
-    action: { type: UIInfoActionType; homeEvents?: HomeEvents; eventInfo?: EventInfo }
+    action: {
+        type: UIInfoActionType
+        homeEvents?: HomeEvents
+        eventInfo?: EventInfo
+        event_id?: string
+        paticipantNames?: string[]
+    }
 ) => {
     switch (action.type) {
         case 'getHomeEvents': {
@@ -56,7 +62,50 @@ export const UIInfoReducer = (
             }
             return { ...state }
         }
+        case 'clickEvent': {
+            if (action.event_id && action.paticipantNames) {
+                state.displayInfo = {
+                    displayType: DisplayType.Myevent,
+                    displayEventId: action.event_id,
+                    event: idToDisplayEventInfo(action.event_id, state.eventsInfos),
+                    paticipants: action.paticipantNames,
+                }
+                return { ...state }
+            }
+            return {
+                ...state,
+            }
+        }
+        case 'clickMyRequest': {
+            if (action.event_id && action.paticipantNames) {
+                state.displayInfo = {
+                    displayType: DisplayType.Editevent,
+                    displayEventId: action.event_id,
+                    event: idToDisplayEventInfo(action.event_id, state.eventsInfos),
+                    paticipants: action.paticipantNames,
+                }
+                return { ...state }
+            }
+            return { ...state }
+        }
+        case 'createNewEvent': {
+            state.displayInfo = {
+                displayType: DisplayType.Newevent,
+                displayEventId: undefined,
+                event: undefined,
+                paticipants: undefined,
+            }
+            return { ...state }
+        }
     }
+}
+const idToDisplayEventInfo = (id: string, infos: EventsInfos) => {
+    const numberOfLengthOver0 = Object.values(infos).filter((info) => info.length > 0)
+    if (numberOfLengthOver0.length > 0) {
+        const allEventInfo = numberOfLengthOver0.flat()
+        return allEventInfo.filter((info) => info.event_id.toString() === id.toString())[0]
+    }
+    return
 }
 export const initState: UIInfo = {
     eventsInfos: {

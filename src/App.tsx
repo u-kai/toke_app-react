@@ -17,12 +17,12 @@ export const App: React.VFC = () => {
                 <ResponseInfoProvider>
                     <IsAttendAndMessageProvider>
                         <BannerMessageProvider>
-                            {/* <BrowserRouter>
+                            <BrowserRouter>
                                 <Route exact path="/" component={Login} />
                                 <Route exact path="/home" component={Home} />
                                 <Route exact path="/newRegistUser" component={NewRegistUser} />
-                            </BrowserRouter> */}
-                            <Test></Test>
+                            </BrowserRouter>
+                            {/* <Test></Test> */}
                         </BannerMessageProvider>
                     </IsAttendAndMessageProvider>
                 </ResponseInfoProvider>

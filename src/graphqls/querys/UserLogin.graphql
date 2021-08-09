@@ -1,8 +1,8 @@
 query Login($userName: String!, $userPassword: String!) {
     login(userName: $userName, userPassword: $userPassword) {
         userInfo {
-            userId
-            userName
+            user_id
+            user_name
         }
         error {
             errorMessage

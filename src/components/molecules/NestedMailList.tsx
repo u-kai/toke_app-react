@@ -43,21 +43,10 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
     const [requestOpen, setRequestOpen] = React.useState(false)
     const { notResMailsInfo, resedMailsInfo, requestMailsInfo, onClickToNotRes, onClickToResed, onClickToRequest } =
         props
-    //  const handleClickForNotRes = useCallback(() => {
-    //      setNotResOpen(!notResOpen)
-    //      console.log('not res open')
-    //  }, [setNotResOpen])
+
     const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
     }
-
-    //  const handleClickForResed = useCallback(() => {
-    //      setResedOpen(!resedOpen)
-    //}, [setResedOpen])
-
-    // const handleClickForRequest = useCallback(() => {
-    //     setRequestOpen(!requestOpen)
-    // }, [setRequestOpen])
     const handleClickForResed = () => {
         setResedOpen(!resedOpen)
     }

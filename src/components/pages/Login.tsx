@@ -27,7 +27,7 @@ export const Login: React.VFC = () => {
             return
         }
         if (data?.login.userInfo) {
-            dispatch({ type: 'inputId', value: data.login.userInfo.userId })
+            dispatch({ type: 'inputId', value: data.login.userInfo.user_id })
             history.push('/home')
         }
     }, [data?.login])
