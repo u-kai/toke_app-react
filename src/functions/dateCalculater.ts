@@ -4,9 +4,11 @@ const add0 = (hourOrMinute: number) => {
     }
     return hourOrMinute.toString()
 }
-export const dateCalculater = (datetime: string, hourAndminutes: string) => {
-    const dt = new Date(datetime)
-    const toDate = new Date(`${dt.getFullYear()}-${add0(dt.getMonth() + 1)}-${add0(dt.getDate())} ${hourAndminutes}`)
+export const dateCalculater = (datetime: string, hourAndminutes: string): string => {
+    const dt: Date = new Date(datetime)
+    const toDate: Date = new Date(
+        `${dt.getFullYear()}-${add0(dt.getMonth() + 1)}-${add0(dt.getDate())} ${hourAndminutes}`
+    )
     const hours: number = dt.getHours() + toDate.getHours()
     const minutes: number = dt.getMinutes() + toDate.getMinutes()
     dt.setHours(hours)

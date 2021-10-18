@@ -1,0 +1,8 @@
+fragment MailListInfo on Event {
+    eventId
+    eventInfo {
+        startDate
+        endDate
+        purpose
+    }
+}

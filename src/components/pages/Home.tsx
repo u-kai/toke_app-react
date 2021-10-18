@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, useReducer, useState } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { NestedMailList } from 'components/molecules/NestedMailList'
 import { NestedScheduleList } from 'components/molecules/NestedScheduleList'
 import styled from 'styled-components'
@@ -10,144 +10,214 @@ import { ResponseComponent } from 'components/organisms/ReponseComponent'
 import { EventEdit } from 'components/organisms/EventEdit'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
+import { UserEvents, UserEventsContext } from 'providers/UserEvents'
+import {
+    DisplayEventInfoFragment,
+    DisplayUserEventFragment,
+    FetchHomeDataDocument,
+    useChangeResponseMutation,
+    useCommingEventSubscription,
+    useFetchHomeDataQuery,
+    useFetchUserAttendEventsLazyQuery,
+    useFetchUserAttendEventsQuery,
+    useFetchUserNotResponseEventsQuery,
+    useFetchUserResponsedEventsQuery,
+    useFetchUserTodayEventsQuery,
+    UserEvent,
+    UserInfo,
+} from 'types/generated/graphql'
+import { DisplayEvent, DisplayEventContext, initDisplayEvent } from 'reducers/DisplayEvent'
+import { useHistory } from 'react-router-dom'
+import { EventEditMode } from 'types/ui-types/EventEditMode'
+import { AllUserContext } from 'providers/AllUser'
 import { ResponseInfoContext } from 'providers/ResponseInfoProvider'
-import { useUserName } from 'hocks/useUserName'
-import { useDisplayEventInfo } from 'hocks/useDisplayEventInfo'
-import { useResponseInfo } from 'hocks/useResponseInfo'
-import { useParticipants } from 'hocks/useParitcipants'
-import { DisplayType, useGetHomeEventsLazyQuery } from 'types/generated/graphql'
-import { useSendRequestSubscriptionKai } from 'hocks/useSendRequestSubscription'
-import { initState, UIInfoReducer } from 'reducers/UIInfo'
-import { useGetPaticipants } from 'hocks/useGetPaticipants'
-import { useGetPaticipantsAndResponse } from 'hocks/useGetPaticipnatsAndResponse'
+import { selectOneArray } from 'functions/selectOneArray'
+const isEventEmpty = (eventsArray: DisplayEventInfoFragment[][]): boolean => {
+    const over0Events = eventsArray.filter((events) => events.length > 0).flat()
+    return over0Events.length === 0
+}
+const searchEvent = (eventsArray: DisplayUserEventFragment[][], eventId: string): DisplayUserEventFragment => {
+    const event = eventsArray
+        .map((events) => events.filter((event) => event.event.eventId === eventId))
+        .filter((events) => events.length > 0)[0]
+        .map((event) => {
+            return {
+                ...event,
+                currentPaticipants: event.event.paticipantUsers,
+            }
+        })
+    return event[0]
+}
+
 export const Home = (): JSX.Element => {
-    const [uiInfoState, uiInfoStateDispatch] = useReducer(UIInfoReducer, initState)
-    const { fetchAndSetResponseInfo } = useResponseInfo()
-    const { fetchAndSetAllEvent, displayAndEventInfoDispatch, displayAndEventInfo, fetchAndSetRequestInfo } =
-        useDisplayEventInfo()
-    const { fetchAndSetUserName } = useUserName()
-    //const { participants, getPariticipants } = useParticipants()
-    const userContext = useContext(UserIdContext)
+    const { setAllUser } = useContext(AllUserContext)
     const bannerMessageContext = useContext(BannerMessageContext)
-    const { userInfo, dispatch } = userContext
-    const responseInfoContext = useContext(ResponseInfoContext)
-    const { responseInfoDispatch } = responseInfoContext
-    const { bannerMessage } = bannerMessageContext
-    const { subscriptionData } = useSendRequestSubscriptionKai(userInfo.userId)
-    const [getHomeEvents, { data }] = useGetHomeEventsLazyQuery()
-    const [event_id, setEvent_id] = useState('')
-    const [clickType, setClickType] = useState<'clickEvent' | 'clickMyRequest'>('clickEvent')
-    const { getPAndR, pAndR } = useGetPaticipantsAndResponse()
-    const onClickToEvent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const event_id = e.currentTarget.id
-        getPAndR({
+    const { userInfo, dispatch } = useContext(UserIdContext)
+    const [displayEventInfo, setDisplayEventInfo] = useState<DisplayUserEventFragment | undefined>(undefined)
+    //    const { data, error } = useFetchHomeDataQuery({
+    //        variables: {
+    //            input: userInfo,
+    //        },
+    //    })
+    const attendEvent = useFetchUserAttendEventsQuery({
+        variables: {
+            input: userInfo,
+        },
+    })
+    const todayEvent = useFetchUserTodayEventsQuery({
+        variables: {
+            input: userInfo,
+        },
+    })
+    const responsedEvent = useFetchUserResponsedEventsQuery({
+        variables: {
+            input: userInfo,
+        },
+    })
+    const notResponseEvent = useFetchUserNotResponseEventsQuery({
+        variables: {
+            input: userInfo,
+        },
+    })
+
+    const [events, setEvents] = useState<DisplayUserEventFragment[][]>([])
+    //const { displayEvent, displayEventDispatch } = useContext(DisplayEventContext)
+    const [isEventEdit, setIsEventEdit] = useState(false) //isEventEmpty([notResponsed, today, responsed, attend]))
+    const { bannerMessage, bannerDispatch } = bannerMessageContext
+    const [eventEditMode, setEventEditMode] = useState<EventEditMode>('editEvent')
+    const { responseInfo } = useContext(ResponseInfoContext)
+    const subscription = useCommingEventSubscription({ variables: { input: userInfo } })
+    const [changeResponse] = useChangeResponseMutation({
+        awaitRefetchQueries: true,
+        refetchQueries: [FetchHomeDataDocument],
+    })
+    const postResponse = async () => {
+        if (displayEventInfo === undefined) {
+            return
+        }
+        const { isAttend, responseMessage } = responseInfo
+        const { userId } = userInfo
+        const { eventId } = displayEventInfo.event
+        await changeResponse({
             variables: {
-                event_id: event_id,
-                user_id: userInfo.userId,
-            },
-        })
-        setClickType('clickEvent')
-        setEvent_id(event_id)
-    }
-    useEffect(() => {
-        if (pAndR?.getPaticipantsAndMyResponse?.paticipants) {
-            const paticipantsInfo = pAndR?.getPaticipantsAndMyResponse?.paticipants
-            const paticipantNames = paticipantsInfo.map((pInfo) => pInfo.user_name)
-            uiInfoStateDispatch({ type: clickType, event_id, paticipantNames })
-            if (pAndR?.getPaticipantsAndMyResponse.response) {
-                const res = pAndR?.getPaticipantsAndMyResponse.response
-                console.log('res', res)
-                responseInfoDispatch({
-                    type: 'setState',
-                    setState: {
-                        isAttend: res.is_attendance,
-                        responseMessage: res.message,
+                input: {
+                    response: {
+                        isAttend,
+                        isResponse: true,
+                        message: responseMessage,
+                        userId,
+                        eventId,
                     },
-                })
-            }
-            if (!pAndR.getPaticipantsAndMyResponse.response) {
-                console.log('inint')
-                responseInfoDispatch({
-                    type: 'setInit',
-                })
-            }
-            return
-        }
-        return
-    }, [event_id])
-    useEffect(() => {
-        if (data) {
-            uiInfoStateDispatch({ type: 'getHomeEvents', homeEvents: data.getHomeEvents })
-            return
-        }
-        return
-    }, [data])
-    const onClickToRequest = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const event_id = e.currentTarget.id
-        getPAndR({
-            variables: {
-                event_id: event_id,
-                user_id: userInfo.userId,
+                },
             },
-        })
-        setClickType('clickMyRequest')
-        setEvent_id(event_id)
+        }).catch((e) => bannerDispatch({ type: 'setError', message: e.toString() }))
     }
-    const onClickToCreateNewEvent = useCallback(() => {
-        uiInfoStateDispatch({ type: 'createNewEvent' })
-    }, [])
-
-    const initHome = (): Promise<void> => {
-        return new Promise((resolve) => {
-            fetchAndSetAllEvent(userInfo.userId)
-            displayAndEventInfoDispatch({ type: 'initializeDisplay' })
-            fetchAndSetUserName(userInfo.userId)
-            fetchAndSetRequestInfo(userInfo.userId)
-            resolve()
-        })
+    const history = useHistory()
+    const onClickToEvent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const eventId = e.currentTarget.id
+        setIsEventEdit(false)
+        setDisplayEventInfo(searchEvent(events, eventId))
+        //    displayEventDispatch({ type: 'change', newState: searchEvent(events, eventId) })
     }
-    const displaySuccessAtSec = (): Promise<void> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                initHome()
-                resolve()
-            }, 1000)
-        })
+    const onClickToCreateNewEvent = () => {
+        //   displayEventDispatch({ type: 'init', userInfo })
+        setIsEventEdit(true)
+        setEventEditMode('newEvent')
+        return
     }
-
-    useEffect(() => {
-        getHomeEvents({ variables: { userId: userInfo.userId } })
-    }, [userInfo.userId])
-
-    useEffect(() => {
-        if (bannerMessage.message === '送信が完了しました' || bannerMessage.message === '返信が成功しました！') {
-            displaySuccessAtSec()
-        }
-    }, [bannerMessage.status])
-
-    useEffect(() => {
-        displayAndEventInfoDispatch({ type: 'initializeDisplay' })
-    }, [
-        displayAndEventInfo.infos.resedInfo,
-        displayAndEventInfo.infos.notResInfo,
-        displayAndEventInfo.infos.requestEventInfo,
-    ])
-    //
-    //    useEffect(() => {
-    //        if (displayAndEventInfo.displayEventId !== undefined && displayAndEventInfo.displayEventId !== null) {
-    //            console.log(displayAndEventInfo.displayEventId)
-    //            getPariticipants(displayAndEventInfo.displayEventId)
-    //        }
-    //    }, [displayAndEventInfo.displayEventId])
-
     const changeUserId = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         dispatch({ type: 'inputId', value: e.target.value })
     }
+    const onClickToMyCreated = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const eventId = e.currentTarget.id
+        //  displayEventDispatch({ type: 'change', newState: searchEvent(events, eventId) })
+        setDisplayEventInfo(searchEvent(events, eventId))
+        setIsEventEdit(true)
+        setEventEditMode('editEvent')
+    }
+    useEffect(() => {
+        const { userId, userName } = userInfo
+        if (userId === '' || userName === '') {
+            bannerDispatch({ type: 'setError', message: '再度ログインしてください' })
+            history.push('/')
+        }
+        if (userId && userName) {
+            bannerDispatch({ type: 'resetMessage' })
+        }
+    }, [])
+    useEffect(() => {
+        const { data } = subscription
+        if (data) {
+            bannerDispatch({ type: 'setInfomation', message: data.newEvent.eventInfo.purpose + 'が発行されました' })
+        }
+    }, [subscription.data])
+    useEffect(() => {
+        const { data } = attendEvent
+        if (data) {
+            const events: DisplayUserEventFragment[] = data.userAttendEvents
+            setEvents((prev) => {
+                return [...prev, events]
+            })
+        }
+    }, [attendEvent])
 
+    useEffect(() => {
+        const { data } = todayEvent
+        if (data) {
+            const events: DisplayUserEventFragment[] = data.userTodayEvents
+            setEvents((prev) => {
+                return [...prev, events]
+            })
+        }
+    }, [todayEvent])
+
+    useEffect(() => {
+        const { data } = notResponseEvent
+        if (data) {
+            const events: DisplayUserEventFragment[] = data.userNotResponseEvents
+            setEvents((prev) => {
+                return [...prev, events]
+            })
+        }
+    }, [notResponseEvent])
+
+    useEffect(() => {
+        const { data } = responsedEvent
+        if (data) {
+            const events: DisplayUserEventFragment[] = data.userResponsedEvents
+            setEvents((prev) => {
+                return [...prev, events]
+            })
+        }
+    }, [responsedEvent])
+
+    //useEffect(() => {
+    //if (error) {
+    //bannerDispatch({ type: 'setError', message: error.message })
+    //return
+    //}
+    //if (data) {
+    //const { notResponseEvents, attendEvents, responsedEvents, todayEvents, createdEvents } = data.user
+    //const { allUserInfos } = data
+    //setAllUser(allUserInfos)
+    //const eventsArray = [notResponseEvents, attendEvents, responsedEvents, todayEvents, createdEvents]
+    //setEvents(eventsArray)
+    //const initEvents: UserEvents = {
+    //notResponsed: notResponseEvents,
+    //attend: attendEvents,
+    //responsed: responsedEvents,
+    //today: todayEvents,
+    //created: createdEvents,
+    //}
+    //userEventsDispatch({ type: 'init', initEvents })
+    //setIsEventEdit(isEventEmpty([notResponseEvents, attendEvents, responsedEvents, todayEvents]))
+    //displayEventDispatch({ type: 'change', newState: makeInitDisplayEvent(eventsArray, userInfo) })
+    //}
+    //}, [data, error])
     return (
         <Container>
             <FooterContainer>
-                <PrimarySearchAppBar value={userInfo.userId} onChange={changeUserId}></PrimarySearchAppBar>
+                <PrimarySearchAppBar value={userInfo.userId} onChange={changeUserId} />
             </FooterContainer>
             {bannerMessage.message !== '' && bannerMessage.message !== undefined ? (
                 <BanerContainer>
@@ -158,59 +228,112 @@ export const Home = (): JSX.Element => {
                 <MUIButton label={'会議を設定する'} onClick={onClickToCreateNewEvent} color="primary" />
             </MettingButtonContainer>
             <MailContainer>
-                {data !== undefined ? (
-                    <NestedMailList
-                        notResMailsInfo={uiInfoState.eventsInfos.notResInfo}
-                        resedMailsInfo={uiInfoState.eventsInfos.resedInfo}
-                        requestMailsInfo={uiInfoState.eventsInfos.requestEventInfo}
-                        onClickToNotRes={onClickToEvent}
-                        onClickToResed={onClickToEvent}
-                        onClickToRequest={onClickToRequest}
-                    />
-                ) : (
-                    <NestedMailList
-                        notResMailsInfo={[]}
-                        resedMailsInfo={[]}
-                        requestMailsInfo={[]}
-                        onClickToNotRes={onClickToEvent}
-                        onClickToResed={onClickToEvent}
-                        onClickToRequest={onClickToRequest}
-                    />
-                )}
+                {notResponseEvent !== undefined && responsedEvent !== undefined}
+                <NestedMailList
+                    notResMailsInfo={
+                        notResponseEvent.data ? notResponseEvent.data.userNotResponseEvents.map((e) => e.event) : []
+                    }
+                    resedMailsInfo={
+                        notResponseEvent.data ? notResponseEvent.data.userNotResponseEvents.map((e) => e.event) : []
+                    }
+                    requestMailsInfo={
+                        notResponseEvent.data ? notResponseEvent.data.userNotResponseEvents.map((e) => e.event) : []
+                    }
+                    onClickToNotRes={onClickToEvent}
+                    onClickToResed={onClickToEvent}
+                    onClickToRequest={onClickToMyCreated}
+                />
             </MailContainer>
             <EventInfoContainer>
-                {uiInfoState.displayInfo.displayType === DisplayType.Newevent ? (
-                    <EventEdit />
-                ) : (
-                    <>
-                        {uiInfoState.displayInfo.displayType === DisplayType.Editevent ? (
-                            <EventEdit
-                                info={uiInfoState.displayInfo.event}
-                                participants={uiInfoState.displayInfo.paticipants}
-                            />
-                        ) : null}
-                    </>
-                )}
-                {uiInfoState.displayInfo.event !== undefined &&
-                uiInfoState.displayInfo.displayType === DisplayType.Myevent &&
-                uiInfoState.displayInfo.paticipants ? (
+                {isEventEdit ? <EventEdit eventEdit={eventEditMode} /> : <>{null}</>}
+                {[] !== undefined && !isEventEdit ? (
                     <EventInfo
-                        info={uiInfoState.displayInfo.event}
-                        participants={uiInfoState.displayInfo.paticipants}
+                        event={{
+                            event: {
+                                eventId: '0',
+                                eventInfo: {
+                                    bring: 'test2',
+                                    purpose: 'test2',
+                                    startDate: '2021-07-05T03:00:00.000Z',
+                                    endDate: '2021-07-05T03:30:00.000Z',
+                                    organizerId: '0',
+                                    organizerName: '有働真樹',
+                                    describes: 'test2',
+                                    location: '',
+                                },
+                                requestedUsers: [
+                                    {
+                                        userId: '0',
+                                        userName: 'udo',
+                                    },
+                                ],
+                                paticipantUsers: [
+                                    {
+                                        userId: '0',
+                                        userName: 'udo',
+                                    },
+                                ],
+                            },
+                            response: {
+                                isAttend: true,
+                                isResponse: true,
+                                message: 'test',
+                                userId: '0',
+                            },
+                        }}
                     ></EventInfo>
                 ) : null}
             </EventInfoContainer>
             <NextEventContainer>
                 <NestedScheduleList
-                    todayScheduleInfo={uiInfoState.eventsInfos.todayEventInfo}
-                    allScheduleInfo={uiInfoState.eventsInfos.attendEventInfo}
+                    todayScheduleInfo={[
+                        {
+                            eventId: '0',
+                            eventInfo: {
+                                bring: 'test2',
+                                purpose: 'test2',
+                                startDate: '2021-07-05T03:00:00.000Z',
+                                endDate: '2021-07-05T03:30:00.000Z',
+                                organizerId: '0',
+                                organizerName: '有働真樹',
+                                describes: 'test2',
+                                location: '',
+                            },
+                            paticipantUsers: [
+                                {
+                                    userId: '0',
+                                    userName: 'udo',
+                                },
+                            ],
+                        },
+                    ]}
+                    allScheduleInfo={[
+                        {
+                            eventId: '0',
+                            eventInfo: {
+                                bring: 'test2',
+                                purpose: 'test2',
+                                startDate: '2021-07-05T03:00:00.000Z',
+                                endDate: '2021-07-05T03:30:00.000Z',
+                                organizerId: '0',
+                                organizerName: '有働真樹',
+                                describes: 'test2',
+                                location: '',
+                            },
+                            paticipantUsers: [
+                                {
+                                    userId: '0',
+                                    userName: 'udo',
+                                },
+                            ],
+                        },
+                    ]}
                     onClickToDetail={onClickToEvent}
                 />
             </NextEventContainer>
-            {uiInfoState.displayInfo.displayType === DisplayType.Myevent &&
-            uiInfoState.displayInfo.displayEventId !== undefined ? (
+            {!isEventEdit ? (
                 <ResponseContainer>
-                    <ResponseComponent eventId={uiInfoState.displayInfo.displayEventId}></ResponseComponent>
+                    <ResponseComponent onSendButtonClick={postResponse} />
                 </ResponseContainer>
             ) : null}
         </Container>

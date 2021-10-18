@@ -1,0 +1,5 @@
+mutation EditEvent($input: EditEventInput!) {
+    editEvent(input: $input) {
+        ...displayEventInfo
+    }
+}

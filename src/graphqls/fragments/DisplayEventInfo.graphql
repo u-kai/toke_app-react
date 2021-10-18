@@ -1,0 +1,17 @@
+fragment displayEventInfo on Event {
+    eventId
+    eventInfo {
+        startDate
+        endDate
+        purpose
+        describes
+        bring
+        location
+        organizerId
+        organizerName
+    }
+    paticipantUsers {
+        userName
+        userId
+    }
+}

@@ -1,0 +1,30 @@
+fragment DisplayUserEvent on UserEvent {
+    event {
+        ...displayEventInfo
+        # eventId
+        # eventInfo {
+        #     startDate
+        #     endDate
+        #     purpose
+        #     describes
+        #     bring
+        #     location
+        #     organizerId
+        #     organizerName
+        # }
+        # paticipantUsers {
+        #     userName
+        #     userId
+        # }
+        requestedUsers {
+            userName
+            userId
+        }
+    }
+    response {
+        userId
+        isAttend
+        isResponse
+        message
+    }
+}

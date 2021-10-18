@@ -39,7 +39,7 @@ export const useDisplayEventInfo = () => {
         stateMaker.returnErrorAndInfos().then((data) => {
             if (data.error !== '') {
                 displayAndEventInfoDispatch({ type: setEventInfo.action, info: [] })
-                bannerDispatch({ type: 'setError', value: data.error })
+                bannerDispatch({ type: 'setError', message: data.error })
             }
             if (data.infos) {
                 const sortList = dateChecker.sortInfo(data.infos)
@@ -70,7 +70,7 @@ export const useDisplayEventInfo = () => {
                 bannerDispatch({ type: 'resetMessage' })
             }
             if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
+                bannerDispatch({ type: 'setError', message: data.error })
             }
         })
     }

@@ -6,7 +6,9 @@ import styled from 'styled-components'
 import { ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateConverter } from 'model/DateConverter'
 import { OutlineChip } from 'components/atoms/OutLineChip'
-import React from 'react'
+import React, { useContext } from 'react'
+import { DisplayEventInfoFragment, DisplayUserEventFragment } from 'types/generated/graphql'
+import { DisplayEventContext } from 'reducers/DisplayEvent'
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -24,14 +26,19 @@ const useStyles = makeStyles({
     },
 })
 type Props = {
-    info: ScheduleInfo
-    participants: string[]
+    event: DisplayUserEventFragment
 }
 const dateConverter = new DateConverter()
 export const EventInfo: React.VFC<Props> = React.memo((props) => {
     const classes = useStyles()
-    const { info, participants } = props
-    console.log('dadta info ', info)
+    // const { displayEvent } = useContext(DisplayEventContext)
+    // const { eventId, eventInfo, paticipantUsers } = props.event
+    // const { organizerName, purpose, bring, location, startDate, endDate, describes } = eventInfo
+    //const { paticipantUsers } = displayEvent
+
+    const { event } = props.event
+    const { organizerName, purpose, bring, location, startDate, endDate, describes } = event.eventInfo
+    const { paticipantUsers } = event
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -39,18 +46,18 @@ export const EventInfo: React.VFC<Props> = React.memo((props) => {
                     出席依頼
                 </Typography>
                 <br />
-                <Typography className={classes.pos}>開催者: {info.organizer_name}</Typography>
-                <Typography className={classes.pos}>目的: {info.purpose}</Typography>
+                <Typography className={classes.pos}>開催者: {organizerName}</Typography>
+                <Typography className={classes.pos}>目的: {purpose}</Typography>
                 <Typography className={classes.pos}>
-                    日時: {dateConverter.displayDateRange(info.start_date, info.end_date)}
+                    日時: {dateConverter.displayDateRange(startDate, endDate)}
                 </Typography>
-                <Typography className={classes.pos}>場所: {info.location}</Typography>
-                <Typography className={classes.pos}>持ち物: {info.bring}</Typography>
-                <Typography className={classes.pos}>概要: {info.describes}</Typography>
+                <Typography className={classes.pos}>場所: {location}</Typography>
+                <Typography className={classes.pos}>持ち物: {bring}</Typography>
+                <Typography className={classes.pos}>概要: {describes}</Typography>
                 <Typography className={classes.pos}>現在の参加者</Typography>
                 <Container>
-                    {participants.map((participant) => (
-                        <OutlineChip label={participant} color={'primary'}></OutlineChip>
+                    {paticipantUsers.map((paticipant) => (
+                        <OutlineChip label={paticipant.userName} color={'primary'} />
                     ))}
                 </Container>
             </CardContent>

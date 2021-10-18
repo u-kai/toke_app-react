@@ -1,0 +1,26 @@
+query FetchHomeData($input: UserInfoInput!) {
+    user(input: $input) {
+        info {
+            userName
+        }
+        notResponseEvents {
+            ...displayEventInfo
+        }
+        attendEvents {
+            ...displayEventInfo
+        }
+        responsedEvents {
+            ...displayEventInfo
+        }
+        todayEvents {
+            ...displayEventInfo
+        }
+        createdEvents {
+            ...displayEventInfo
+        }
+    }
+    allUserInfos {
+        userId
+        userName
+    }
+}

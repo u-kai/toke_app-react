@@ -1,28 +1,38 @@
 import React, { useReducer, createContext, VFC } from 'react'
+import { UserInfo } from 'types/generated/graphql'
 import { ChildrenProps } from 'types/ui-types/ChildrenProps'
 
-type UserState = {
-    userId: string
-    userName: string
-}
-type ActionType = 'inputId' | 'inputName'
-const reducer = (state: UserState, action: { type: ActionType; value: string }) => {
-    switch (action.type) {
+type ActionType = 'inputId' | 'inputName' | 'successLogin'
+const reducer = (state: UserInfo, action: { type: ActionType; value?: string; userInfo?: UserInfo }): UserInfo => {
+    const { type, value, userInfo } = action
+    switch (type) {
+        case 'successLogin':
+            if (userInfo) {
+                return userInfo
+            }
+            throw new Error('userInfo is undefinde at UserInfo dispatch')
         case 'inputId':
-            return { ...state, userId: action.value }
+            if (value !== undefined) {
+                return { ...state, userId: value }
+            }
+            throw new Error('value is undefined at UserInfo dispatch')
         case 'inputName':
-            return { ...state, userName: action.value }
+            if (value !== undefined) {
+                return { ...state, userName: value }
+            }
+            throw new Error('value is undefined at UserInfo dispatch')
     }
 }
 type UserIdContextType = {
-    userInfo: UserState
+    userInfo: UserInfo
     dispatch: React.Dispatch<{
         type: ActionType
-        value: string
+        value?: string
+        userInfo?: UserInfo
     }>
 }
-const initState: UserState = {
-    userId: '1',
+const initState: UserInfo = {
+    userId: '0',
     userName: '',
 }
 export const UserIdContext = createContext<UserIdContextType>({} as UserIdContextType)

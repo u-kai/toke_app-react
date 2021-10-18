@@ -1,6 +1,0 @@
-subscription SendRequest($id: ID!) {
-    sendRequest(paticipantId: $id) {
-        purpose
-        location
-    }
-}

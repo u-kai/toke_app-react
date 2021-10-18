@@ -21,7 +21,10 @@ const reducer = (
 ): IsAttendAndMessageStateType => {
     switch (action.type) {
         case 'inputMessage':
-            return { ...state, responseMessage: action.value! }
+            if (action.value) {
+                return { ...state, responseMessage: action.value }
+            }
+            throw new Error('not value set')
         case 'selectAbsent':
             return { ...state, responseMessage: '欠席します．', isAttend: false }
         case 'selectAttend':

@@ -40,7 +40,7 @@ export const fetchAndSetEventInfo = (
     stateMaker.returnErrorAndInfos().then((data) => {
         if (data.error !== '') {
             dispatch({ type: setEventInfo.action, info: [] })
-            bannerDispatch({ type: 'setError', value: data.error })
+            bannerDispatch({ type: 'setError', message: data.error })
         }
         if (data.infos) {
             const sortList = dateChecker.sortInfo(data.infos)

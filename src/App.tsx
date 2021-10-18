@@ -9,24 +9,31 @@ import { IsAttendAndMessageProvider } from 'providers/IsAttendAndMessage'
 import { ResponseInfoProvider } from 'providers/ResponseInfoProvider'
 import { ApolloProvider } from '@apollo/client'
 import { apolloClient } from 'graphqls/graphql'
-import { Test } from 'components/pages/Test'
+import { UserEventsProvider } from 'providers/UserEvents'
+import { DisplayEventProvider } from 'reducers/DisplayEvent'
+import { AllUserProvider } from 'providers/AllUser'
 export const App: React.VFC = () => {
     return (
         <ApolloProvider client={apolloClient}>
-            <UserIdProvider>
-                <ResponseInfoProvider>
-                    <IsAttendAndMessageProvider>
-                        <BannerMessageProvider>
-                            <BrowserRouter>
-                                <Route exact path="/" component={Login} />
-                                <Route exact path="/home" component={Home} />
-                                <Route exact path="/newRegistUser" component={NewRegistUser} />
-                            </BrowserRouter>
-                            {/* <Test></Test> */}
-                        </BannerMessageProvider>
-                    </IsAttendAndMessageProvider>
-                </ResponseInfoProvider>
-            </UserIdProvider>
+            <AllUserProvider>
+                <UserIdProvider>
+                    <DisplayEventProvider>
+                        <UserEventsProvider>
+                            <ResponseInfoProvider>
+                                <IsAttendAndMessageProvider>
+                                    <BannerMessageProvider>
+                                        <BrowserRouter>
+                                            <Route exact path="/" component={Login} />
+                                            <Route exact path="/home" component={Home} />
+                                            <Route exact path="/newRegistUser" component={NewRegistUser} />
+                                        </BrowserRouter>
+                                    </BannerMessageProvider>
+                                </IsAttendAndMessageProvider>
+                            </ResponseInfoProvider>
+                        </UserEventsProvider>
+                    </DisplayEventProvider>
+                </UserIdProvider>
+            </AllUserProvider>
         </ApolloProvider>
     )
 }

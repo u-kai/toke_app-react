@@ -1,4 +1,4 @@
-import React, { VFC } from 'react'
+import React, { useContext, VFC } from 'react'
 import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -6,6 +6,9 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import Chip from '@material-ui/core/Chip'
+import { User, UserInfo } from 'types/generated/graphql'
+import { UserEventsContext } from 'providers/UserEvents'
+import { DisplayEventContext } from 'reducers/DisplayEvent'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,20 +51,32 @@ function getStyles(name: string, personName: string[], theme: Theme) {
 }
 
 type Props = {
-    names: string[]
     selectNames: string[]
     placeholder: string
-    onChange: (
-        event: React.ChangeEvent<{
-            value: unknown
-        }>
-    ) => void
+    allUserInfo: UserInfo[]
 }
 
 export const MultipleSelect: VFC<Props> = (props) => {
-    const { names, placeholder, selectNames, onChange } = props
+    const { allUserInfo, placeholder, selectNames } = props
+    const { displayEvent, displayEventDispatch } = useContext(DisplayEventContext)
     const classes = useStyles()
     const theme = useTheme()
+    const onClickUser = (e: React.MouseEvent<HTMLLIElement>): void => {
+        const userId = e.currentTarget.id.substr(6)
+        const userName = allUserInfo.filter((u) => u.userId === userId).map((u) => u.userName)[0]
+        if (userName === undefined || userName === null) {
+            return
+        }
+        const newPaticipantUser: UserInfo = {
+            userId,
+            userName,
+        }
+        if (displayEvent.paticipantUsers.filter((u) => u.userId === newPaticipantUser.userId).length > 0) {
+            displayEventDispatch({ type: 'removePaticipant', paticipant: newPaticipantUser })
+            return
+        }
+        displayEventDispatch({ type: 'addPaticipant', paticipant: newPaticipantUser })
+    }
 
     return (
         <div>
@@ -72,13 +87,18 @@ export const MultipleSelect: VFC<Props> = (props) => {
                     id="demo-mutiple-name"
                     multiple
                     value={selectNames}
-                    onChange={onChange}
                     input={<Input />}
                     MenuProps={MenuProps}
                 >
-                    {names.map((name) => (
-                        <MenuItem key={name} value={name} style={getStyles(name, selectNames, theme)}>
-                            {name}
+                    {allUserInfo.map((userInfo, i) => (
+                        <MenuItem
+                            key={userInfo.userName + i.toString()}
+                            id={'userId' + allUserInfo.map((u) => u.userId)[i]}
+                            value={userInfo.userName}
+                            onClick={onClickUser}
+                            style={getStyles(userInfo.userName, selectNames, theme)}
+                        >
+                            {userInfo.userName}
                         </MenuItem>
                     ))}
                 </Select>
@@ -90,20 +110,23 @@ export const MultipleSelect: VFC<Props> = (props) => {
                     id="demo-mutiple-chip"
                     multiple
                     value={selectNames}
-                    onChange={onChange}
                     input={<Input id="select-multiple-chip" />}
                     renderValue={(selected) => (
                         <div className={classes.chips}>
-                            {(selected as string[]).map((value) => (
-                                <Chip key={value} label={value} className={classes.chip} />
+                            {(selected as string[]).map((value, i) => (
+                                <Chip key={value + i} label={value} className={classes.chip} />
                             ))}
                         </div>
                     )}
                     MenuProps={MenuProps}
                 >
-                    {names.map((name) => (
-                        <MenuItem key={name} value={name} style={getStyles(name, selectNames, theme)}>
-                            {name}
+                    {displayEvent.paticipantUsers.map((userInfo) => (
+                        <MenuItem
+                            key={userInfo.userId}
+                            value={userInfo.userName}
+                            style={getStyles(userInfo.userName, selectNames, theme)}
+                        >
+                            {userInfo.userName}
                         </MenuItem>
                     ))}
                 </Select>

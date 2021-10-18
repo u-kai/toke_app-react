@@ -49,7 +49,7 @@ export class DateConverter {
         }
         return data.toString()
     }
-    displayDateRange = (start: string, end: string) => {
+    displayDateRange = (start: string, end: string): string => {
         const displayYear = this.returnYear(start)
         const displayMonth = this.displayFormat(this.returnMonth(start))
         const displayDay = this.displayFormat(this.returnDay(start))
@@ -67,7 +67,23 @@ export class DateConverter {
             this.returnDay()
         )}(${this.returnWeekOfDay()})`
     }
-    forMaterialUI = () => {
+    forDB = (date?: string): string => {
+        const dbYear = this.returnYear(date)
+        const dbMonth = this.displayFormat(this.returnMonth(date))
+        const dbDay = this.displayFormat(this.returnDay(date))
+        const dbHour = this.displayFormat(this.returnHour(date))
+        const dbMinute = this.displayFormat(this.returnMinute(date))
+        return `${dbYear}-${dbMonth}-${dbDay}T${dbHour}:${dbMinute}`
+    }
+    forMaterialUI = (date?: string): string => {
+        if (date) {
+            const dbYear = this.returnYear(date)
+            const dbMonth = this.displayFormat(this.returnMonth(date))
+            const dbDay = this.displayFormat(this.returnDay(date))
+            const dbHour = this.displayFormat(this.returnHour(date))
+            const dbMinute = this.displayFormat(this.returnMinute(date))
+            return `${dbYear}-${dbMonth}-${dbDay}T${dbHour}:${dbMinute}`
+        }
         return `${this.returnYear()}-${this.displayFormat(this.returnMonth())}-${this.displayFormat(
             this.returnDay()
         )}T10:00`

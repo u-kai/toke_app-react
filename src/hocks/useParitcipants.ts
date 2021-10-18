@@ -9,7 +9,7 @@ export const useParticipants = () => {
         const stateMaker = new StateMakerForGetParticipants(attendanceRequestId)
         stateMaker.returnErrorAndParticipants().then((data) => {
             if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
+                bannerDispatch({ type: 'setError', message: data.error })
             }
             if (data.error === '') {
                 setPaticipants(data.participants)

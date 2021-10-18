@@ -11,7 +11,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import { SimpleBadge } from 'components/atoms/SimpleBadge'
 import { DateConverter } from 'model/DateConverter'
-import { MailDisplayInfo } from 'types/ui-types/MailDisplayInfo'
+import { DisplayEventInfoFragment, MailListInfoFragment } from 'types/generated/graphql'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -30,9 +30,9 @@ type Props = {
     onClickToNotRes: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     onClickToResed: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     onClickToRequest?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-    notResMailsInfo: MailDisplayInfo[]
-    resedMailsInfo: MailDisplayInfo[]
-    requestMailsInfo: MailDisplayInfo[]
+    notResMailsInfo: MailListInfoFragment[]
+    resedMailsInfo: MailListInfoFragment[]
+    requestMailsInfo: MailListInfoFragment[]
 }
 
 const dateConverter = new DateConverter()
@@ -53,8 +53,9 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
     const handleClickForRequest = () => {
         setRequestOpen(!requestOpen)
     }
-    const display = (data: MailDisplayInfo): string => {
-        return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
+    const display = (data: MailListInfoFragment): string => {
+        const { startDate, endDate, purpose } = data.eventInfo
+        return `${dateConverter.displayDateRange(startDate, endDate)} ${purpose}`
     }
 
     return (
@@ -82,10 +83,10 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`notResInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={notResInfo.event_id}
+                            id={notResInfo.eventId}
                             onClick={onClickToNotRes}
                         >
-                            <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)}></ListItemText>
+                            <ListItemText key={`notResInfoItemText${i}`} primary={display(notResInfo)} />
                         </ListItem>
                     ))}
                 </List>
@@ -104,10 +105,10 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`resedInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={resedInfo.event_id}
+                            id={resedInfo.eventId}
                             onClick={onClickToResed}
                         >
-                            <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)}></ListItemText>
+                            <ListItemText key={`resedInfoItemText${i}`} primary={display(resedInfo)} />
                         </ListItem>
                     ))}
                 </List>
@@ -126,10 +127,10 @@ export const NestedMailList: VFC<Props> = React.memo((props) => {
                             key={`sendInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={sendInfo.event_id}
+                            id={sendInfo.eventId}
                             onClick={onClickToRequest}
                         >
-                            <ListItemText key={`sendInfoItemText${i}`} primary={display(sendInfo)}></ListItemText>
+                            <ListItemText key={`sendInfoItemText${i}`} primary={display(sendInfo)} />
                         </ListItem>
                     ))}
                 </List>

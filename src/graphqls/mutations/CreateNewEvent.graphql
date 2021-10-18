@@ -1,34 +1,6 @@
-mutation CreateNewEvent(
-    $location: String!
-    $end_date: String!
-    $describes: String!
-    $bring: String!
-    $start_date: String!
-    $organizer_id: ID!
-    $organizer_name: String!
-    $purpose: String!
-    $date: String!
-    $paticipantsIds: [ID!]!
-) {
-    createNewEvent(
-        input: {
-            location: $location
-            end_date: $end_date
-            describes: $describes
-            bring: $bring
-            start_date: $start_date
-            organizer_name: $organizer_name
-            organizer_id: $organizer_id
-            purpose: $purpose
-            paticipantsIds: $paticipantsIds
-            date: $date
-        }
-    ) {
-        error {
-            errorMessage
-        }
-        newEvent {
-            event_id
-        }
+mutation CreateNewEvent($input: CreateEventInput!) {
+    createEvent(input: $input) {
+        __typename
+        ...displayEventInfo
     }
 }

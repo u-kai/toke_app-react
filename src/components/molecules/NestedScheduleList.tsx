@@ -1,4 +1,4 @@
-import React, { useCallback, VFC } from 'react'
+import React, { VFC } from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import List from '@material-ui/core/List'
@@ -10,7 +10,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import { SimpleBadge } from 'components/atoms/SimpleBadge'
 import { DateConverter } from 'model/DateConverter'
-import { MailDisplayInfo } from 'types/ui-types/MailDisplayInfo'
+import { DisplayEventInfoFragment } from 'types/generated/graphql'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
     onClickToDetail: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-    todayScheduleInfo: MailDisplayInfo[]
-    allScheduleInfo: MailDisplayInfo[]
+    todayScheduleInfo: DisplayEventInfoFragment[]
+    allScheduleInfo: DisplayEventInfoFragment[]
 }
 
 const dateConverter = new DateConverter()
@@ -37,16 +37,17 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
     const [notResOpen, setNotResOpen] = React.useState(true)
     const [resedOpen, setResedOpen] = React.useState(false)
     const { todayScheduleInfo, allScheduleInfo, onClickToDetail } = props
-    const handleClickForNotRes = useCallback(() => {
+    const handleClickForNotRes = () => {
         setNotResOpen(!notResOpen)
-    }, [setNotResOpen])
+    }
 
-    const handleClickForResed = useCallback(() => {
+    const handleClickForResed = () => {
         setResedOpen(!resedOpen)
-    }, [setResedOpen])
+    }
 
-    const display = (data: MailDisplayInfo): string => {
-        return `${dateConverter.displayDateRange(data.start_date, data.end_date)} ${data.purpose}`
+    const display = (data: DisplayEventInfoFragment): string => {
+        const { startDate, endDate, purpose } = data.eventInfo
+        return `${dateConverter.displayDateRange(startDate, endDate)} ${purpose}`
     }
     return (
         <List
@@ -73,7 +74,7 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
                             key={`todayScheduleItem${i}`}
                             button
                             className={classes.nested}
-                            id={todayInfo.event_id}
+                            id={todayInfo.eventId}
                             onClick={onClickToDetail}
                         >
                             <ListItemText key={`todayScheduleItemText${i}`} primary={display(todayInfo)}></ListItemText>
@@ -95,7 +96,7 @@ export const NestedScheduleList: VFC<Props> = React.memo((props) => {
                             key={`scheduleInfoItem${i}`}
                             button
                             className={classes.nested}
-                            id={scheduleInfo.event_id}
+                            id={scheduleInfo.eventId}
                             onClick={onClickToDetail}
                         >
                             <ListItemText

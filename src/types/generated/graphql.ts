@@ -12,373 +12,527 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
 };
 
-export type AttendEvent = {
-  __typename?: 'AttendEvent';
-  events?: Maybe<Array<Maybe<Event>>>;
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token: Scalars['String'];
+  userInfo: UserInfo;
 };
 
-export type CreateNewEvent = {
-  start_date: Scalars['String'];
-  end_date: Scalars['String'];
-  location: Scalars['String'];
-  organizer_id: Scalars['ID'];
-  organizer_name: Scalars['String'];
-  describes: Scalars['String'];
-  bring: Scalars['String'];
-  purpose: Scalars['String'];
-  paticipantsIds: Array<Scalars['ID']>;
-  date: Scalars['String'];
+export type ChangeResponseInput = {
+  response: EventResponseInput;
 };
 
-export type CreateNewEventResult = {
-  __typename?: 'CreateNewEventResult';
-  newEvent?: Maybe<Event>;
-  error?: Maybe<Error>;
+export type ChangeResponseResult = {
+  __typename?: 'ChangeResponseResult';
+  event: Event;
+  eventResponse: EventResponse;
 };
 
-export type DisplayEvent = {
-  __typename?: 'DisplayEvent';
-  event?: Maybe<Event>;
-  type: DisplayType;
-  paticipants?: Maybe<Array<Paticipant>>;
+export type CreateEventInput = {
+  info: EventInput;
+  userInfos: Array<UserInfoInput>;
 };
 
-export enum DisplayType {
-  Myevent = 'MYEVENT',
-  Newevent = 'NEWEVENT',
-  Editevent = 'EDITEVENT'
-}
 
-export type Error = {
-  __typename?: 'Error';
-  errorMessage: Scalars['String'];
+export type EditEventInput = {
+  eventId: Scalars['ID'];
+  info: EventInput;
+  userInfos: Array<UserInfoInput>;
 };
 
 export type Event = {
   __typename?: 'Event';
-  event_id: Scalars['ID'];
+  eventId: Scalars['ID'];
+  eventInfo: EventInfo;
+  requestedUsers: Array<UserInfo>;
+  paticipantUsers: Array<UserInfo>;
+};
+
+export type EventInfo = {
+  __typename?: 'EventInfo';
   purpose: Scalars['String'];
-  date: Scalars['String'];
+  created: Scalars['DateTime'];
   location: Scalars['String'];
-  start_date: Scalars['String'];
-  end_date: Scalars['String'];
-  organizer_id: Scalars['ID'];
-  organizer_name: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  endDate: Scalars['DateTime'];
+  organizerId: Scalars['ID'];
+  organizerName: Scalars['String'];
   describes: Scalars['String'];
   bring: Scalars['String'];
 };
 
-export type GetPaticipantsResults = {
-  __typename?: 'GetPaticipantsResults';
-  paticipants: Array<Paticipant>;
-  error?: Maybe<Error>;
+export type EventInput = {
+  purpose: Scalars['String'];
+  created: Scalars['DateTime'];
+  location: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  endDate: Scalars['DateTime'];
+  organizerId: Scalars['ID'];
+  organizerName: Scalars['String'];
+  describes: Scalars['String'];
+  bring: Scalars['String'];
 };
 
-export type GetUsers = {
-  __typename?: 'GetUsers';
-  users?: Maybe<Array<Maybe<User>>>;
-  error?: Maybe<Error>;
+export type EventResponse = {
+  __typename?: 'EventResponse';
+  userId: Scalars['String'];
+  eventId: Scalars['String'];
+  isAttend: Scalars['Boolean'];
+  isResponse: Scalars['Boolean'];
+  message: Scalars['String'];
 };
 
-export type HomeEvents = {
-  __typename?: 'HomeEvents';
-  requestEvent: Array<Event>;
-  displayEvent: DisplayEvent;
-  resedEvent: Array<Event>;
-  notResEvent: Array<Event>;
-  attendEvent: Array<Event>;
-  error?: Maybe<Error>;
+export type EventResponseInput = {
+  userId: Scalars['String'];
+  eventId: Scalars['String'];
+  isAttend: Scalars['Boolean'];
+  isResponse: Scalars['Boolean'];
+  message: Scalars['String'];
 };
 
-export type LoginResult = {
-  __typename?: 'LoginResult';
-  userInfo?: Maybe<User>;
-  error?: Maybe<Error>;
+export type LoginInput = {
+  userId: Scalars['ID'];
+  password: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  newRegistUser?: Maybe<Scalars['Boolean']>;
-  createNewEvent: CreateNewEventResult;
+  newRegistUser: UserInfo;
+  changeResponse: ChangeResponseResult;
+  createEvent: Event;
+  editEvent: Event;
 };
 
 
 export type MutationNewRegistUserArgs = {
-  input: NewUser;
+  input: RegistUserInput;
 };
 
 
-export type MutationCreateNewEventArgs = {
-  input: CreateNewEvent;
+export type MutationChangeResponseArgs = {
+  input: ChangeResponseInput;
 };
 
-export enum MutationType {
-  Changeresponse = 'CHANGERESPONSE',
-  Sendresponse = 'SENDRESPONSE',
-  Createnewevent = 'CREATENEWEVENT'
-}
 
-export type MyEvent = {
-  __typename?: 'MyEvent';
-  events?: Maybe<Array<Maybe<Event>>>;
+export type MutationCreateEventArgs = {
+  input: CreateEventInput;
 };
 
-export type NewUser = {
-  userName: Scalars['String'];
-  userPassword: Scalars['String'];
-};
 
-export type NotResEvent = {
-  __typename?: 'NotResEvent';
-  events?: Maybe<Array<Maybe<Event>>>;
-};
-
-export type Paticipant = {
-  __typename?: 'Paticipant';
-  user_id: Scalars['ID'];
-  user_name: Scalars['String'];
-};
-
-export type PaticipantsAndMyResponse = {
-  __typename?: 'PaticipantsAndMyResponse';
-  paticipants: Array<Paticipant>;
-  response?: Maybe<Response>;
-  error?: Maybe<Error>;
+export type MutationEditEventArgs = {
+  input: EditEventInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  getHomeEvents: HomeEvents;
-  login: LoginResult;
-  getUsers: GetUsers;
-  getPaticipants: GetPaticipantsResults;
-  getPaticipantsAndMyResponse?: Maybe<PaticipantsAndMyResponse>;
-};
-
-
-export type QueryGetHomeEventsArgs = {
-  userId: Scalars['ID'];
+  login: AuthPayload;
+  TestQ: Test;
+  user: User;
+  allUserInfos: Array<UserInfo>;
+  userAttendEvents: Array<UserEvent>;
+  userAbsentEvents: Array<UserEvent>;
+  userNotResponseEvents: Array<UserEvent>;
+  userResponsedEvents: Array<UserEvent>;
+  userTodayEvents: Array<UserEvent>;
 };
 
 
 export type QueryLoginArgs = {
+  input: LoginInput;
+};
+
+
+export type QueryTestQArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserAttendEventsArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserAbsentEventsArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserNotResponseEventsArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserResponsedEventsArgs = {
+  input: UserInfoInput;
+};
+
+
+export type QueryUserTodayEventsArgs = {
+  input: UserInfoInput;
+};
+
+export type RegistUserInput = {
   userName: Scalars['String'];
-  userPassword: Scalars['String'];
-};
-
-
-export type QueryGetUsersArgs = {
-  user_id: Scalars['String'];
-};
-
-
-export type QueryGetPaticipantsArgs = {
-  event_id: Scalars['String'];
-};
-
-
-export type QueryGetPaticipantsAndMyResponseArgs = {
-  event_id: Scalars['String'];
-  user_id: Scalars['String'];
-};
-
-export type ResedEvent = {
-  __typename?: 'ResedEvent';
-  events?: Maybe<Array<Maybe<Event>>>;
-};
-
-export type Response = {
-  __typename?: 'Response';
-  user_id: Scalars['ID'];
-  event_id: Scalars['String'];
-  is_attendance: Scalars['Boolean'];
-  is_response: Scalars['Boolean'];
-  message: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
-  sendRequest: Event;
+  newEvent: Event;
+  changeEvent: Event;
+  sendResposne: EventResponse;
 };
 
 
-export type SubscriptionSendRequestArgs = {
-  paticipantId: Scalars['ID'];
+export type SubscriptionNewEventArgs = {
+  input: UserInfoInput;
+};
+
+export type Test = {
+  __typename?: 'Test';
+  test: Scalars['String'];
+  data: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
-  user_name?: Maybe<Scalars['String']>;
-  user_id: Scalars['ID'];
-  userPassword?: Maybe<Scalars['String']>;
+  info: UserInfo;
+  todayEvents: Array<Event>;
+  createdEvents: Array<Event>;
+  attendEvents: Array<Event>;
+  absentEvents: Array<Event>;
+  responsedEvents: Array<Event>;
+  notResponseEvents: Array<Event>;
+  eventResponses: Array<EventResponse>;
 };
 
+export type UserEvent = {
+  __typename?: 'UserEvent';
+  event: Event;
+  response: EventResponse;
+};
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  userId: Scalars['ID'];
+  userName: Scalars['String'];
+};
+
+export type UserInfoInput = {
+  userId: Scalars['ID'];
+  userName: Scalars['String'];
+};
+
+export type DisplayEventInfoFragment = (
+  { __typename?: 'Event' }
+  & Pick<Event, 'eventId'>
+  & { eventInfo: (
+    { __typename?: 'EventInfo' }
+    & Pick<EventInfo, 'startDate' | 'endDate' | 'purpose' | 'describes' | 'bring' | 'location' | 'organizerId' | 'organizerName'>
+  ), paticipantUsers: Array<(
+    { __typename?: 'UserInfo' }
+    & Pick<UserInfo, 'userName' | 'userId'>
+  )> }
+);
+
+export type DisplayUserEventFragment = (
+  { __typename?: 'UserEvent' }
+  & { event: (
+    { __typename?: 'Event' }
+    & { requestedUsers: Array<(
+      { __typename?: 'UserInfo' }
+      & Pick<UserInfo, 'userName' | 'userId'>
+    )> }
+    & DisplayEventInfoFragment
+  ), response: (
+    { __typename?: 'EventResponse' }
+    & Pick<EventResponse, 'userId' | 'isAttend' | 'isResponse' | 'message'>
+  ) }
+);
+
+export type MailListInfoFragment = (
+  { __typename?: 'Event' }
+  & Pick<Event, 'eventId'>
+  & { eventInfo: (
+    { __typename?: 'EventInfo' }
+    & Pick<EventInfo, 'startDate' | 'endDate' | 'purpose'>
+  ) }
+);
+
+export type ChangeResponseMutationVariables = Exact<{
+  input: ChangeResponseInput;
+}>;
+
+
+export type ChangeResponseMutation = (
+  { __typename?: 'Mutation' }
+  & { changeResponse: (
+    { __typename?: 'ChangeResponseResult' }
+    & { event: (
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
+    ), eventResponse: (
+      { __typename?: 'EventResponse' }
+      & Pick<EventResponse, 'isAttend'>
+    ) }
+  ) }
+);
+
 export type CreateNewEventMutationVariables = Exact<{
-  location: Scalars['String'];
-  end_date: Scalars['String'];
-  describes: Scalars['String'];
-  bring: Scalars['String'];
-  start_date: Scalars['String'];
-  organizer_id: Scalars['ID'];
-  organizer_name: Scalars['String'];
-  purpose: Scalars['String'];
-  date: Scalars['String'];
-  paticipantsIds: Array<Scalars['ID']> | Scalars['ID'];
+  input: CreateEventInput;
 }>;
 
 
 export type CreateNewEventMutation = (
   { __typename?: 'Mutation' }
-  & { createNewEvent: (
-    { __typename?: 'CreateNewEventResult' }
-    & { error?: Maybe<(
-      { __typename?: 'Error' }
-      & Pick<Error, 'errorMessage'>
-    )>, newEvent?: Maybe<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'event_id'>
-    )> }
+  & { createEvent: (
+    { __typename: 'Event' }
+    & DisplayEventInfoFragment
   ) }
 );
 
-export type NewRegistUserMutationVariables = Exact<{
-  userName: Scalars['String'];
-  userPassword: Scalars['String'];
+export type EditEventMutationVariables = Exact<{
+  input: EditEventInput;
 }>;
 
 
-export type NewRegistUserMutation = (
+export type EditEventMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'newRegistUser'>
-);
-
-export type GetHomeEventsQueryVariables = Exact<{
-  userId: Scalars['ID'];
-}>;
-
-
-export type GetHomeEventsQuery = (
-  { __typename?: 'Query' }
-  & { getHomeEvents: (
-    { __typename?: 'HomeEvents' }
-    & { error?: Maybe<(
-      { __typename?: 'Error' }
-      & Pick<Error, 'errorMessage'>
-    )>, attendEvent: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
-    )>, notResEvent: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
-    )>, requestEvent: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
-    )>, resedEvent: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
-    )>, displayEvent: (
-      { __typename?: 'DisplayEvent' }
-      & Pick<DisplayEvent, 'type'>
-      & { paticipants?: Maybe<Array<(
-        { __typename?: 'Paticipant' }
-        & Pick<Paticipant, 'user_id' | 'user_name'>
-      )>>, event?: Maybe<(
-        { __typename?: 'Event' }
-        & Pick<Event, 'event_id' | 'purpose' | 'location' | 'date' | 'describes' | 'bring' | 'start_date' | 'end_date' | 'organizer_id' | 'organizer_name'>
-      )> }
-    ) }
+  & { editEvent: (
+    { __typename?: 'Event' }
+    & DisplayEventInfoFragment
   ) }
 );
 
-export type GetPaticipantsQueryVariables = Exact<{
-  event_id: Scalars['String'];
+export type NewUserRegistMutationVariables = Exact<{
+  input: RegistUserInput;
 }>;
 
 
-export type GetPaticipantsQuery = (
-  { __typename?: 'Query' }
-  & { getPaticipants: (
-    { __typename?: 'GetPaticipantsResults' }
-    & { paticipants: Array<(
-      { __typename?: 'Paticipant' }
-      & Pick<Paticipant, 'user_id' | 'user_name'>
-    )>, error?: Maybe<(
-      { __typename?: 'Error' }
-      & Pick<Error, 'errorMessage'>
-    )> }
+export type NewUserRegistMutation = (
+  { __typename?: 'Mutation' }
+  & { newRegistUser: (
+    { __typename?: 'UserInfo' }
+    & Pick<UserInfo, 'userId' | 'userName'>
   ) }
 );
 
-export type GetPaticipantsAndResponseQueryVariables = Exact<{
-  user_id: Scalars['String'];
-  event_id: Scalars['String'];
+export type FetchUserAttendEventsQueryVariables = Exact<{
+  input: UserInfoInput;
 }>;
 
 
-export type GetPaticipantsAndResponseQuery = (
+export type FetchUserAttendEventsQuery = (
   { __typename?: 'Query' }
-  & { getPaticipantsAndMyResponse?: Maybe<(
-    { __typename?: 'PaticipantsAndMyResponse' }
-    & { paticipants: Array<(
-      { __typename?: 'Paticipant' }
-      & Pick<Paticipant, 'user_name'>
-    )>, response?: Maybe<(
-      { __typename?: 'Response' }
-      & Pick<Response, 'event_id' | 'is_attendance' | 'is_response' | 'message'>
+  & { userAttendEvents: Array<(
+    { __typename?: 'UserEvent' }
+    & DisplayUserEventFragment
+  )> }
+);
+
+export type FetchUserTodayEventsQueryVariables = Exact<{
+  input: UserInfoInput;
+}>;
+
+
+export type FetchUserTodayEventsQuery = (
+  { __typename?: 'Query' }
+  & { userTodayEvents: Array<(
+    { __typename?: 'UserEvent' }
+    & DisplayUserEventFragment
+  )> }
+);
+
+export type FetchUserResponsedEventsQueryVariables = Exact<{
+  input: UserInfoInput;
+}>;
+
+
+export type FetchUserResponsedEventsQuery = (
+  { __typename?: 'Query' }
+  & { userResponsedEvents: Array<(
+    { __typename?: 'UserEvent' }
+    & DisplayUserEventFragment
+  )> }
+);
+
+export type FetchUserNotResponseEventsQueryVariables = Exact<{
+  input: UserInfoInput;
+}>;
+
+
+export type FetchUserNotResponseEventsQuery = (
+  { __typename?: 'Query' }
+  & { userNotResponseEvents: Array<(
+    { __typename?: 'UserEvent' }
+    & DisplayUserEventFragment
+  )> }
+);
+
+export type FetchHomeDataQueryVariables = Exact<{
+  input: UserInfoInput;
+}>;
+
+
+export type FetchHomeDataQuery = (
+  { __typename?: 'Query' }
+  & { user: (
+    { __typename?: 'User' }
+    & { info: (
+      { __typename?: 'UserInfo' }
+      & Pick<UserInfo, 'userName'>
+    ), notResponseEvents: Array<(
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
+    )>, attendEvents: Array<(
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
+    )>, responsedEvents: Array<(
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
+    )>, todayEvents: Array<(
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
+    )>, createdEvents: Array<(
+      { __typename?: 'Event' }
+      & DisplayEventInfoFragment
     )> }
+  ), allUserInfos: Array<(
+    { __typename?: 'UserInfo' }
+    & Pick<UserInfo, 'userId' | 'userName'>
   )> }
 );
 
 export type LoginQueryVariables = Exact<{
-  userName: Scalars['String'];
-  userPassword: Scalars['String'];
+  input: LoginInput;
 }>;
 
 
 export type LoginQuery = (
   { __typename?: 'Query' }
   & { login: (
-    { __typename?: 'LoginResult' }
-    & { userInfo?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'user_id' | 'user_name'>
-    )>, error?: Maybe<(
-      { __typename?: 'Error' }
-      & Pick<Error, 'errorMessage'>
-    )> }
+    { __typename?: 'AuthPayload' }
+    & Pick<AuthPayload, 'token'>
+    & { userInfo: (
+      { __typename?: 'UserInfo' }
+      & Pick<UserInfo, 'userId' | 'userName'>
+    ) }
   ) }
 );
 
-export type SendRequestSubscriptionVariables = Exact<{
-  id: Scalars['ID'];
+export type CommingEventSubscriptionVariables = Exact<{
+  input: UserInfoInput;
 }>;
 
 
-export type SendRequestSubscription = (
+export type CommingEventSubscription = (
   { __typename?: 'Subscription' }
-  & { sendRequest: (
+  & { newEvent: (
     { __typename?: 'Event' }
-    & Pick<Event, 'purpose' | 'location'>
+    & DisplayEventInfoFragment
   ) }
 );
 
-
-export const CreateNewEventDocument = gql`
-    mutation CreateNewEvent($location: String!, $end_date: String!, $describes: String!, $bring: String!, $start_date: String!, $organizer_id: ID!, $organizer_name: String!, $purpose: String!, $date: String!, $paticipantsIds: [ID!]!) {
-  createNewEvent(
-    input: {location: $location, end_date: $end_date, describes: $describes, bring: $bring, start_date: $start_date, organizer_name: $organizer_name, organizer_id: $organizer_id, purpose: $purpose, paticipantsIds: $paticipantsIds, date: $date}
-  ) {
-    error {
-      errorMessage
-    }
-    newEvent {
-      event_id
-    }
+export const DisplayEventInfoFragmentDoc = gql`
+    fragment displayEventInfo on Event {
+  eventId
+  eventInfo {
+    startDate
+    endDate
+    purpose
+    describes
+    bring
+    location
+    organizerId
+    organizerName
+  }
+  paticipantUsers {
+    userName
+    userId
   }
 }
     `;
+export const DisplayUserEventFragmentDoc = gql`
+    fragment DisplayUserEvent on UserEvent {
+  event {
+    ...displayEventInfo
+    requestedUsers {
+      userName
+      userId
+    }
+  }
+  response {
+    userId
+    isAttend
+    isResponse
+    message
+  }
+}
+    ${DisplayEventInfoFragmentDoc}`;
+export const MailListInfoFragmentDoc = gql`
+    fragment MailListInfo on Event {
+  eventId
+  eventInfo {
+    startDate
+    endDate
+    purpose
+  }
+}
+    `;
+export const ChangeResponseDocument = gql`
+    mutation ChangeResponse($input: ChangeResponseInput!) {
+  changeResponse(input: $input) {
+    event {
+      ...displayEventInfo
+    }
+    eventResponse {
+      isAttend
+    }
+  }
+}
+    ${DisplayEventInfoFragmentDoc}`;
+export type ChangeResponseMutationFn = Apollo.MutationFunction<ChangeResponseMutation, ChangeResponseMutationVariables>;
+
+/**
+ * __useChangeResponseMutation__
+ *
+ * To run a mutation, you first call `useChangeResponseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeResponseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeResponseMutation, { data, loading, error }] = useChangeResponseMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangeResponseMutation(baseOptions?: Apollo.MutationHookOptions<ChangeResponseMutation, ChangeResponseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeResponseMutation, ChangeResponseMutationVariables>(ChangeResponseDocument, options);
+      }
+export type ChangeResponseMutationHookResult = ReturnType<typeof useChangeResponseMutation>;
+export type ChangeResponseMutationResult = Apollo.MutationResult<ChangeResponseMutation>;
+export type ChangeResponseMutationOptions = Apollo.BaseMutationOptions<ChangeResponseMutation, ChangeResponseMutationVariables>;
+export const CreateNewEventDocument = gql`
+    mutation CreateNewEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    __typename
+    ...displayEventInfo
+  }
+}
+    ${DisplayEventInfoFragmentDoc}`;
 export type CreateNewEventMutationFn = Apollo.MutationFunction<CreateNewEventMutation, CreateNewEventMutationVariables>;
 
 /**
@@ -394,16 +548,7 @@ export type CreateNewEventMutationFn = Apollo.MutationFunction<CreateNewEventMut
  * @example
  * const [createNewEventMutation, { data, loading, error }] = useCreateNewEventMutation({
  *   variables: {
- *      location: // value for 'location'
- *      end_date: // value for 'end_date'
- *      describes: // value for 'describes'
- *      bring: // value for 'bring'
- *      start_date: // value for 'start_date'
- *      organizer_id: // value for 'organizer_id'
- *      organizer_name: // value for 'organizer_name'
- *      purpose: // value for 'purpose'
- *      date: // value for 'date'
- *      paticipantsIds: // value for 'paticipantsIds'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -414,241 +559,276 @@ export function useCreateNewEventMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateNewEventMutationHookResult = ReturnType<typeof useCreateNewEventMutation>;
 export type CreateNewEventMutationResult = Apollo.MutationResult<CreateNewEventMutation>;
 export type CreateNewEventMutationOptions = Apollo.BaseMutationOptions<CreateNewEventMutation, CreateNewEventMutationVariables>;
-export const NewRegistUserDocument = gql`
-    mutation NewRegistUser($userName: String!, $userPassword: String!) {
-  newRegistUser(input: {userName: $userName, userPassword: $userPassword})
+export const EditEventDocument = gql`
+    mutation EditEvent($input: EditEventInput!) {
+  editEvent(input: $input) {
+    ...displayEventInfo
+  }
 }
-    `;
-export type NewRegistUserMutationFn = Apollo.MutationFunction<NewRegistUserMutation, NewRegistUserMutationVariables>;
+    ${DisplayEventInfoFragmentDoc}`;
+export type EditEventMutationFn = Apollo.MutationFunction<EditEventMutation, EditEventMutationVariables>;
 
 /**
- * __useNewRegistUserMutation__
+ * __useEditEventMutation__
  *
- * To run a mutation, you first call `useNewRegistUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useNewRegistUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useEditEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [newRegistUserMutation, { data, loading, error }] = useNewRegistUserMutation({
+ * const [editEventMutation, { data, loading, error }] = useEditEventMutation({
  *   variables: {
- *      userName: // value for 'userName'
- *      userPassword: // value for 'userPassword'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useNewRegistUserMutation(baseOptions?: Apollo.MutationHookOptions<NewRegistUserMutation, NewRegistUserMutationVariables>) {
+export function useEditEventMutation(baseOptions?: Apollo.MutationHookOptions<EditEventMutation, EditEventMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<NewRegistUserMutation, NewRegistUserMutationVariables>(NewRegistUserDocument, options);
+        return Apollo.useMutation<EditEventMutation, EditEventMutationVariables>(EditEventDocument, options);
       }
-export type NewRegistUserMutationHookResult = ReturnType<typeof useNewRegistUserMutation>;
-export type NewRegistUserMutationResult = Apollo.MutationResult<NewRegistUserMutation>;
-export type NewRegistUserMutationOptions = Apollo.BaseMutationOptions<NewRegistUserMutation, NewRegistUserMutationVariables>;
-export const GetHomeEventsDocument = gql`
-    query GetHomeEvents($userId: ID!) {
-  getHomeEvents(userId: $userId) {
-    error {
-      errorMessage
-    }
-    attendEvent {
-      event_id
-      purpose
-      location
-      date
-      describes
-      bring
-      describes
-      start_date
-      end_date
-      organizer_id
-      organizer_name
-    }
-    notResEvent {
-      event_id
-      purpose
-      location
-      date
-      describes
-      bring
-      describes
-      start_date
-      end_date
-      organizer_id
-      organizer_name
-    }
-    requestEvent {
-      event_id
-      purpose
-      location
-      date
-      describes
-      bring
-      describes
-      start_date
-      end_date
-      organizer_id
-      organizer_name
-    }
-    resedEvent {
-      event_id
-      purpose
-      location
-      date
-      describes
-      bring
-      describes
-      start_date
-      end_date
-      organizer_id
-      organizer_name
-    }
-    displayEvent {
-      paticipants {
-        user_id
-        user_name
-      }
-      type
-      event {
-        event_id
-        purpose
-        location
-        date
-        describes
-        bring
-        describes
-        start_date
-        end_date
-        organizer_id
-        organizer_name
-      }
-    }
+export type EditEventMutationHookResult = ReturnType<typeof useEditEventMutation>;
+export type EditEventMutationResult = Apollo.MutationResult<EditEventMutation>;
+export type EditEventMutationOptions = Apollo.BaseMutationOptions<EditEventMutation, EditEventMutationVariables>;
+export const NewUserRegistDocument = gql`
+    mutation NewUserRegist($input: RegistUserInput!) {
+  newRegistUser(input: $input) {
+    userId
+    userName
   }
 }
     `;
+export type NewUserRegistMutationFn = Apollo.MutationFunction<NewUserRegistMutation, NewUserRegistMutationVariables>;
 
 /**
- * __useGetHomeEventsQuery__
+ * __useNewUserRegistMutation__
  *
- * To run a query within a React component, call `useGetHomeEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetHomeEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a mutation, you first call `useNewUserRegistMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useNewUserRegistMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [newUserRegistMutation, { data, loading, error }] = useNewUserRegistMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useNewUserRegistMutation(baseOptions?: Apollo.MutationHookOptions<NewUserRegistMutation, NewUserRegistMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<NewUserRegistMutation, NewUserRegistMutationVariables>(NewUserRegistDocument, options);
+      }
+export type NewUserRegistMutationHookResult = ReturnType<typeof useNewUserRegistMutation>;
+export type NewUserRegistMutationResult = Apollo.MutationResult<NewUserRegistMutation>;
+export type NewUserRegistMutationOptions = Apollo.BaseMutationOptions<NewUserRegistMutation, NewUserRegistMutationVariables>;
+export const FetchUserAttendEventsDocument = gql`
+    query FetchUserAttendEvents($input: UserInfoInput!) {
+  userAttendEvents(input: $input) {
+    ...DisplayUserEvent
+  }
+}
+    ${DisplayUserEventFragmentDoc}`;
+
+/**
+ * __useFetchUserAttendEventsQuery__
+ *
+ * To run a query within a React component, call `useFetchUserAttendEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserAttendEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetHomeEventsQuery({
+ * const { data, loading, error } = useFetchUserAttendEventsQuery({
  *   variables: {
- *      userId: // value for 'userId'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetHomeEventsQuery(baseOptions: Apollo.QueryHookOptions<GetHomeEventsQuery, GetHomeEventsQueryVariables>) {
+export function useFetchUserAttendEventsQuery(baseOptions: Apollo.QueryHookOptions<FetchUserAttendEventsQuery, FetchUserAttendEventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetHomeEventsQuery, GetHomeEventsQueryVariables>(GetHomeEventsDocument, options);
+        return Apollo.useQuery<FetchUserAttendEventsQuery, FetchUserAttendEventsQueryVariables>(FetchUserAttendEventsDocument, options);
       }
-export function useGetHomeEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHomeEventsQuery, GetHomeEventsQueryVariables>) {
+export function useFetchUserAttendEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserAttendEventsQuery, FetchUserAttendEventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetHomeEventsQuery, GetHomeEventsQueryVariables>(GetHomeEventsDocument, options);
+          return Apollo.useLazyQuery<FetchUserAttendEventsQuery, FetchUserAttendEventsQueryVariables>(FetchUserAttendEventsDocument, options);
         }
-export type GetHomeEventsQueryHookResult = ReturnType<typeof useGetHomeEventsQuery>;
-export type GetHomeEventsLazyQueryHookResult = ReturnType<typeof useGetHomeEventsLazyQuery>;
-export type GetHomeEventsQueryResult = Apollo.QueryResult<GetHomeEventsQuery, GetHomeEventsQueryVariables>;
-export const GetPaticipantsDocument = gql`
-    query GetPaticipants($event_id: String!) {
-  getPaticipants(event_id: $event_id) {
-    paticipants {
-      user_id
-      user_name
-    }
-    error {
-      errorMessage
-    }
+export type FetchUserAttendEventsQueryHookResult = ReturnType<typeof useFetchUserAttendEventsQuery>;
+export type FetchUserAttendEventsLazyQueryHookResult = ReturnType<typeof useFetchUserAttendEventsLazyQuery>;
+export type FetchUserAttendEventsQueryResult = Apollo.QueryResult<FetchUserAttendEventsQuery, FetchUserAttendEventsQueryVariables>;
+export const FetchUserTodayEventsDocument = gql`
+    query FetchUserTodayEvents($input: UserInfoInput!) {
+  userTodayEvents(input: $input) {
+    ...DisplayUserEvent
   }
 }
-    `;
+    ${DisplayUserEventFragmentDoc}`;
 
 /**
- * __useGetPaticipantsQuery__
+ * __useFetchUserTodayEventsQuery__
  *
- * To run a query within a React component, call `useGetPaticipantsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPaticipantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useFetchUserTodayEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserTodayEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPaticipantsQuery({
+ * const { data, loading, error } = useFetchUserTodayEventsQuery({
  *   variables: {
- *      event_id: // value for 'event_id'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetPaticipantsQuery(baseOptions: Apollo.QueryHookOptions<GetPaticipantsQuery, GetPaticipantsQueryVariables>) {
+export function useFetchUserTodayEventsQuery(baseOptions: Apollo.QueryHookOptions<FetchUserTodayEventsQuery, FetchUserTodayEventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPaticipantsQuery, GetPaticipantsQueryVariables>(GetPaticipantsDocument, options);
+        return Apollo.useQuery<FetchUserTodayEventsQuery, FetchUserTodayEventsQueryVariables>(FetchUserTodayEventsDocument, options);
       }
-export function useGetPaticipantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaticipantsQuery, GetPaticipantsQueryVariables>) {
+export function useFetchUserTodayEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserTodayEventsQuery, FetchUserTodayEventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPaticipantsQuery, GetPaticipantsQueryVariables>(GetPaticipantsDocument, options);
+          return Apollo.useLazyQuery<FetchUserTodayEventsQuery, FetchUserTodayEventsQueryVariables>(FetchUserTodayEventsDocument, options);
         }
-export type GetPaticipantsQueryHookResult = ReturnType<typeof useGetPaticipantsQuery>;
-export type GetPaticipantsLazyQueryHookResult = ReturnType<typeof useGetPaticipantsLazyQuery>;
-export type GetPaticipantsQueryResult = Apollo.QueryResult<GetPaticipantsQuery, GetPaticipantsQueryVariables>;
-export const GetPaticipantsAndResponseDocument = gql`
-    query GetPaticipantsAndResponse($user_id: String!, $event_id: String!) {
-  getPaticipantsAndMyResponse(user_id: $user_id, event_id: $event_id) {
-    paticipants {
-      user_name
-    }
-    response {
-      event_id
-      is_attendance
-      is_response
-      message
-    }
+export type FetchUserTodayEventsQueryHookResult = ReturnType<typeof useFetchUserTodayEventsQuery>;
+export type FetchUserTodayEventsLazyQueryHookResult = ReturnType<typeof useFetchUserTodayEventsLazyQuery>;
+export type FetchUserTodayEventsQueryResult = Apollo.QueryResult<FetchUserTodayEventsQuery, FetchUserTodayEventsQueryVariables>;
+export const FetchUserResponsedEventsDocument = gql`
+    query FetchUserResponsedEvents($input: UserInfoInput!) {
+  userResponsedEvents(input: $input) {
+    ...DisplayUserEvent
   }
 }
-    `;
+    ${DisplayUserEventFragmentDoc}`;
 
 /**
- * __useGetPaticipantsAndResponseQuery__
+ * __useFetchUserResponsedEventsQuery__
  *
- * To run a query within a React component, call `useGetPaticipantsAndResponseQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPaticipantsAndResponseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useFetchUserResponsedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserResponsedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPaticipantsAndResponseQuery({
+ * const { data, loading, error } = useFetchUserResponsedEventsQuery({
  *   variables: {
- *      user_id: // value for 'user_id'
- *      event_id: // value for 'event_id'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetPaticipantsAndResponseQuery(baseOptions: Apollo.QueryHookOptions<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>) {
+export function useFetchUserResponsedEventsQuery(baseOptions: Apollo.QueryHookOptions<FetchUserResponsedEventsQuery, FetchUserResponsedEventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>(GetPaticipantsAndResponseDocument, options);
+        return Apollo.useQuery<FetchUserResponsedEventsQuery, FetchUserResponsedEventsQueryVariables>(FetchUserResponsedEventsDocument, options);
       }
-export function useGetPaticipantsAndResponseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>) {
+export function useFetchUserResponsedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserResponsedEventsQuery, FetchUserResponsedEventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>(GetPaticipantsAndResponseDocument, options);
+          return Apollo.useLazyQuery<FetchUserResponsedEventsQuery, FetchUserResponsedEventsQueryVariables>(FetchUserResponsedEventsDocument, options);
         }
-export type GetPaticipantsAndResponseQueryHookResult = ReturnType<typeof useGetPaticipantsAndResponseQuery>;
-export type GetPaticipantsAndResponseLazyQueryHookResult = ReturnType<typeof useGetPaticipantsAndResponseLazyQuery>;
-export type GetPaticipantsAndResponseQueryResult = Apollo.QueryResult<GetPaticipantsAndResponseQuery, GetPaticipantsAndResponseQueryVariables>;
+export type FetchUserResponsedEventsQueryHookResult = ReturnType<typeof useFetchUserResponsedEventsQuery>;
+export type FetchUserResponsedEventsLazyQueryHookResult = ReturnType<typeof useFetchUserResponsedEventsLazyQuery>;
+export type FetchUserResponsedEventsQueryResult = Apollo.QueryResult<FetchUserResponsedEventsQuery, FetchUserResponsedEventsQueryVariables>;
+export const FetchUserNotResponseEventsDocument = gql`
+    query FetchUserNotResponseEvents($input: UserInfoInput!) {
+  userNotResponseEvents(input: $input) {
+    ...DisplayUserEvent
+  }
+}
+    ${DisplayUserEventFragmentDoc}`;
+
+/**
+ * __useFetchUserNotResponseEventsQuery__
+ *
+ * To run a query within a React component, call `useFetchUserNotResponseEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserNotResponseEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchUserNotResponseEventsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFetchUserNotResponseEventsQuery(baseOptions: Apollo.QueryHookOptions<FetchUserNotResponseEventsQuery, FetchUserNotResponseEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchUserNotResponseEventsQuery, FetchUserNotResponseEventsQueryVariables>(FetchUserNotResponseEventsDocument, options);
+      }
+export function useFetchUserNotResponseEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserNotResponseEventsQuery, FetchUserNotResponseEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchUserNotResponseEventsQuery, FetchUserNotResponseEventsQueryVariables>(FetchUserNotResponseEventsDocument, options);
+        }
+export type FetchUserNotResponseEventsQueryHookResult = ReturnType<typeof useFetchUserNotResponseEventsQuery>;
+export type FetchUserNotResponseEventsLazyQueryHookResult = ReturnType<typeof useFetchUserNotResponseEventsLazyQuery>;
+export type FetchUserNotResponseEventsQueryResult = Apollo.QueryResult<FetchUserNotResponseEventsQuery, FetchUserNotResponseEventsQueryVariables>;
+export const FetchHomeDataDocument = gql`
+    query FetchHomeData($input: UserInfoInput!) {
+  user(input: $input) {
+    info {
+      userName
+    }
+    notResponseEvents {
+      ...displayEventInfo
+    }
+    attendEvents {
+      ...displayEventInfo
+    }
+    responsedEvents {
+      ...displayEventInfo
+    }
+    todayEvents {
+      ...displayEventInfo
+    }
+    createdEvents {
+      ...displayEventInfo
+    }
+  }
+  allUserInfos {
+    userId
+    userName
+  }
+}
+    ${DisplayEventInfoFragmentDoc}`;
+
+/**
+ * __useFetchHomeDataQuery__
+ *
+ * To run a query within a React component, call `useFetchHomeDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchHomeDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchHomeDataQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFetchHomeDataQuery(baseOptions: Apollo.QueryHookOptions<FetchHomeDataQuery, FetchHomeDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchHomeDataQuery, FetchHomeDataQueryVariables>(FetchHomeDataDocument, options);
+      }
+export function useFetchHomeDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchHomeDataQuery, FetchHomeDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchHomeDataQuery, FetchHomeDataQueryVariables>(FetchHomeDataDocument, options);
+        }
+export type FetchHomeDataQueryHookResult = ReturnType<typeof useFetchHomeDataQuery>;
+export type FetchHomeDataLazyQueryHookResult = ReturnType<typeof useFetchHomeDataLazyQuery>;
+export type FetchHomeDataQueryResult = Apollo.QueryResult<FetchHomeDataQuery, FetchHomeDataQueryVariables>;
 export const LoginDocument = gql`
-    query Login($userName: String!, $userPassword: String!) {
-  login(userName: $userName, userPassword: $userPassword) {
+    query Login($input: LoginInput!) {
+  login(input: $input) {
+    token
     userInfo {
-      user_id
-      user_name
-    }
-    error {
-      errorMessage
+      userId
+      userName
     }
   }
 }
@@ -666,8 +846,7 @@ export const LoginDocument = gql`
  * @example
  * const { data, loading, error } = useLoginQuery({
  *   variables: {
- *      userName: // value for 'userName'
- *      userPassword: // value for 'userPassword'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -682,34 +861,33 @@ export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Logi
 export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
 export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
 export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
-export const SendRequestDocument = gql`
-    subscription SendRequest($id: ID!) {
-  sendRequest(paticipantId: $id) {
-    purpose
-    location
+export const CommingEventDocument = gql`
+    subscription CommingEvent($input: UserInfoInput!) {
+  newEvent(input: $input) {
+    ...displayEventInfo
   }
 }
-    `;
+    ${DisplayEventInfoFragmentDoc}`;
 
 /**
- * __useSendRequestSubscription__
+ * __useCommingEventSubscription__
  *
- * To run a query within a React component, call `useSendRequestSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSendRequestSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCommingEventSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useCommingEventSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSendRequestSubscription({
+ * const { data, loading, error } = useCommingEventSubscription({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useSendRequestSubscription(baseOptions: Apollo.SubscriptionHookOptions<SendRequestSubscription, SendRequestSubscriptionVariables>) {
+export function useCommingEventSubscription(baseOptions: Apollo.SubscriptionHookOptions<CommingEventSubscription, CommingEventSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<SendRequestSubscription, SendRequestSubscriptionVariables>(SendRequestDocument, options);
+        return Apollo.useSubscription<CommingEventSubscription, CommingEventSubscriptionVariables>(CommingEventDocument, options);
       }
-export type SendRequestSubscriptionHookResult = ReturnType<typeof useSendRequestSubscription>;
-export type SendRequestSubscriptionResult = Apollo.SubscriptionResult<SendRequestSubscription>;
+export type CommingEventSubscriptionHookResult = ReturnType<typeof useCommingEventSubscription>;
+export type CommingEventSubscriptionResult = Apollo.SubscriptionResult<CommingEventSubscription>;

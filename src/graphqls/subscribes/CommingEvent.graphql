@@ -1,0 +1,5 @@
+subscription CommingEvent($input: UserInfoInput!) {
+    newEvent(input: $input) {
+        ...displayEventInfo
+    }
+}

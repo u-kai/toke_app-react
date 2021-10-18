@@ -1,6 +1,6 @@
 export type MailDisplayInfo = {
-    event_id: string
-    start_date: string
-    end_date: string
+    eventId: string
+    startDate: string
+    endDate: string
     purpose: string
 }

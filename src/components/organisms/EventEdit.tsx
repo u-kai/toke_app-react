@@ -3,14 +3,10 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
-import { ScheduleInfo } from 'types/backend-return-tyeps/ScheduleInfo'
 import { DateConverter } from 'model/DateConverter'
 import { OutlineChip } from 'components/atoms/OutLineChip'
-import { dateCalculater } from 'functions/dateCalculater'
 import { MultipleSelect } from 'components/atoms/MultipleSelect'
-import { StateMakerForNewEventRegist } from 'model/StateMaker/StateMakerForNewEventRegist'
-import { StateMakerForGetMembers } from 'model/StateMaker/StateMakerForGetMembers'
-import React, { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useContext, useState } from 'react'
 import { DateAndTimePickers } from 'components/atoms/DateAndTimePickers'
 import { SendButton } from 'components/atoms/SendButton'
 import { MultilineTextFields } from 'components/atoms/MultilineTextFileds'
@@ -18,7 +14,17 @@ import { TimePicker } from 'components/atoms/TimePicker'
 import TextField from '@material-ui/core/TextField'
 import { UserIdContext } from 'providers/UserIdProvider'
 import { BannerMessageContext } from 'providers/BannerMessage'
-import { useCreateNewEventMutation } from 'types/generated/graphql'
+import { DisplayEventContext } from 'reducers/DisplayEvent'
+import { AllUserContext } from 'providers/AllUser'
+import { dateCalculater } from 'functions/dateCalculater'
+import {
+    CreateEventInput,
+    EditEventInput,
+    FetchHomeDataDocument,
+    useCreateNewEventMutation,
+    useEditEventMutation,
+} from 'types/generated/graphql'
+import { EventEditMode } from 'types/ui-types/EventEditMode'
 
 const useStyles = makeStyles({
     root: {
@@ -36,132 +42,100 @@ const useStyles = makeStyles({
         marginBottom: 7,
     },
 })
-type Props = {
-    eventId?: string
-    info?: ScheduleInfo
-    participants?: string[]
-}
 const dateConverter = new DateConverter()
-const today = dateConverter.forMaterialUI()
-export const EventEdit: React.VFC<Props> = React.memo((props) => {
+
+type Props = {
+    eventEdit: EventEditMode
+}
+export const EventEdit: React.VFC<Props> = (props) => {
     const classes = useStyles()
-    const context = useContext(UserIdContext)
-    const bannerContext = useContext(BannerMessageContext)
-    const { bannerDispatch } = bannerContext
+    const { eventEdit } = props
+    const { userName } = useContext(UserIdContext).userInfo
+    const { bannerDispatch } = useContext(BannerMessageContext)
+    const { allUser } = useContext(AllUserContext)
+    const { displayEvent, displayEventDispatch } = useContext(DisplayEventContext)
+    const [eventTime, setEventTime] = useState('00:30')
+    const [postNewEvent] = useCreateNewEventMutation({
+        awaitRefetchQueries: true,
+        refetchQueries: [FetchHomeDataDocument],
+    })
+    const [postEditEvent] = useEditEventMutation({
+        awaitRefetchQueries: true,
+        refetchQueries: [FetchHomeDataDocument],
+    })
 
-    const { userInfo } = context
-    const {
-        info = {
-            purpose: '',
-            location: '',
-            describes: '',
-            bring: '',
-            organizer_id: userInfo.userId,
-            organizer_name: userInfo.userName,
-            date: new Date().toString(),
-            start_date: today,
-            end_date: '',
-        },
-        participants = [],
-    } = props
-    const [purpose, setPurpose] = useState(info.purpose)
-    const [date, setDate] = useState(info.start_date)
-    const [requestTime, setRequestTime] = useState('00:30')
-    const [bring, setBring] = useState(info.bring)
-    const [desc, setDesc] = useState(info.describes)
-    const [location, setLocation] = useState(info.location)
-    const [createNewEvent, { data }] = useCreateNewEventMutation()
-    console.log('event data is ', data)
-    const [memberIds, setMemberIds] = useState([''])
-    const [memberNames, setMemberNames] = useState([''])
-    const [selectedMembers, setSelectedMembers] = useState<string[]>(participants)
-    useEffect(() => {
-        const stateMaker = new StateMakerForGetMembers(userInfo.userId)
-        stateMaker.returnErrorAndIdsNames().then((data) => {
-            bannerDispatch({ type: 'setError', value: data.error })
-            setMemberIds(data.data.ids)
-            setMemberNames(data.data.names)
-        })
-    }, [])
-
-    const changePurpose = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setPurpose(e.target.value)
-        },
-        [setPurpose]
-    )
-
-    const changeBring = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setBring(e.target.value)
-        },
-        [setBring]
-    )
-    const changeDesc = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setDesc(e.target.value)
-        },
-        [setDesc]
-    )
-    const changeDate = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setDate(e.target.value)
-        },
-        [setDesc]
-    )
-    const changeRequestTime = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setRequestTime(e.target.value)
-        },
-        [setRequestTime]
-    )
-    const changeLocation = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setLocation(e.target.value)
-        },
-        [setLocation]
-    )
-    const test = () => {
-        createNewEvent({
-            variables: {
-                location,
-                purpose,
-                end_date: dateCalculater(date, requestTime),
-                paticipantsIds: memberIds,
-                bring,
-                describes: desc,
-                start_date: date,
-                organizer_id: userInfo.userId,
-                organizer_name: userInfo.userName,
-                date: date,
-            },
-        })
-        //  const stateMaker = new StateMakerForNewEventRegist(
-        //      purpose,
-        //      bring,
-        //      desc,
-        //      userInfo.userId,
-        //      userInfo.userName,
-        //      location,
-        //      date,
-        //      dateCalculater(date, requestTime),
-        //      memberIds
-        //  )
-        //  stateMaker.returnErrorAndSuccessMessage().then((data) => {
-        //      if (data.error === '') {
-        //          bannerDispatch({ type: 'setSuccess', value: data.success })
-        //          return
-        //      }
-        //      bannerDispatch({ type: 'setError', value: data.error })
-        //  })
+    const changePurpose = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = e.target.value
+        displayEventDispatch({ type: 'inputPurpose', value })
     }
 
-    const changeMembers = useCallback(
-        (event: React.ChangeEvent<{ value: unknown }>) => {
-            setSelectedMembers(event.target.value as string[])
-        },
-        [setSelectedMembers]
-    )
+    const changeBring = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = e.target.value
+        displayEventDispatch({ type: 'inputBring', value })
+    }
+    const changeDesc = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = e.target.value
+        displayEventDispatch({ type: 'inputDescribes', value })
+    }
+
+    const changeStartDate = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        const startDate: string = dateConverter.forDB(e.target.value)
+        displayEventDispatch({ type: 'inputStartDate', value: startDate })
+    }
+    const changeEventTime = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        const value = e.target.value
+        setEventTime(value)
+    }
+    const changeLocation = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = e.target.value
+        displayEventDispatch({ type: 'inputLocation', value })
+    }
+    const onClickSendButton = async () => {
+        const { describes, bring, location, purpose, organizerId, organizerName, startDate } = displayEvent.eventInfo
+        const { eventId, paticipantUsers } = displayEvent
+
+        const endDate: string = dateCalculater(startDate, eventTime)
+
+        const created = dateConverter.forDB()
+        const info = {
+            describes,
+            bring,
+            location,
+            purpose,
+            organizerId,
+            organizerName,
+            startDate: dateConverter.forDB(startDate),
+            endDate,
+            created,
+        }
+        const userInfos = paticipantUsers
+        if (eventEdit === 'newEvent') {
+            const createEventInput: CreateEventInput = {
+                info,
+                userInfos,
+            }
+            await postNewEvent({
+                variables: {
+                    input: createEventInput,
+                },
+            }).catch((e) => bannerDispatch({ type: 'setError', message: e.toString() }))
+            return
+        }
+
+        if (eventEdit === 'editEvent') {
+            const editEventInput: EditEventInput = {
+                eventId,
+                info,
+                userInfos,
+            }
+            await postEditEvent({
+                variables: {
+                    input: editEventInput,
+                },
+            }).catch((e) => bannerDispatch({ type: 'setError', message: e.toString() }))
+        }
+    }
+
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -170,50 +144,63 @@ export const EventEdit: React.VFC<Props> = React.memo((props) => {
                 </Typography>
                 <br />
                 <Typography className={classes.pos}>
-                    <TextField id="organizer_name" label="開催者" value={info.organizer_name} />
+                    <TextField id="organizer_name" label="開催者" value={userName} />
                 </Typography>
                 <Typography className={classes.pos}>
-                    <TextField id="porpose" label="目的" value={purpose} onChange={changePurpose} />
+                    <TextField
+                        id="porpose"
+                        label="目的"
+                        value={displayEvent.eventInfo.purpose}
+                        onChange={changePurpose}
+                    />
                 </Typography>
                 <Typography className={classes.pos}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <DateAndTimePickers
-                            date={date}
+                            date={dateConverter.forMaterialUI(displayEvent.eventInfo.startDate)}
                             id="date"
                             label="日時"
-                            onChange={changeDate}
-                        ></DateAndTimePickers>
-                        <TimePicker label="時間" onChange={changeRequestTime}></TimePicker>
+                            onChange={changeStartDate}
+                        />
+                        <TimePicker label="時間" onChange={changeEventTime} />
                     </div>
                 </Typography>
                 <Typography className={classes.pos}>
-                    <TextField id="location" label="場所" value={location} onChange={changeLocation} />
+                    <TextField
+                        id="location"
+                        label="場所"
+                        value={displayEvent.eventInfo.location}
+                        onChange={changeLocation}
+                    />
                 </Typography>
                 <Typography className={classes.pos}>
-                    <TextField id="bring" label="持ち物" value={bring} onChange={changeBring} />
+                    <TextField id="bring" label="持ち物" value={displayEvent.eventInfo.bring} onChange={changeBring} />
                 </Typography>
                 <Typography className={classes.pos}>
-                    <MultilineTextFields placeholder={'説明'} value={desc} onChange={changeDesc}></MultilineTextFields>
+                    <MultilineTextFields
+                        placeholder={'説明'}
+                        value={displayEvent.eventInfo.describes}
+                        onChange={changeDesc}
+                    />
                 </Typography>
                 <Typography className={classes.pos}>現在の参加者</Typography>
                 <Container>
-                    {participants.map((participant) => (
-                        <OutlineChip label={participant} color={'primary'}></OutlineChip>
+                    {displayEvent.currentPaticipants.map((paticipant, i) => (
+                        <OutlineChip key={paticipant + i.toString()} label={paticipant.userName} color={'primary'} />
                     ))}
                 </Container>
                 <DisplayFlexContainer>
                     <MultipleSelect
-                        names={memberNames}
-                        onChange={changeMembers}
+                        allUserInfo={allUser}
                         placeholder={'メンバーを選択'}
-                        selectNames={selectedMembers}
+                        selectNames={displayEvent.paticipantUsers.map((u) => u.userName)}
                     />
-                    <SendButton onClick={test}></SendButton>
+                    <SendButton onClick={onClickSendButton} />
                 </DisplayFlexContainer>
             </CardContent>
         </Card>
     )
-})
+}
 const Container = styled.div`
     display: flex;
     flex-wrap: wrap;

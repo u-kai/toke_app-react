@@ -1,0 +1,23 @@
+query FetchUserAttendEvents($input: UserInfoInput!) {
+    userAttendEvents(input: $input) {
+        ...DisplayUserEvent
+    }
+}
+
+query FetchUserTodayEvents($input: UserInfoInput!) {
+    userTodayEvents(input: $input) {
+        ...DisplayUserEvent
+    }
+}
+
+query FetchUserResponsedEvents($input: UserInfoInput!) {
+    userResponsedEvents(input: $input) {
+        ...DisplayUserEvent
+    }
+}
+
+query FetchUserNotResponseEvents($input: UserInfoInput!) {
+    userNotResponseEvents(input: $input) {
+        ...DisplayUserEvent
+    }
+}

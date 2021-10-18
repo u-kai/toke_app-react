@@ -1,0 +1,10 @@
+mutation ChangeResponse($input: ChangeResponseInput!) {
+    changeResponse(input: $input) {
+        event {
+            ...displayEventInfo
+        }
+        eventResponse {
+            isAttend
+        }
+    }
+}

@@ -7,19 +7,22 @@ type BannerMessageContextType = {
     bannerMessage: Banner
     bannerDispatch: React.Dispatch<{
         type: ActionType
-        value?: string
+        message?: string
     }>
 }
 
 const initState: Banner = {}
-const reducer = (state: Banner, action: { type: ActionType; value?: string }): Banner => {
-    switch (action.type) {
+const reducer = (state: Banner, action: { type: ActionType; message?: string }): Banner => {
+    const { type, message } = action
+    switch (type) {
         case 'setError':
-            return { ...state, status: 'error', message: action.value }
+            return { ...state, status: 'error', message }
         case 'setSuccess':
-            return { ...state, status: 'success', message: action.value }
+            return { ...state, status: 'success', message }
         case 'resetMessage':
             return { ...state, status: undefined, message: undefined }
+        case 'setInfomation':
+            return { ...state, status: 'success', message }
         default:
             return { ...state }
     }

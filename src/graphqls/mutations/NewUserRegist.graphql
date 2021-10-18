@@ -1,0 +1,6 @@
+mutation NewUserRegist($input: RegistUserInput!) {
+    newRegistUser(input: $input) {
+        userId
+        userName
+    }
+}

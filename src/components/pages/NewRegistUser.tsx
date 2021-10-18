@@ -4,7 +4,7 @@ import { LayoutTextField } from 'components/atoms/LayoutTextField'
 import { SendButton } from 'components/atoms/SendButton'
 import { SimpleAlert } from 'components/atoms/SimpleAletert'
 import { Link } from 'react-router-dom'
-import { useNewRegistUserMutation } from 'types/generated/graphql'
+import { useNewUserRegistMutation } from 'types/generated/graphql'
 
 type NewRegistUserInfo = {
     userName: string
@@ -65,8 +65,13 @@ const initState: NewRegistUserInfo = {
 
 export const NewRegistUser: React.VFC = () => {
     const [newRegisterUser, dispatch] = useReducer(reducer, initState)
-    const [newRegistUser, { data }] = useNewRegistUserMutation({
-        variables: { userName: newRegisterUser.userName, userPassword: newRegisterUser.password },
+    const [newRegistUser, { data }] = useNewUserRegistMutation({
+        variables: {
+            input: {
+                userName: newRegisterUser.userName,
+                password: newRegisterUser.password,
+            },
+        },
     })
     const sendData = async () => {
         try {

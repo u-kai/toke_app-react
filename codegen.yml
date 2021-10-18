@@ -4,7 +4,7 @@ documents:
     - ./src/**/*.graphql
 generates:
     ./src/types/generated/graphql.ts:
-        schema: ../toke_app-back/schema.graphql
+        schema: ../graphql_server/schema.graphql
         config:
             #uhseIndexSignature: true
             withHooks: true

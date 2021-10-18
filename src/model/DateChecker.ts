@@ -1,7 +1,7 @@
 import { ScheduleInfo, ScheduleInfoResults } from 'types/backend-return-tyeps/ScheduleInfo'
 
 export class DateChecker {
-    isToday = (date: string) => {
+    isToday = (date: string): boolean => {
         const today = new Date()
         const compare = new Date(date)
         return (
@@ -40,7 +40,7 @@ export class DateChecker {
         maxList.pop()
         return maxList
     }
-    sortAsc = (dates: string[]) => {
+    sortAsc = (dates: string[]): string[] => {
         const keyIsIndexValueIsDateValueTemp: { [key: string]: string } = {}
         const keyIsDateValueValueIsIndexTemp: { [key: string]: number } = {}
         const dateToValueList = dates.map((date, i) => {

@@ -16,7 +16,7 @@ export const useUserName = () => {
                 bannerDispatch({ type: 'resetMessage' })
             }
             if (data.error !== '') {
-                bannerDispatch({ type: 'setError', value: data.error })
+                bannerDispatch({ type: 'setError', message: data.error })
             }
         })
     }
